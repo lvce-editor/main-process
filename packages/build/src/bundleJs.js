@@ -9,21 +9,22 @@ import { root } from './root.js'
  * @type {import('rollup').RollupOptions}
  */
 const options = {
-  input: join(root, 'packages/iframe-worker/src/iframeWorkerMain.ts'),
+  input: join(root, 'packages/main-process/src/mainProcessMain.ts'),
   preserveEntrySignatures: 'strict',
   treeshake: {
     propertyReadSideEffects: false,
   },
   output: {
-    file: join(root, '.tmp/dist/dist/iframeWorkerMain.js'),
+    file: join(root, '.tmp/dist/dist/mainProcessMain.js'),
     format: 'es',
     freeze: false,
     generatedCode: {
       constBindings: true,
       objectShorthand: true,
     },
+    inlineDynamicImports: true,
   },
-  external: ['electron', 'ws'],
+  external: ['electron', 'ws', 'electron-unhandled', 'debug', 'minimist'],
   plugins: [
     babel({
       babelHelpers: 'bundled',
