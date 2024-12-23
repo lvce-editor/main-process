@@ -19,6 +19,7 @@ export const getFirstEvent = async (eventEmitter, eventMap) => {
     eventEmitter.on(event, listener)
     listenerMap[event] = listener
   }
+  // @ts-ignore
   const { type, event } = await promise
   return { type, event }
 }

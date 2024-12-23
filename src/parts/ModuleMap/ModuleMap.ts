@@ -1,5 +1,5 @@
-import { CommandNotFoundError } from '../CommandNotFoundError/CommandNotFoundError.js'
-import * as ModuleId from '../ModuleId/ModuleId.js'
+import { CommandNotFoundError } from '../CommandNotFoundError/CommandNotFoundError.ts'
+import * as ModuleId from '../ModuleId/ModuleId.ts'
 
 const getPrefix = (commandId) => {
   return commandId.slice(0, commandId.indexOf('.'))

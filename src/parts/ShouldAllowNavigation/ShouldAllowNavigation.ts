@@ -1,4 +1,4 @@
-import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.js'
+import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
 
 export const shouldAllowNavigation = (webContentsId) => {
   if (ElectronWebContentsViewState.hasWebContents(webContentsId)) {

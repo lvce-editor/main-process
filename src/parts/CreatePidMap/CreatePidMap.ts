@@ -33,6 +33,7 @@ export const createPidMap = () => {
     pidWindowMap[pid] = `hidden-browser-view-${viewWebContents.id}`
   }
   for (const [pid, value] of utilityProcesses) {
+    // @ts-ignore
     pidWindowMap[pid] = value.name
   }
   return pidWindowMap

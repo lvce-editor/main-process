@@ -1,4 +1,4 @@
-import * as Platform from '../Platform/Platform.js'
+import * as Platform from '../Platform/Platform.ts'
 import * as Scheme from '../Scheme/Scheme.js'
 
 export const privilegedSchems = [
