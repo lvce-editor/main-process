@@ -9,7 +9,7 @@
     "test:watch": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --watch",
     "type-check": "tsc",
     "build": "node scripts/build.js",
-    "lint": "echo ok"
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
