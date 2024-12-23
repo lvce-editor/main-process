@@ -2,7 +2,10 @@ import * as GetHelpfulChildProcessError from '../GetHelpfulChildProcessError/Get
 import { VError } from '../VError/VError.ts'
 
 export class IpcError extends VError {
-  constructor(message, stdout = '', stderr = '') {
+  stdout: string
+  stderr: string
+
+  constructor(message: string, stdout = '', stderr = '') {
     if (stdout || stderr) {
       const cause = GetHelpfulChildProcessError.getHelpfulChildProcessError(message, stdout, stderr)
       super(cause, message)
@@ -10,9 +13,7 @@ export class IpcError extends VError {
       super(message)
     }
     this.name = 'IpcError'
-    // @ts-ignore
     this.stdout = stdout
-    // @ts-ignore
     this.stderr = stderr
   }
 }
