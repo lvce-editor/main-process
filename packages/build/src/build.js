@@ -65,6 +65,7 @@ delete packageJson.jest
 delete packageJson.xo
 delete packageJson.directories
 delete packageJson.nodemonConfig
+packageJson.dependencies = {}
 packageJson.version = version
 packageJson.main = 'dist/mainProcessMain.js'
 
