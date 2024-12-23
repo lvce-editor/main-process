@@ -18,7 +18,7 @@ export const openPath = async (path) => {
 /**
  * @deprecated use Beep.beep instead
  */
-export const beep = () => {
-  const Beep = require('../Beep/Beep.ts')
+export const beep = async () => {
+  const Beep = await import('../Beep/Beep.ts')
   Beep.beep()
 }

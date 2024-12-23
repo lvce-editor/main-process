@@ -2,10 +2,11 @@ import * as Electron from 'electron'
 import * as ElectronBrowserViewAdBlock from '../ElectronBrowserViewAdBlock/ElectronBrowserViewAdBlock.ts'
 import * as ElectronPermissionType from '../ElectronPermissionType/ElectronPermissionType.ts'
 
-const state = {
-  /**
-   * @type {import('electron').Session|undefined}
-   */
+interface State {
+  session: Electron.Session | undefined
+}
+
+const state: State = {
   session: undefined,
 }
 
@@ -42,8 +43,7 @@ const createSession = () => {
   return session
 }
 
-export const getSession = () => {
-  // @ts-ignore
+export const getSession = (): Electron.Session => {
   state.session ||= createSession()
   return state.session
 }
