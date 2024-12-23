@@ -1,5 +1,5 @@
-import * as Assert from '../Assert/Assert.js'
-import * as EmbedsProcess from '../EmbedsProcess/EmbedsProcess.js'
+import * as Assert from '../Assert/Assert.ts'
+import * as EmbedsProcess from '../EmbedsProcess/EmbedsProcess.ts'
 import * as HandleIpc from '../HandleIpc/HandleIpc.js'
 import * as IpcChild from '../IpcChild/IpcChild.js'
 import * as IpcChildType from '../IpcChildType/IpcChildType.js'

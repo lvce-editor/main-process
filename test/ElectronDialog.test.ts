@@ -35,6 +35,7 @@ test.skip('showMessageBox', async () => {
       response: 1,
     }
   })
+  // @ts-ignore
   await ElectronDialog.showMessageBox({
     message: 'test',
     buttons: ['copy', 'ok'],

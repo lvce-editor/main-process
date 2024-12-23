@@ -1,6 +1,6 @@
 import { webContents } from 'electron'
-import * as Assert from '../Assert/Assert.js'
-import * as DisposeWebContents from '../DisposeWebContents/DisposeWebContents.js'
+import * as Assert from '../Assert/Assert.ts'
+import * as DisposeWebContents from '../DisposeWebContents/DisposeWebContents.ts'
 
 export const getStats = (webContentsId) => {
   Assert.number(webContentsId)

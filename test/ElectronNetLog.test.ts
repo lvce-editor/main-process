@@ -21,6 +21,7 @@ test('startLogging - error', async () => {
   electron.netLog.startLogging.mockImplementation(() => {
     throw new TypeError('x is not a function')
   })
+  // @ts-ignore
   await expect(ElectronNetLog.startLogging()).rejects.toThrow(new TypeError('x is not a function'))
 })
 

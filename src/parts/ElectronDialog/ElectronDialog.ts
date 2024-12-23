@@ -1,5 +1,5 @@
 import * as Electron from 'electron'
-import * as Assert from '../Assert/Assert.js'
+import * as Assert from '../Assert/Assert.ts'
 import * as ElectronMessageBoxType from '../ElectronMessageBoxType/ElectronMessageBoxType.js'
 import * as ElectronWindow from '../ElectronWindow/ElectronWindow.js'
 import * as GetElectronWindow from '../GetElectronWindow/GetElectronWindow.js'
@@ -51,6 +51,7 @@ export const showMessageBox = async ({
     message = message.message
   }
   const result = await Electron.dialog.showMessageBox(window, {
+    // @ts-ignore
     type,
     message,
     title: title || productName,

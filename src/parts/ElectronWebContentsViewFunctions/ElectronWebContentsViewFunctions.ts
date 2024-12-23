@@ -1,6 +1,6 @@
 import { BrowserWindow } from 'electron'
-import * as Assert from '../Assert/Assert.js'
-import * as Debug from '../Debug/Debug.js'
+import * as Assert from '../Assert/Assert.ts'
+import * as Debug from '../Debug/Debug.ts'
 import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.js'
 import { VError } from '../VError/VError.js'
 import * as WebContentsViewErrorPath from '../WebContentsViewErrorPath/WebContentsViewErrorPath.js'
