@@ -71,6 +71,8 @@ export default tseslint.config(
       '@typescript-eslint/no-unnecessary-condition': 'off',
       'jest/no-disabled-tests': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
+      'n/no-process-exit': 'off',
+      '@typescript-eslint/no-dynamic-delete': 'off',
     },
   },
 )
