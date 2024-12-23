@@ -20,7 +20,7 @@
     "directory": "packages/main-process"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "devDependencies": {
     "@electron/rebuild": "^3.7.1",
