@@ -26,10 +26,10 @@ test.skip('showItemInFolder', () => {
   expect(electron.shell.showItemInFolder).toHaveBeenCalledWith('/test/file.txt')
 })
 
-test.skip('beep', () => {
+test.skip('beep', async () => {
   // @ts-expect-error
   electron.shell.beep.mockImplementation(() => {})
-  ElectronShell.beep()
+  await ElectronShell.beep()
   expect(electron.shell.beep).toHaveBeenCalledTimes(1)
   expect(electron.shell.beep).toHaveBeenCalledWith()
 })
