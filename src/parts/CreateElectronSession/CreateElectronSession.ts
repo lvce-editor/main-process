@@ -6,7 +6,7 @@ import * as Platform from '../Platform/Platform.ts'
 import * as Protocol from '../Protocol/Protocol.ts'
 
 // TODO maybe create a separate session for webviews
-export const createElectronSession = () => {
+export const createElectronSession = (): globalThis.Electron.Session => {
   const sessionId = Platform.getSessionId()
   const session = Electron.session.fromPartition(sessionId, {
     cache: IsSessionCacheEnabled.isSessionCacheEnabled,
