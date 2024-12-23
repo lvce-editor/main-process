@@ -1,6 +1,6 @@
 import * as Electron from 'electron'
-import * as ElectronBrowserViewAdBlock from '../ElectronBrowserViewAdBlock/ElectronBrowserViewAdBlock.js'
-import * as ElectronPermissionType from '../ElectronPermissionType/ElectronPermissionType.js'
+import * as ElectronBrowserViewAdBlock from '../ElectronBrowserViewAdBlock/ElectronBrowserViewAdBlock.ts'
+import * as ElectronPermissionType from '../ElectronPermissionType/ElectronPermissionType.ts'
 
 const state = {
   /**
@@ -43,6 +43,7 @@ const createSession = () => {
 }
 
 export const getSession = () => {
+  // @ts-ignore
   state.session ||= createSession()
   return state.session
 }

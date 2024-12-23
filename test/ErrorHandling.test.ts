@@ -54,6 +54,7 @@ test.skip('handleUncaughtExceptionMonitor', () => {
   22 |`,
     }
   })
+  // @ts-ignore
   ErrorHandling.handleUncaughtExceptionMonitor(error)
   expect(Logger.info).toHaveBeenCalledTimes(1)
   expect(Logger.info).toHaveBeenCalledWith('[main process] uncaught exception: Error: oops')
@@ -90,6 +91,7 @@ test.skip('handleUnhandledRejection', () => {
     }
   })
   const error = new Error('oops')
+  // @ts-ignore
   ErrorHandling.handleUnhandledRejection(error)
   expect(Logger.error).toHaveBeenCalledTimes(1)
   expect(Logger.error).toHaveBeenNthCalledWith(
@@ -142,6 +144,7 @@ SyntaxError: Cannot use import statement outside a module
     at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:169:29)
     at ModuleJob.run (node:internal/modules/esm/module_job:193:25)
     at async Promise.all (index 0)'`
+  // @ts-ignore
   ErrorHandling.handleUnhandledRejection(error)
   expect(Logger.error).toHaveBeenCalledTimes(1)
   expect(Logger.error).toHaveBeenNthCalledWith(

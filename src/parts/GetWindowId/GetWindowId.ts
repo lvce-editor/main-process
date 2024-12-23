@@ -1,5 +1,5 @@
 import * as Electron from 'electron'
-import * as Assert from '../Assert/Assert.js'
+import * as Assert from '../Assert/Assert.ts'
 
 export const getWindowId = (webContentsId) => {
   Assert.number(webContentsId)

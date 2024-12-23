@@ -22,6 +22,7 @@ export const getModulesErrorStack = (stderr) => {
   const extraLines = []
   for (const line of lines) {
     if (isJustPath(line)) {
+      // @ts-ignore
       extraLines.push(`    at ${line}`)
       break
     }

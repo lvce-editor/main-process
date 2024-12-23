@@ -1,4 +1,4 @@
-import * as Assert from '../Assert/Assert.js'
+import * as Assert from '../Assert/Assert.ts'
 
 const state = {
   views: Object.create(null),
@@ -47,7 +47,9 @@ export const getAnyKey = () => {
  */
 export const getWindow = (webContents) => {
   for (const value of Object.values(state.views)) {
+    // @ts-ignore
     if (value.view.webContents === webContents) {
+      // @ts-ignore
       return value.browserWindow
     }
   }
