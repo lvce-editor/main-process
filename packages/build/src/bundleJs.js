@@ -4,6 +4,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve'
 import { join } from 'path'
 import { rollup } from 'rollup'
 import { root } from './root.js'
+import { default as commonjs } from '@rollup/plugin-commonjs'
 
 /**
  * @type {import('rollup').RollupOptions}
@@ -24,7 +25,7 @@ const options = {
     },
     inlineDynamicImports: true,
   },
-  external: ['electron', 'ws', 'electron-unhandled', 'debug', 'minimist'],
+  external: ['electron', 'ws'],
   plugins: [
     babel({
       babelHelpers: 'bundled',
@@ -32,6 +33,8 @@ const options = {
       presets: [pluginTypeScript],
     }),
     nodeResolve(),
+    // @ts-ignore
+    commonjs(),
   ],
 }
 
