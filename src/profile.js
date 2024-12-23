@@ -1,5 +1,5 @@
-const inspector = require('node:inspector')
 const fs = require('node:fs')
+const inspector = require('node:inspector')
 
 const session = new inspector.Session()
 session.connect()

@@ -1,6 +1,6 @@
 import minimist from 'minimist'
-import * as Debug from '../Debug/Debug.js'
 import * as CliCommandType from '../CliCommandType/CliCommandType.js'
+import * as Debug from '../Debug/Debug.js'
 
 export const parseCliArgs = (argv) => {
   const CLI_OPTIONS = {
