@@ -30,6 +30,7 @@ export const attachEventListeners = (webContentsId) => {
   const values = Object.values(ElectronBrowserViewEventListeners)
   for (const value of values) {
     const wrappedListener = (...args) => {
+      // @ts-ignore
       const { result, messages } = value.handler(...args)
       for (const message of messages) {
         const [key, ...rest] = message

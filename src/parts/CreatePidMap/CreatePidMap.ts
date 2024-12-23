@@ -24,6 +24,7 @@ export const createPidMap = () => {
     }
   }
   for (const { view } of browserViews) {
+    // @ts-ignore
     const viewWebContents = view.webContents
     const pid = viewWebContents.getOSProcessId()
     if (pid in pidWindowMap) {

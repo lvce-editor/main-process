@@ -22,6 +22,7 @@ export const handler = (event, input) => {
   }
   const falltroughKeyBindings = ElectronWebContentsViewState.getFallthroughKeyBindings()
   const identifier = GetKeyBindingIdentifier.getKeyBindingIdentifier(input)
+  // @ts-ignore
   const matches = falltroughKeyBindings.includes(identifier)
   if (matches) {
     event.preventDefault()
