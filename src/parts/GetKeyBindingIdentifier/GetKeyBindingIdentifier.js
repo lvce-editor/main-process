@@ -1,5 +1,5 @@
-import * as KeyModifier from '../KeyModifier/KeyModifier.js'
 import * as GetKeyCode from '../GetKeyCode/GetKeyCode.js'
+import * as KeyModifier from '../KeyModifier/KeyModifier.js'
 import * as NormalizeKey from '../NormalizeKey/NormalizeKey.js'
 
 export const getKeyBindingIdentifier = (input) => {

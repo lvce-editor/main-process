@@ -21,5 +21,5 @@ export const send = (method, ...params) => {
   if (!ipc) {
     return
   }
-  return JsonRpc.send(ipc, method, ...params)
+  JsonRpc.send(ipc, method, ...params);
 }
