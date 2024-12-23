@@ -72,4 +72,4 @@ await writeJson(join(dist, 'package.json'), packageJson)
 
 await cp(join(root, 'README.md'), join(dist, 'README.md'))
 await cp(join(root, 'LICENSE'), join(dist, 'LICENSE'))
-await cp(join(root, 'packages', 'main-process', 'pages'), join(dist, 'pages'))
+await cp(join(root, 'packages', 'main-process', 'pages'), join(dist, 'pages'), { recursive: true })
