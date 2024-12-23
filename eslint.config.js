@@ -33,7 +33,16 @@ export default tseslint.config(
   nodePlugin.configs['flat/recommended'],
   pluginJest.configs['flat/recommended'],
   {
-    ignores: ['dist', 'coverage', 'scripts', 'rollup.config.js', 'eslint.config.js', 'src/previewProcessMain.ts', 'files/previewInjectedCode.js'],
+    ignores: [
+      'dist',
+      'coverage',
+      'scripts',
+      'rollup.config.js',
+      'eslint.config.js',
+      'src/mainProcessMain.ts',
+      'files/previewInjectedCode.js',
+      'pages',
+    ],
   },
   {
     rules: {
@@ -61,6 +70,7 @@ export default tseslint.config(
       '@typescript-eslint/no-deprecated': 'off',
       '@typescript-eslint/no-unnecessary-condition': 'off',
       'jest/no-disabled-tests': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'off',
     },
   },
 )
