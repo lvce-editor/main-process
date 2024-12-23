@@ -42,6 +42,7 @@ export default tseslint.config(
       'src/mainProcessMain.ts',
       'files/previewInjectedCode.js',
       'pages',
+      'packages/build',
     ],
   },
   {
@@ -74,7 +75,7 @@ export default tseslint.config(
       'n/no-process-exit': 'off',
       '@typescript-eslint/no-dynamic-delete': 'off',
       '@typescript-eslint/no-extraneous-class': 'off',
-      '@typescript-eslint/unbound-method':'off'
+      '@typescript-eslint/unbound-method': 'off',
     },
   },
 )
