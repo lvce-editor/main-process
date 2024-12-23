@@ -59,13 +59,16 @@ const version = await getVersion()
 const packageJson = await readJson(join(root, 'packages', 'main-process', 'package.json'))
 
 delete packageJson.scripts
+const electron = packageJson.devDependencies['electron']
 delete packageJson.devDependencies
 delete packageJson.prettier
 delete packageJson.jest
 delete packageJson.xo
 delete packageJson.directories
 delete packageJson.nodemonConfig
-packageJson.dependencies = {}
+packageJson.dependencies = {
+  electron,
+}
 packageJson.version = version
 packageJson.main = 'dist/mainProcessMain.js'
 
