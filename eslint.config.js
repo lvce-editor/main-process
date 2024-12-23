@@ -39,7 +39,7 @@ export default tseslint.config(
       'scripts',
       'rollup.config.js',
       'eslint.config.js',
-      'src/mainProcessMain.ts',
+      'packages/main-process/src/mainProcessMain.ts',
       'files/previewInjectedCode.js',
       'pages',
       'packages/build',
