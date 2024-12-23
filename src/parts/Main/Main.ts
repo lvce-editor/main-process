@@ -1,8 +1,8 @@
 // @ts-ignore
 performance.mark('code/start')
-import * as App from '../App/App.js'
-import * as Command from '../Command/Command.js'
-import * as ErrorHandling from '../ErrorHandling/ErrorHandling.js'
+import * as App from '../App/App.ts'
+import * as Command from '../Command/Command.ts'
+import * as ErrorHandling from '../ErrorHandling/ErrorHandling.ts'
 import * as Module from '../Module/Module.js'
 import * as Process from '../Process/Process.js'
 import * as SetStackTraceLimit from '../SetStackTraceLimit/SetStackTraceLimit.js'

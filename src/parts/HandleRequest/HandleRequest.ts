@@ -1,4 +1,4 @@
-import * as GetElectronFileResponse from '../GetElectronFileResponse/GetElectronFileResponse.js'
+import * as GetElectronFileResponse from '../GetElectronFileResponse/GetElectronFileResponse.ts'
 import * as SerializeRequest from '../SerializeRequest/SerializeRequest.js'
 
 /**

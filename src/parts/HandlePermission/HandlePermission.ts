@@ -1,4 +1,4 @@
-import * as ElectronPermissionType from '../ElectronPermissionType/ElectronPermissionType.js'
+import * as ElectronPermissionType from '../ElectronPermissionType/ElectronPermissionType.ts'
 import * as Logger from '../Logger/Logger.js'
 
 const isAllowedPermission = (permission) => {

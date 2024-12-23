@@ -1,5 +1,5 @@
-import * as Callback from '../Callback/Callback.js'
-import * as Command from '../Command/Command.js'
+import * as Callback from '../Callback/Callback.ts'
+import * as Command from '../Command/Command.ts'
 import * as JsonRpc from '../JsonRpc/JsonRpc.js'
 import * as PrettyError from '../PrettyError/PrettyError.js'
 import * as PrintPrettyError from '../PrintPrettyError/PrintPrettyError.js'
@@ -16,6 +16,7 @@ export const handleMessage = (event) => {
     Command.execute,
     Callback.resolve,
     PrettyError.prepare,
+    // @ts-ignore
     logError,
     RequiresSocket.requiresSocket,
   )

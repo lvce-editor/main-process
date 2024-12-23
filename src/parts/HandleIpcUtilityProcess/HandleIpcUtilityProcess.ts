@@ -1,5 +1,5 @@
-import * as Assert from '../Assert/Assert.js'
-import * as FormatUtilityProcessName from '../FormatUtilityProcessName/FormatUtilityProcessName.js'
+import * as Assert from '../Assert/Assert.ts'
+import * as FormatUtilityProcessName from '../FormatUtilityProcessName/FormatUtilityProcessName.ts'
 import * as IpcParentWithElectronUtilityProcess from '../IpcParentWithElectronUtilityProcess/IpcParentWithElectronUtilityProcess.js'
 import * as UtilityProcessState from '../UtilityProcessState/UtilityProcessState.js'
 

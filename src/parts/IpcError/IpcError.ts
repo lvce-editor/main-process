@@ -1,4 +1,4 @@
-import * as GetHelpfulChildProcessError from '../GetHelpfulChildProcessError/GetHelpfulChildProcessError.js'
+import * as GetHelpfulChildProcessError from '../GetHelpfulChildProcessError/GetHelpfulChildProcessError.ts'
 import { VError } from '../VError/VError.js'
 
 export class IpcError extends VError {
@@ -10,7 +10,9 @@ export class IpcError extends VError {
       super(message)
     }
     this.name = 'IpcError'
+    // @ts-ignore
     this.stdout = stdout
+    // @ts-ignore
     this.stderr = stderr
   }
 }

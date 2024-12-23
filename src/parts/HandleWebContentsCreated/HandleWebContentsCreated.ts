@@ -1,6 +1,6 @@
-import * as ElectronShell from '../ElectronShell/ElectronShell.js'
-import * as ElectronWebContentsEventType from '../ElectronWebContentsEventType/ElectronWebContentsEventType.js'
-import * as ElectronWindowOpenActionType from '../ElectronWindowOpenActionType/ElectronWindowOpenActionType.js'
+import * as ElectronShell from '../ElectronShell/ElectronShell.ts'
+import * as ElectronWebContentsEventType from '../ElectronWebContentsEventType/ElectronWebContentsEventType.ts'
+import * as ElectronWindowOpenActionType from '../ElectronWindowOpenActionType/ElectronWindowOpenActionType.ts'
 import * as Logger from '../Logger/Logger.js'
 import * as ShouldAllowNavigation from '../ShouldAllowNavigation/ShouldAllowNavigation.js'
 
