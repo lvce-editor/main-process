@@ -1,5 +1,5 @@
-import * as ApplyIncomingIpcResponse from '../ApplyIncomingIpcResponse/ApplyIncomingIpcResponse.js'
-import * as Assert from '../Assert/Assert.js'
+import * as ApplyIncomingIpcResponse from '../ApplyIncomingIpcResponse/ApplyIncomingIpcResponse.ts'
+import * as Assert from '../Assert/Assert.ts'
 import * as HandleIncomingIpcMessagePort from '../HandleIncomingIpcMessagePort/HandleIncomingIpcMessagePort.js'
 import * as HandleIpcModule from '../HandleIpcModule/HandleIpcModule.js'
 

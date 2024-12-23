@@ -1,4 +1,4 @@
-import * as ConnectIpc from '../ConnectIpc/ConnectIpc.js'
+import * as ConnectIpc from '../ConnectIpc/ConnectIpc.ts'
 import * as IpcParentType from '../IpcParentType/IpcParentType.js'
 import * as SharedProcess from '../SharedProcess/SharedProcess.js'
 

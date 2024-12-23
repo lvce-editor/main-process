@@ -1,12 +1,12 @@
-import * as ExitCode from '../ExitCode/ExitCode.js'
-import * as GetPortTuple from '../GetPortTuple/GetPortTuple.js'
-import * as GetSharedProcessArgv from '../GetSharedProcessArgv/GetSharedProcessArgv.js'
-import * as HandleIpc from '../HandleIpc/HandleIpc.js'
-import * as IpcChild from '../IpcChild/IpcChild.js'
-import * as IpcChildType from '../IpcChildType/IpcChildType.js'
-import * as IpcId from '../IpcId/IpcId.js'
-import * as IpcParent from '../IpcParent/IpcParent.js'
-import * as JsonRpc from '../JsonRpc/JsonRpc.js'
+import * as ExitCode from '../ExitCode/ExitCode.ts'
+import * as GetPortTuple from '../GetPortTuple/GetPortTuple.ts'
+import * as GetSharedProcessArgv from '../GetSharedProcessArgv/GetSharedProcessArgv.ts'
+import * as HandleIpc from '../HandleIpc/HandleIpc.ts'
+import * as IpcChild from '../IpcChild/IpcChild.ts'
+import * as IpcChildType from '../IpcChildType/IpcChildType.ts'
+import * as IpcId from '../IpcId/IpcId.ts'
+import * as IpcParent from '../IpcParent/IpcParent.ts'
+import * as JsonRpc from '../JsonRpc/JsonRpc.ts'
 import * as Logger from '../Logger/Logger.js'
 import * as Performance from '../Performance/Performance.js'
 import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMarkerType.js'
@@ -45,8 +45,11 @@ export const launchSharedProcess = async ({ method, env = {} }) => {
     path: sharedProcessPath,
     name: 'shared-process',
   })
+  // @ts-ignore
   sharedProcess._rawIpc.on('error', handleChildError)
+  // @ts-ignore
   sharedProcess._rawIpc.on('exit', handleChildExit)
+  // @ts-ignore
   sharedProcess._rawIpc.on('disconnect', handleChildDisconnect)
   HandleIpc.handleIpc(sharedProcess)
 

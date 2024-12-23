@@ -1,4 +1,4 @@
-import * as IpcParent from '../IpcParent/IpcParent.js'
+import * as IpcParent from './IpcParent.js'
 
 export const name = 'IpcParent'
 
