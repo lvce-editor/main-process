@@ -1,4 +1,4 @@
-import * as Assert from '../Assert/Assert.js'
+import * as Assert from '../Assert/Assert.ts'
 
 export const state = {
   all: Object.create(null),
@@ -25,7 +25,9 @@ export const getAll = () => {
 
 export const getByName = (name) => {
   for (const value of Object.values(state.all)) {
+    // @ts-ignore
     if (value.name === name) {
+      // @ts-ignore
       return value.process
     }
   }

@@ -1,5 +1,5 @@
-import * as IsProtocolHandleApiSupported from '../IsProtocolHandleApiSupported/IsProtocolHandleApiSupported.js'
-import * as PrivilegedSchemes from '../PrivilegedSchemes/PrivilegedSchemes.js'
+import * as IsProtocolHandleApiSupported from '../IsProtocolHandleApiSupported/IsProtocolHandleApiSupported.ts'
+import * as PrivilegedSchemes from '../PrivilegedSchemes/PrivilegedSchemes.ts'
 
 /**
  *

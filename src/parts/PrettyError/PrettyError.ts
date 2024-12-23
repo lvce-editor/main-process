@@ -1,4 +1,4 @@
-import * as GetNewLineIndex from '../GetNewLineIndex/GetNewLineIndex.js'
+import * as GetNewLineIndex from '../GetNewLineIndex/GetNewLineIndex.ts'
 
 export { prepare, prepareJsonError } from '@lvce-editor/pretty-error'
 

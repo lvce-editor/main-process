@@ -1,5 +1,5 @@
-import * as HandleIpc from '../HandleIpc/HandleIpc.js'
-import * as JsonRpc from '../JsonRpc/JsonRpc.js'
+import * as HandleIpc from '../HandleIpc/HandleIpc.ts'
+import * as JsonRpc from '../JsonRpc/JsonRpc.ts'
 
 const state = {
   pendingCount: Object.create(null),

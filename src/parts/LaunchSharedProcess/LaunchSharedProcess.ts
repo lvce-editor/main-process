@@ -64,6 +64,7 @@ export const launchSharedProcess = async ({ method, env = {} }) => {
   })
   HandleIpc.handleIpc(childIpc)
   await JsonRpc.invokeAndTransfer(sharedProcess, 'HandleElectronMessagePort.handleElectronMessagePort', port2, IpcId.MainProcess)
+  // @ts-ignore
   SharedProcessState.state.sharedProcess = sharedProcess
   Performance.mark(PerformanceMarkerType.DidStartSharedProcess)
   return sharedProcess

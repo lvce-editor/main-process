@@ -1,4 +1,4 @@
-import * as JsonRpc from '../JsonRpc/JsonRpc.js'
+import * as JsonRpc from '../JsonRpc/JsonRpc.ts'
 
 export const create = (ipc) => {
   const handleRequest = async (request) => {
