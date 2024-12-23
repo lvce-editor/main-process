@@ -8,11 +8,11 @@ import * as Protocol from '../Protocol/Protocol.ts'
 import * as Scheme from '../Scheme/Scheme.ts'
 import * as WebViewRequestHandler from '../WebViewRequestHandler/WebViewRequestHandler.ts'
 
-export const get = () => {
+export const get = (): globalThis.Electron.Session => {
   if (!ElectronSessionState.get()) {
     ElectronSessionState.set(CreateElectronSession.createElectronSession())
   }
-  ElectronSessionState.get()
+  return ElectronSessionState.get()
 }
 
 export const registerWebviewProtocol = async (port) => {
