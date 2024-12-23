@@ -1,7 +1,7 @@
 import { net } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
 
-export const getJson = async (url) => {
+export const getJson = async (url: string): Promise<any> => {
   Assert.string(url)
   const request = net.request({ url })
   let body = ''

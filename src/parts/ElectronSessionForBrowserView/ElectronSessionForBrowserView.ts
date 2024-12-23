@@ -9,7 +9,7 @@ const state = {
   session: undefined,
 }
 
-const isAllowedPermission = (permission) => {
+const isAllowedPermission = (permission: string): boolean => {
   switch (permission) {
     case ElectronPermissionType.ClipBoardRead:
     case ElectronPermissionType.ClipBoardSanitizedWrite:
@@ -22,11 +22,11 @@ const isAllowedPermission = (permission) => {
   }
 }
 
-const handlePermissionRequest = (webContents, permission, callback, details) => {
+const handlePermissionRequest = (webContents, permission, callback, details): void => {
   callback(isAllowedPermission(permission))
 }
 
-const handlePermissionCheck = (webContents, permission, origin, details) => {
+const handlePermissionCheck = (webContents, permission, origin, details): boolean => {
   return isAllowedPermission(permission)
 }
 

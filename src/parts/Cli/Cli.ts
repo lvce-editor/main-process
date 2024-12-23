@@ -10,7 +10,7 @@ const ModuleId = {
   None: 0,
 }
 
-const getModule = (moduleId) => {
+const getModule = (moduleId: number): any => {
   switch (moduleId) {
     case ModuleId.SharedProcess:
       return CliForwardToSharedProcess
@@ -19,7 +19,7 @@ const getModule = (moduleId) => {
   }
 }
 
-const getModuleId = (parsedArgs) => {
+const getModuleId = (parsedArgs: any): number => {
   const arg0 = parsedArgs._[0]
   if (
     arg0 === CliCommandType.Install ||
@@ -37,12 +37,12 @@ const getModuleId = (parsedArgs) => {
   return ModuleId.None
 }
 
-const handleArgs = (moduleId, parsedArgs) => {
+const handleArgs = (moduleId: number, parsedArgs: any): any => {
   const module = getModule(moduleId)
   return module.handleCliArgs(parsedArgs)
 }
 
-export const handleFastCliArgsMaybe = async (parsedArgs) => {
+export const handleFastCliArgsMaybe = async (parsedArgs: any): Promise<boolean> => {
   const moduleId = getModuleId(parsedArgs)
   if (moduleId) {
     await ElectronApp.whenReady()

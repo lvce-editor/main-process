@@ -12,7 +12,7 @@ export const get = () => {
   if (!ElectronSessionState.get()) {
     ElectronSessionState.set(CreateElectronSession.createElectronSession())
   }
-  return ElectronSessionState.get()
+  ElectronSessionState.get();
 }
 
 export const registerWebviewProtocol = async (port) => {

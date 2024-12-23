@@ -50,7 +50,7 @@ test.skip('get - error', async () => {
     }
   })
   const Session = await import('../src/parts/ElectronSession/ElectronSession.js')
-  expect(() => Session.get()).toThrow(new TypeError('x is not a function'))
+  expect(() => { Session.get(); }).toThrow(new TypeError('x is not a function'))
 })
 
 test.skip('handlePermissionCheck - allow writing to clipboard', async () => {

@@ -1,6 +1,6 @@
 import * as IpcParentType from '../IpcParentType/IpcParentType.js'
 
-const getModule = (method) => {
+const getModule = (method: number): any => {
   switch (method) {
     case IpcParentType.NodeWorker:
       return import('../ConnectIpcNodeWorker/ConnectIpcNodeWorker.js')
@@ -11,7 +11,7 @@ const getModule = (method) => {
   }
 }
 
-export const connectIpc = async (method, ipc, browserWindowPort, ipcId) => {
+export const connectIpc = async (method, ipc, browserWindowPort, ipcId): Promise<any> => {
   const module = await getModule(method)
   return module.connectIpc(ipc, browserWindowPort, ipcId)
 }
