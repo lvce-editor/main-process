@@ -1,6 +1,6 @@
 import * as GetFileUrl from '../GetFileUrl/GetFileUrl.js'
-import * as Platform from '../Platform/Platform.js'
 import * as HasStaticPrefix from '../HasStaticPrefix/HasStaticPrefix.js'
+import * as Platform from '../Platform/Platform.js'
 
 const prefix = `${Platform.scheme}://-/`
 const prefixLength = prefix.length
