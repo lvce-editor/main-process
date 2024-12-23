@@ -11,14 +11,14 @@ export const load = async (moduleId) => {
       return import('../Beep/Beep.ipc.ts')
     case ModuleId.Crash:
       return import('../Crash/Crash.ipc.ts')
+    case ModuleId.CreateMessagePort:
+      return import('../CreateMessagePort/CreateMessagePort.ipc.ts')
     case ModuleId.CreatePidMap:
       return import('../CreatePidMap/CreatePidMap.ipc.ts')
     case ModuleId.DesktopCapturer:
       return import('../DesktopCapturer/DesktopCapturer.ipc.ts')
     case ModuleId.ElectronApplicationMenu:
       return import('../ElectronApplicationMenu/ElectronApplicationMenu.ipc.ts')
-    case ModuleId.Beep:
-      return import('../ElectronBeep/ElectronBeep.ts')
     case ModuleId.ElectronClipBoard:
       return import('../ElectronClipBoard/ElectronClipBoard.ipc.ts')
     case ModuleId.ElectronContentTracing:
@@ -49,8 +49,6 @@ export const load = async (moduleId) => {
       return import('../OpenExternal/OpenExternal.ipc.ts')
     case ModuleId.Process:
       return import('../Process/Process.ipc.ts')
-    case ModuleId.Trash:
-      return import('../Trash/Trash.ipc.ts')
     case ModuleId.Exit:
       return import('../Exit/Exit.ipc.ts')
     case ModuleId.ElectronScreen:
@@ -63,14 +61,14 @@ export const load = async (moduleId) => {
       return import('../ElectronWebContentsView/ElectronWebContentsView.ipc.ts')
     case ModuleId.ElectronWebContentsViewFunctions:
       return import('../ElectronWebContentsViewFunctions/ElectronWebContentsViewFunctions.ipc.ts')
-    case ModuleId.CreateMessagePort:
-      return import('../CreateMessagePort/CreateMessagePort.ipc.ts')
     case ModuleId.HandleElectronMessagePort:
       return import('../HandleElectronMessagePort/HandleElectronMessagePort.ipc.ts')
     case ModuleId.GetWindowId:
       return import('../GetWindowId/GetWindowId.ipc.ts')
     case ModuleId.ElectronSession:
       return import('../ElectronSession/ElectronSession.ipc.ts')
+    case ModuleId.Trash:
+      return import('../Trash/Trash.ipc.ts')
     default:
       throw new ModuleNotFoundError(moduleId)
   }
