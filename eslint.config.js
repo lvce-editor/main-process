@@ -41,7 +41,7 @@ export default tseslint.config(
       'n/no-unpublished-import': [
         'error',
         {
-          allowModules: ['@jest/globals'],
+          allowModules: ['@jest/globals', 'electron'],
         },
       ],
     },

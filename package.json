@@ -2,7 +2,7 @@
   "name": "@lvce-editor/main-process",
   "version": "0.0.0-dev",
   "description": "",
-  "main": "src/mainProcessMain.js",
+  "main": "src/mainProcessMain.ts",
   "type": "module",
   "scripts": {
     "test": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --detectOpenHandles --forceExit",
@@ -25,6 +25,7 @@
   "devDependencies": {
     "@electron/rebuild": "^3.7.1",
     "@eslint/js": "^9.17.0",
+    "@jest/globals": "^29.7.0",
     "@lerna/legacy-package-management": "^8.1.9",
     "@types/debug": "^4.1.12",
     "@types/eslint__js": "^8.42.3",
