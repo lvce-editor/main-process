@@ -35,8 +35,6 @@ export const launchSharedProcess = async ({ method, env = {} }) => {
     ...process.env,
     ...env,
   }
-  if (!Platform.isProduction) {
-  }
   const sharedProcess = await IpcParent.create({
     method,
     env: fullEnv,
