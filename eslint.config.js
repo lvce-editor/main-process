@@ -74,6 +74,7 @@ export default tseslint.config(
       'n/no-process-exit': 'off',
       '@typescript-eslint/no-dynamic-delete': 'off',
       '@typescript-eslint/no-extraneous-class': 'off',
+      '@typescript-eslint/unbound-method':'off'
     },
   },
 )
