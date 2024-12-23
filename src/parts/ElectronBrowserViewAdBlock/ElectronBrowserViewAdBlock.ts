@@ -1,3 +1,4 @@
+// @ts-ignore
 import * as Electron from 'electron'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -95,6 +96,7 @@ const getBeforeRequestResponse = (details) => {
  */
 export const handleBeforeRequest = (details, callback) => {
   const response = getBeforeRequestResponse(details)
+  // @ts-ignore
   if (!response.cancel && details.resourceType === ElectronResourceType.Xhr) {
     // console.log({
     //   resourceType: details.resourceType,

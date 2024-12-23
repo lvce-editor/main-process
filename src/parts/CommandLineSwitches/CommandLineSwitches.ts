@@ -10,6 +10,7 @@ export const enable = (parsedCliArgs) => {
   } else {
     // see https://github.com/microsoft/vscode/issues/151187#issuecomment-1221475319
     if (Platform.isLinux) {
+      // @ts-ignore
       ElectronApp.appendCommandLineSwitch('--disable-gpu-sandbox')
     }
   }
