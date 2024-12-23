@@ -1,7 +1,7 @@
 import { desktopCapturer } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
-import * as SerializeDesktopCapturerSources from '../SerializeDesktopCapturerSources/SerializeDesktopCapturerSources.js'
-import { VError } from '../VError/VError.js'
+import * as SerializeDesktopCapturerSources from '../SerializeDesktopCapturerSources/SerializeDesktopCapturerSources.ts'
+import { VError } from '../VError/VError.ts'
 
 export const getSources = async (options: any): Promise<any> => {
   try {

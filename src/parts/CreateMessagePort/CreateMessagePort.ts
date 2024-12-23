@@ -1,5 +1,5 @@
 import * as Assert from '../Assert/Assert.ts'
-import * as HandleMessagePortForSharedProcess from '../HandleMessagePortForSharedProcess/HandleMessagePortForSharedProcess.js'
+import * as HandleMessagePortForSharedProcess from '../HandleMessagePortForSharedProcess/HandleMessagePortForSharedProcess.ts'
 
 // TODO reverse order of parameters: make ports first
 // TODO when sending transferrables, remove them from parameters

@@ -2,10 +2,10 @@
 import * as Electron from 'electron'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import * as ElectronResourceType from '../ElectronResourceType/ElectronResourceType.js'
-import * as ElectronWebContentsEventType from '../ElectronWebContentsEventType/ElectronWebContentsEventType.js'
-import * as HttpMethod from '../HttpMethod/HttpMethod.js'
-import * as Root from '../Root/Root.js'
+import * as ElectronResourceType from '../ElectronResourceType/ElectronResourceType.ts'
+import * as ElectronWebContentsEventType from '../ElectronWebContentsEventType/ElectronWebContentsEventType.ts'
+import * as HttpMethod from '../HttpMethod/HttpMethod.ts'
+import * as Root from '../Root/Root.ts'
 
 const getBeforeRequestResponseMainFrame = (method, url) => {
   return {}
@@ -119,7 +119,7 @@ export const filter = {
 export const enableForWebContents = (webContents) => {
   const handleDidNavigate = () => {
     const resourcesPath = join(Root.root, 'packages', 'main-process', 'src', 'parts', 'ElectronBrowserViewAdBlock')
-    const blockJs = readFileSync(join(resourcesPath, './block.js'), 'utf8')
+    const blockJs = readFileSync(join(resourcesPath, './block.ts'), 'utf8')
     webContents.executeJavaScript(blockJs)
     const blockCss = readFileSync(join(resourcesPath, './block.css'), 'utf8')
     webContents.insertCSS(blockCss)

@@ -1,8 +1,8 @@
 import * as Assert from '../Assert/Assert.ts'
 import * as HandleIpcSharedProcess from '../HandleIpcMainProcess/HandleIpcMainProcess.ts'
-import * as HandleIpcRendererProcess from '../HandleIpcRendererProcess/HandleIpcRendererProcess.js'
-import * as HandleIpcUtilityProcess from '../HandleIpcUtilityProcess/HandleIpcUtilityProcess.js'
-import * as IpcId from '../IpcId/IpcId.js'
+import * as HandleIpcRendererProcess from '../HandleIpcRendererProcess/HandleIpcRendererProcess.ts'
+import * as HandleIpcUtilityProcess from '../HandleIpcUtilityProcess/HandleIpcUtilityProcess.ts'
+import * as IpcId from '../IpcId/IpcId.ts'
 
 export const getModule = (ipcId) => {
   Assert.number(ipcId)

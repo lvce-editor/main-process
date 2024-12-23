@@ -1,4 +1,4 @@
-import * as ElectronContentTracing from './ElectronContentTracing.js'
+import * as ElectronContentTracing from './ElectronContentTracing.ts'
 
 export const name = 'ElectronContentTracing'
 

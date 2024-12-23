@@ -3,9 +3,9 @@ performance.mark('code/start')
 import * as App from '../App/App.ts'
 import * as Command from '../Command/Command.ts'
 import * as ErrorHandling from '../ErrorHandling/ErrorHandling.ts'
-import * as Module from '../Module/Module.js'
-import * as Process from '../Process/Process.js'
-import * as SetStackTraceLimit from '../SetStackTraceLimit/SetStackTraceLimit.js'
+import * as Module from '../Module/Module.ts'
+import * as Process from '../Process/Process.ts'
+import * as SetStackTraceLimit from '../SetStackTraceLimit/SetStackTraceLimit.ts'
 
 export const main = async () => {
   SetStackTraceLimit.setStackTraceLimit(20)

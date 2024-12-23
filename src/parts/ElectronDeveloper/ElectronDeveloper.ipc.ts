@@ -1,4 +1,4 @@
-import * as Developer from './ElectronDeveloper.js'
+import * as Developer from './ElectronDeveloper.ts'
 
 export const name = 'ElectronDeveloper'
 

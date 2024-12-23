@@ -1,5 +1,5 @@
-import * as HandleIpc from '../HandleIpc/HandleIpc.js'
-import * as SendIncomingIpc from '../SendIncomingIpc/SendIncomingIpc.js'
+import * as HandleIpc from '../HandleIpc/HandleIpc.ts'
+import * as SendIncomingIpc from '../SendIncomingIpc/SendIncomingIpc.ts'
 
 export const applyIncomingIpcResponse = async (target, response, ipcId) => {
   switch (response.type) {

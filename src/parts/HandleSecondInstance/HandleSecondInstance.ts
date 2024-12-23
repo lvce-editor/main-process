@@ -1,7 +1,7 @@
 import * as Cli from '../Cli/Cli.ts'
 import * as Debug from '../Debug/Debug.ts'
 import * as HandleElectronReady from '../HandleElectronReady/HandleElectronReady.ts'
-import * as ParseCliArgs from '../ParseCliArgs/ParseCliArgs.js'
+import * as ParseCliArgs from '../ParseCliArgs/ParseCliArgs.ts'
 
 export const handleSecondInstance = async (
   event,

@@ -7,12 +7,12 @@ import * as IpcChildType from '../IpcChildType/IpcChildType.ts'
 import * as IpcId from '../IpcId/IpcId.ts'
 import * as IpcParent from '../IpcParent/IpcParent.ts'
 import * as JsonRpc from '../JsonRpc/JsonRpc.ts'
-import * as Logger from '../Logger/Logger.js'
-import * as Performance from '../Performance/Performance.js'
-import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMarkerType.js'
-import * as Platform from '../Platform/Platform.js'
-import * as Process from '../Process/Process.js'
-import * as SharedProcessState from '../SharedProcessState/SharedProcessState.js'
+import * as Logger from '../Logger/Logger.ts'
+import * as Performance from '../Performance/Performance.ts'
+import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMarkerType.ts'
+import * as Platform from '../Platform/Platform.ts'
+import * as Process from '../Process/Process.ts'
+import * as SharedProcessState from '../SharedProcessState/SharedProcessState.ts'
 
 const handleChildError = (error) => {
   Process.exit(ExitCode.Error)

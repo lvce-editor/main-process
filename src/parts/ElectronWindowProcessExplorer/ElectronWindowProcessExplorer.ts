@@ -1,9 +1,9 @@
 import { BrowserWindow } from 'electron'
 import * as Session from '../ElectronSession/ElectronSession.ts'
 import * as ElectronWebContentsEventType from '../ElectronWebContentsEventType/ElectronWebContentsEventType.ts'
-import * as HandleIpc from '../HandleIpc/HandleIpc.js'
-import * as IpcChild from '../IpcChild/IpcChild.js'
-import * as IpcChildType from '../IpcChildType/IpcChildType.js'
+import * as HandleIpc from '../HandleIpc/HandleIpc.ts'
+import * as IpcChild from '../IpcChild/IpcChild.ts'
+import * as IpcChildType from '../IpcChildType/IpcChildType.ts'
 
 export const open2 = async (options, url) => {
   const allOptions = {

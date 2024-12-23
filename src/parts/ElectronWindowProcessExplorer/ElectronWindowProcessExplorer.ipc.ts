@@ -1,4 +1,4 @@
-import * as ElectronWindowProcessExplorer from './ElectronWindowProcessExplorer.js'
+import * as ElectronWindowProcessExplorer from './ElectronWindowProcessExplorer.ts'
 
 export const name = 'ElectronWindowProcessExplorer'
 

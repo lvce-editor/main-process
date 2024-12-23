@@ -1,4 +1,4 @@
-import * as Performance from '../Performance/Performance.js'
+import * as Performance from '../Performance/Performance.ts'
 
 export const getPerformanceEntries = (): any => {
   const entries = Performance.getEntries()

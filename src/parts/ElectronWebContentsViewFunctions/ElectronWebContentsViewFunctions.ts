@@ -1,9 +1,9 @@
 import { BrowserWindow } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
 import * as Debug from '../Debug/Debug.ts'
-import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.js'
-import { VError } from '../VError/VError.js'
-import * as WebContentsViewErrorPath from '../WebContentsViewErrorPath/WebContentsViewErrorPath.js'
+import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
+import { VError } from '../VError/VError.ts'
+import * as WebContentsViewErrorPath from '../WebContentsViewErrorPath/WebContentsViewErrorPath.ts'
 
 // TODO create output channel for browser view debug logs
 

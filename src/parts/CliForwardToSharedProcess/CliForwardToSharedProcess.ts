@@ -1,8 +1,8 @@
-import * as ErrorHandling from '../ErrorHandling/ErrorHandling.js'
-import * as Exit from '../Exit/Exit.js'
-import * as ExitCode from '../ExitCode/ExitCode.js'
-import * as Process from '../Process/Process.js'
-import * as SharedProcess from '../SharedProcess/SharedProcess.js'
+import * as ErrorHandling from '../ErrorHandling/ErrorHandling.ts'
+import * as Exit from '../Exit/Exit.ts'
+import * as ExitCode from '../ExitCode/ExitCode.ts'
+import * as Process from '../Process/Process.ts'
+import * as SharedProcess from '../SharedProcess/SharedProcess.ts'
 
 export const handleCliArgs = async (parsedArgs: any): Promise<any> => {
   try {

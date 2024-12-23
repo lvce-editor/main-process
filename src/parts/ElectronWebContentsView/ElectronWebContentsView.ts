@@ -3,8 +3,8 @@ import { BrowserWindow, WebContentsView } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
 import * as ElectronBrowserViewEventListeners from '../ElectronBrowserViewEventListeners/ElectronBrowserViewEventListeners.ts'
 import * as ElectronSessionForBrowserView from '../ElectronSessionForBrowserView/ElectronSessionForBrowserView.ts'
-import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.js'
-import * as EmbedsProcess from '../EmbedsProcess/EmbedsProcess.js'
+import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
+import * as EmbedsProcess from '../EmbedsProcess/EmbedsProcess.ts'
 
 // TODO use electron 30 webcontentsview api
 export const createWebContentsView = async () => {

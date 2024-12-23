@@ -1,4 +1,4 @@
-import * as ElectronNetLog from './ElectronNetLog.js'
+import * as ElectronNetLog from './ElectronNetLog.ts'
 
 export const name = 'ElectronNetLog'
 

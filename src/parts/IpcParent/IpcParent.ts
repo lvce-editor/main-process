@@ -1,4 +1,4 @@
-import * as IpcParentModule from '../IpcParentModule/IpcParentModule.js'
+import * as IpcParentModule from '../IpcParentModule/IpcParentModule.ts'
 
 /**
  *

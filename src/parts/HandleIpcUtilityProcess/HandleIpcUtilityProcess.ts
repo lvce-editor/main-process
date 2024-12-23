@@ -1,7 +1,7 @@
 import * as Assert from '../Assert/Assert.ts'
 import * as FormatUtilityProcessName from '../FormatUtilityProcessName/FormatUtilityProcessName.ts'
-import * as IpcParentWithElectronUtilityProcess from '../IpcParentWithElectronUtilityProcess/IpcParentWithElectronUtilityProcess.js'
-import * as UtilityProcessState from '../UtilityProcessState/UtilityProcessState.js'
+import * as IpcParentWithElectronUtilityProcess from '../IpcParentWithElectronUtilityProcess/IpcParentWithElectronUtilityProcess.ts'
+import * as UtilityProcessState from '../UtilityProcessState/UtilityProcessState.ts'
 
 export const targetMessagePort = async (messagePort, message) => {
   Assert.object(messagePort)

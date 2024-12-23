@@ -1,18 +1,18 @@
 import * as Assert from '../Assert/Assert.ts'
 import * as CreateElectronSession from '../CreateElectronSession/CreateElectronSession.ts'
-import * as ElectronSessionState from '../ElectronSessionState/ElectronSessionState.js'
-import * as HandleIpc from '../HandleIpc/HandleIpc.js'
-import * as IpcParent from '../IpcParent/IpcParent.js'
-import * as IpcParentType from '../IpcParentType/IpcParentType.js'
-import * as Protocol from '../Protocol/Protocol.js'
-import * as Scheme from '../Scheme/Scheme.js'
-import * as WebViewRequestHandler from '../WebViewRequestHandler/WebViewRequestHandler.js'
+import * as ElectronSessionState from '../ElectronSessionState/ElectronSessionState.ts'
+import * as HandleIpc from '../HandleIpc/HandleIpc.ts'
+import * as IpcParent from '../IpcParent/IpcParent.ts'
+import * as IpcParentType from '../IpcParentType/IpcParentType.ts'
+import * as Protocol from '../Protocol/Protocol.ts'
+import * as Scheme from '../Scheme/Scheme.ts'
+import * as WebViewRequestHandler from '../WebViewRequestHandler/WebViewRequestHandler.ts'
 
 export const get = () => {
   if (!ElectronSessionState.get()) {
     ElectronSessionState.set(CreateElectronSession.createElectronSession())
   }
-  ElectronSessionState.get();
+  ElectronSessionState.get()
 }
 
 export const registerWebviewProtocol = async (port) => {

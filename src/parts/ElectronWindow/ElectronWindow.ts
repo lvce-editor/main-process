@@ -1,6 +1,6 @@
 import * as Electron from 'electron'
-import * as GetWindowById from '../GetWindowById/GetWindowById.js'
-import * as Logger from '../Logger/Logger.js'
+import * as GetWindowById from '../GetWindowById/GetWindowById.ts'
+import * as Logger from '../Logger/Logger.ts'
 
 export const executeWindowFunction = (browserWindowId, key) => {
   const browserWindow = GetWindowById.getWindowById(browserWindowId)

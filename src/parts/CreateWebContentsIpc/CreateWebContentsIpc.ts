@@ -1,4 +1,4 @@
-import * as ElectronPreloadChannelType from '../ElectronPreloadChannelType/ElectronPreloadChannelType.js'
+import * as ElectronPreloadChannelType from '../ElectronPreloadChannelType/ElectronPreloadChannelType.ts'
 
 export const createWebContentsIpc = (webContents) => {
   return {

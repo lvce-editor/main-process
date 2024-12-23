@@ -1,5 +1,5 @@
-import * as ModuleId from '../ModuleId/ModuleId.js'
-import { ModuleNotFoundError } from '../ModuleNotFoundError/ModuleNotFoundError.js'
+import * as ModuleId from '../ModuleId/ModuleId.ts'
+import { ModuleNotFoundError } from '../ModuleNotFoundError/ModuleNotFoundError.ts'
 
 export const load = async (moduleId) => {
   switch (moduleId) {
@@ -46,17 +46,17 @@ export const load = async (moduleId) => {
     case ModuleId.IpcParent:
       return import('../IpcParent/IpcParent.ipc.ts')
     case ModuleId.OpenExternal:
-      return import('../OpenExternal/OpenExternal.ipc.js')
+      return import('../OpenExternal/OpenExternal.ipc.ts')
     case ModuleId.Process:
-      return import('../Process/Process.ipc.js')
+      return import('../Process/Process.ipc.ts')
     case ModuleId.Trash:
-      return import('../Trash/Trash.ipc.js')
+      return import('../Trash/Trash.ipc.ts')
     case ModuleId.Exit:
       return import('../Exit/Exit.ipc.ts')
     case ModuleId.ElectronScreen:
       return import('../ElectronScreen/ElectronScreen.ipc.ts')
     case ModuleId.TemporaryMessagePort:
-      return import('../TemporaryMessagePort/TemporaryMessagePort.ipc.js')
+      return import('../TemporaryMessagePort/TemporaryMessagePort.ipc.ts')
     case ModuleId.ElectronWebContents:
       return import('../ElectronWebContents/ElectronWebContents.ipc.ts')
     case ModuleId.ElectronWebContentsView:

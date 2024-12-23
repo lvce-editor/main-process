@@ -1,4 +1,4 @@
-import * as HandleElectronMessagePort from './HandleElectronMessagePort.js'
+import * as HandleElectronMessagePort from './HandleElectronMessagePort.ts'
 
 export const name = 'HandleElectronMessagePort'
 

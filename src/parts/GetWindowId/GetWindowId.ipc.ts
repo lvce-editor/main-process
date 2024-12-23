@@ -1,4 +1,4 @@
-import * as GetWindowId from './GetWindowId.js'
+import * as GetWindowId from './GetWindowId.ts'
 
 export const name = 'GetWindowId'
 

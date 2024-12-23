@@ -1,4 +1,4 @@
-import * as ElectronClipBoard from './ElectronClipBoard.js'
+import * as ElectronClipBoard from './ElectronClipBoard.ts'
 
 export const name = 'ElectronClipBoard'
 

@@ -1,7 +1,7 @@
 import * as ApplyIncomingIpcResponse from '../ApplyIncomingIpcResponse/ApplyIncomingIpcResponse.ts'
 import * as Assert from '../Assert/Assert.ts'
-import * as HandleIncomingIpcMessagePort from '../HandleIncomingIpcMessagePort/HandleIncomingIpcMessagePort.js'
-import * as HandleIpcModule from '../HandleIpcModule/HandleIpcModule.js'
+import * as HandleIncomingIpcMessagePort from '../HandleIncomingIpcMessagePort/HandleIncomingIpcMessagePort.ts'
+import * as HandleIpcModule from '../HandleIpcModule/HandleIpcModule.ts'
 
 const getIpcAndResponse = (module, handle, message) => {
   return HandleIncomingIpcMessagePort.handleIncomingIpcMessagePort(module, handle, message)

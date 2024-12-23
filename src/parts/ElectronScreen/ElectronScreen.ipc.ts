@@ -1,4 +1,4 @@
-import * as ElectronScreen from './ElectronScreen.js'
+import * as ElectronScreen from './ElectronScreen.ts'
 
 export const name = 'ElectronScreen'
 

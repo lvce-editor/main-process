@@ -1,8 +1,8 @@
 import * as ElectronShell from '../ElectronShell/ElectronShell.ts'
 import * as ElectronWebContentsEventType from '../ElectronWebContentsEventType/ElectronWebContentsEventType.ts'
 import * as ElectronWindowOpenActionType from '../ElectronWindowOpenActionType/ElectronWindowOpenActionType.ts'
-import * as Logger from '../Logger/Logger.js'
-import * as ShouldAllowNavigation from '../ShouldAllowNavigation/ShouldAllowNavigation.js'
+import * as Logger from '../Logger/Logger.ts'
+import * as ShouldAllowNavigation from '../ShouldAllowNavigation/ShouldAllowNavigation.ts'
 
 const handleWebContentsWindowOpen = ({ url }) => {
   ElectronShell.openExternal(url)

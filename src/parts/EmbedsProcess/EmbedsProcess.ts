@@ -1,4 +1,4 @@
-import * as JsonRpc from '../JsonRpc/JsonRpc.js'
+import * as JsonRpc from '../JsonRpc/JsonRpc.ts'
 
 const state = {
   ipc: undefined,
@@ -21,5 +21,5 @@ export const send = (method, ...params) => {
   if (!ipc) {
     return
   }
-  JsonRpc.send(ipc, method, ...params);
+  JsonRpc.send(ipc, method, ...params)
 }

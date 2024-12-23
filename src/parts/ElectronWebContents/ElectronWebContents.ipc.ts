@@ -1,4 +1,4 @@
-import * as ElectronWebContents from './ElectronWebContents.js'
+import * as ElectronWebContents from './ElectronWebContents.ts'
 
 export const name = 'ElectronWebContents'
 

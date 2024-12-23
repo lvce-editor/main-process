@@ -1,5 +1,5 @@
 import * as GetElectronFileResponse from '../GetElectronFileResponse/GetElectronFileResponse.ts'
-import * as SerializeRequest from '../SerializeRequest/SerializeRequest.js'
+import * as SerializeRequest from '../SerializeRequest/SerializeRequest.ts'
 
 /**
  *

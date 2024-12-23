@@ -1,4 +1,4 @@
-import * as Beep from './ElectronBeep.js'
+import * as Beep from './ElectronBeep.ts'
 
 export const name = 'ElectronBeep'
 

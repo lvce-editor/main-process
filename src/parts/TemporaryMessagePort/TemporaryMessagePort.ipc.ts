@@ -1,4 +1,4 @@
-import * as TemporaryMessagePort from './TemporaryMessagePort.js'
+import * as TemporaryMessagePort from './TemporaryMessagePort.ts'
 
 export const name = 'TemporaryMessagePort'
 

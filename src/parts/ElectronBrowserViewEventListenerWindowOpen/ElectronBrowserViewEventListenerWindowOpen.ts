@@ -1,6 +1,6 @@
-import * as ElectronDispositionType from '../ElectronDispositionType/ElectronDispositionType.js'
-import * as ElectronWindowOpenActionType from '../ElectronWindowOpenActionType/ElectronWindowOpenActionType.js'
-import * as Logger from '../Logger/Logger.js'
+import * as ElectronDispositionType from '../ElectronDispositionType/ElectronDispositionType.ts'
+import * as ElectronWindowOpenActionType from '../ElectronWindowOpenActionType/ElectronWindowOpenActionType.ts'
+import * as Logger from '../Logger/Logger.ts'
 
 export const key = 'window-open'
 

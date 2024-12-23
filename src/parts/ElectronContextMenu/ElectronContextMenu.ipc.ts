@@ -1,4 +1,4 @@
-import * as ElectronContextMenu from './ElectronContextMenu.js'
+import * as ElectronContextMenu from './ElectronContextMenu.ts'
 
 export const name = 'ElectronContextMenu'
 

@@ -1,4 +1,4 @@
-import * as OpenExternal from './OpenExternal.js'
+import * as OpenExternal from './OpenExternal.ts'
 
 export const name = 'OpenExternal'
 

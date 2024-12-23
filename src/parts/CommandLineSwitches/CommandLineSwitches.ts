@@ -1,7 +1,7 @@
-import * as ElectronApp from '../ElectronApp/ElectronApp.js'
-import * as Locale from '../Locale/Locale.js'
-import * as Platform from '../Platform/Platform.js'
-import * as Sandbox from '../Sandbox/Sandbox.js'
+import * as ElectronApp from '../ElectronApp/ElectronApp.ts'
+import * as Locale from '../Locale/Locale.ts'
+import * as Platform from '../Platform/Platform.ts'
+import * as Sandbox from '../Sandbox/Sandbox.ts'
 
 export const enable = (parsedCliArgs) => {
   // command line switches
