@@ -1,9 +1,9 @@
 import * as Assert from '../Assert/Assert.ts'
 import * as EmbedsProcess from '../EmbedsProcess/EmbedsProcess.ts'
-import * as HandleIpc from '../HandleIpc/HandleIpc.js'
-import * as IpcChild from '../IpcChild/IpcChild.js'
-import * as IpcChildType from '../IpcChildType/IpcChildType.js'
-import * as IpcId from '../IpcId/IpcId.js'
+import * as HandleIpc from '../HandleIpc/HandleIpc.ts'
+import * as IpcChild from '../IpcChild/IpcChild.ts'
+import * as IpcChildType from '../IpcChildType/IpcChildType.ts'
+import * as IpcId from '../IpcId/IpcId.ts'
 
 export const handleElectronMessagePort = async (messagePort, ipcId) => {
   Assert.object(messagePort)

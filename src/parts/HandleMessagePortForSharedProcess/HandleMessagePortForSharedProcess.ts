@@ -1,6 +1,6 @@
 import * as ConnectIpc from '../ConnectIpc/ConnectIpc.ts'
-import * as IpcParentType from '../IpcParentType/IpcParentType.js'
-import * as SharedProcess from '../SharedProcess/SharedProcess.js'
+import * as IpcParentType from '../IpcParentType/IpcParentType.ts'
+import * as SharedProcess from '../SharedProcess/SharedProcess.ts'
 
 // TODO maybe handle critical (first render) request via ipcMain
 // and spawn shared process when page is idle/loaded

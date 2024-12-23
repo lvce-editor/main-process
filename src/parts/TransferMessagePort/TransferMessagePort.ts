@@ -1,5 +1,5 @@
 import * as JsonRpc from '../JsonRpc/JsonRpc.ts'
-import { VError } from '../VError/VError.js'
+import { VError } from '../VError/VError.ts'
 
 export const transferMessagePort = async (ipc, port, ...params) => {
   try {

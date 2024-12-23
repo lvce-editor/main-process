@@ -1,4 +1,4 @@
-import * as HandleMessage from '../HandleMessage/HandleMessage.js'
+import * as HandleMessage from '../HandleMessage/HandleMessage.ts'
 
 export const handleIpc = (ipc) => {
   if ('addEventListener' in ipc) {

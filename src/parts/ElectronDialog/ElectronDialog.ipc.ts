@@ -1,4 +1,4 @@
-import * as ElectronDialog from './ElectronDialog.js'
+import * as ElectronDialog from './ElectronDialog.ts'
 
 export const name = 'ElectronDialog'
 

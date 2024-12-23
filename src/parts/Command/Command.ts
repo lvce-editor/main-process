@@ -1,5 +1,5 @@
-import { CommandNotFoundError } from '../CommandNotFoundError/CommandNotFoundError.js'
-import * as ModuleMap from '../ModuleMap/ModuleMap.js'
+import { CommandNotFoundError } from '../CommandNotFoundError/CommandNotFoundError.ts'
+import * as ModuleMap from '../ModuleMap/ModuleMap.ts'
 
 const state = {
   commands: Object.create(null),

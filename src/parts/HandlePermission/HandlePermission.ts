@@ -1,5 +1,5 @@
 import * as ElectronPermissionType from '../ElectronPermissionType/ElectronPermissionType.ts'
-import * as Logger from '../Logger/Logger.js'
+import * as Logger from '../Logger/Logger.ts'
 
 const isAllowedPermission = (permission) => {
   switch (permission) {

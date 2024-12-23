@@ -1,9 +1,9 @@
 import * as Electron from 'electron'
 import * as Assert from '../Assert/Assert.ts'
-import * as ElectronMessageBoxType from '../ElectronMessageBoxType/ElectronMessageBoxType.js'
-import * as ElectronWindow from '../ElectronWindow/ElectronWindow.js'
-import * as GetElectronWindow from '../GetElectronWindow/GetElectronWindow.js'
-import * as Logger from '../Logger/Logger.js'
+import * as ElectronMessageBoxType from '../ElectronMessageBoxType/ElectronMessageBoxType.ts'
+import * as ElectronWindow from '../ElectronWindow/ElectronWindow.ts'
+import * as GetElectronWindow from '../GetElectronWindow/GetElectronWindow.ts'
+import * as Logger from '../Logger/Logger.ts'
 
 export const showOpenDialog = async (title, properties) => {
   Assert.string(title)

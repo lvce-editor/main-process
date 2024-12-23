@@ -1,4 +1,4 @@
-import * as Exit from './Exit.js'
+import * as Exit from './Exit.ts'
 
 export const name = 'Exit'
 

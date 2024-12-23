@@ -1,6 +1,6 @@
 import { homedir, tmpdir } from 'node:os'
 import { join } from 'node:path'
-import * as Root from '../Root/Root.js'
+import * as Root from '../Root/Root.ts'
 
 const { env, platform } = process
 
@@ -19,11 +19,11 @@ const xdgData = env.XDG_DATA_HOME || (homeDirectory ? join(homeDirectory, '.loca
 const dataDir = join(xdgData || tmpdir(), applicationName)
 
 export const getBuiltinSelfTestPath = () => {
-  return process.env.BUILTIN_SELF_TEST_PATH || join(Root.root, 'extensions', 'builtin.self-test', 'bin', 'SelfTest.js')
+  return process.env.BUILTIN_SELF_TEST_PATH || join(Root.root, 'extensions', 'builtin.self-test', 'bin', 'SelfTest.ts')
 }
 
 export const getWebPath = () => {
-  return process.env.WEB_PATH || join(Root.root, 'packages', 'web', 'src', 'web.js')
+  return process.env.WEB_PATH || join(Root.root, 'packages', 'web', 'src', 'web.ts')
 }
 
 export const chromeUserDataPath = xdgCache ? join(xdgCache, applicationName, 'userdata') : ''
@@ -40,9 +40,9 @@ export const getSessionId = () => {
 
 export const getSharedProcessPath = () => {
   if (isProduction) {
-    return join(Root.root, 'packages', 'shared-process', 'src', 'sharedProcessMain.js')
+    return join(Root.root, 'packages', 'shared-process', 'src', 'sharedProcessMain.ts')
   }
-  return join(Root.root, 'packages', 'shared-process', 'src', 'sharedProcessMain.js')
+  return join(Root.root, 'packages', 'shared-process', 'src', 'sharedProcessMain.ts')
 }
 
 export const getChromeExtensionsPath = () => {

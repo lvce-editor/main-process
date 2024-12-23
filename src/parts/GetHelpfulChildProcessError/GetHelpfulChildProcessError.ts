@@ -1,5 +1,5 @@
-import * as GetModulesErrorStack from '../GetModulesErrorStack/GetModulesErrorStack.js'
-import * as SplitLines from '../SplitLines/SplitLines.js'
+import * as GetModulesErrorStack from '../GetModulesErrorStack/GetModulesErrorStack.ts'
+import * as SplitLines from '../SplitLines/SplitLines.ts'
 
 const RE_NATIVE_MODULE_ERROR = /^innerError Error: Cannot find module '.*.node'/
 const RE_NATIVE_MODULE_ERROR_2 = /was compiled against a different Node.js version/

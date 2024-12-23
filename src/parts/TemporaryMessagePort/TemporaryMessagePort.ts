@@ -5,7 +5,7 @@ import * as HandleIpc from '../HandleIpc/HandleIpc.ts'
 import * as IpcParentWithElectronUtilityProcess from '../IpcParentWithElectronUtilityProcess/IpcParentWithElectronUtilityProcess.ts'
 import * as JsonRpc from '../JsonRpc/JsonRpc.ts'
 import * as SharedProcess from '../SharedProcess/SharedProcess.ts'
-import * as UtilityProcessState from '../UtilityProcessState/UtilityProcessState.js'
+import * as UtilityProcessState from '../UtilityProcessState/UtilityProcessState.ts'
 
 // TODO
 // In order to create utility process from shared process

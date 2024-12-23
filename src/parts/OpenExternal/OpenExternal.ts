@@ -1,6 +1,6 @@
 import { shell } from 'electron'
-import * as ShouldOpenExternal from '../ShouldOpenExternal/ShouldOpenExternal.js'
-import { VError } from '../VError/VError.js'
+import * as ShouldOpenExternal from '../ShouldOpenExternal/ShouldOpenExternal.ts'
+import { VError } from '../VError/VError.ts'
 
 export const openExternal = async (url) => {
   if (!ShouldOpenExternal.shouldOpenExternal(url)) {

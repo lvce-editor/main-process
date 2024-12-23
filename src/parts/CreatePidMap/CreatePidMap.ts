@@ -1,5 +1,5 @@
 import { BrowserWindow } from 'electron'
-import * as UtilityProcessState from '../UtilityProcessState/UtilityProcessState.js'
+import * as UtilityProcessState from '../UtilityProcessState/UtilityProcessState.ts'
 
 export const createPidMap = () => {
   const browserWindows = BrowserWindow.getAllWindows()

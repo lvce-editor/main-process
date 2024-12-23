@@ -1,7 +1,7 @@
 import { BrowserWindow, Menu } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
-import * as GetElectronContextMenuCallbacks from '../GetElectronContextMenuCallbacks/GetElectronContextMenuCallbacks.js'
-import * as GetElectronMenuItems from '../GetElectronMenuItems/GetElectronMenuItems.js'
+import * as GetElectronContextMenuCallbacks from '../GetElectronContextMenuCallbacks/GetElectronContextMenuCallbacks.ts'
+import * as GetElectronMenuItems from '../GetElectronMenuItems/GetElectronMenuItems.ts'
 
 // @ts-ignore
 export const openContextMenu = async (menuItems, x, y) => {

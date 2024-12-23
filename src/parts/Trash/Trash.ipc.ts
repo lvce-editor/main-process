@@ -1,4 +1,4 @@
-import * as Trash from './Trash.js'
+import * as Trash from './Trash.ts'
 
 export const name = 'Trash'
 

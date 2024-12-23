@@ -1,5 +1,5 @@
 import * as NodePath from 'node:path'
-import * as Root from '../Root/Root.js'
+import * as Root from '../Root/Root.ts'
 
 export const absolute = (relativePath) => {
   return NodePath.join(Root.root, relativePath)

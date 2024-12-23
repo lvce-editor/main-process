@@ -1,4 +1,4 @@
-import * as ElectronNet from './ElectronNet.js'
+import * as ElectronNet from './ElectronNet.ts'
 
 export const name = 'ElectronNet'
 

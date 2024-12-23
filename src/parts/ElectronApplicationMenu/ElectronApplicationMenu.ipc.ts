@@ -1,4 +1,4 @@
-import * as ElectronAplicationMenu from './ElectronApplicationMenu.js'
+import * as ElectronAplicationMenu from './ElectronApplicationMenu.ts'
 
 export const name = 'ElectronApplicationMenu'
 

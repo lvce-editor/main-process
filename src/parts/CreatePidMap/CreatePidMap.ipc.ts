@@ -1,4 +1,4 @@
-import * as CreatePidMap from './CreatePidMap.js'
+import * as CreatePidMap from './CreatePidMap.ts'
 
 export const name = 'CreatePidMap'
 

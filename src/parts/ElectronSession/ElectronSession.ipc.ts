@@ -1,4 +1,4 @@
-import * as ElectronSession from './ElectronSession.js'
+import * as ElectronSession from './ElectronSession.ts'
 
 export const name = 'ElectronSession'
 

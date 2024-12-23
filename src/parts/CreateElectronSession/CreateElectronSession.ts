@@ -1,9 +1,9 @@
 import * as Electron from 'electron'
-import * as HandlePermission from '../HandlePermission/HandlePermission.js'
-import * as HandleRequest from '../HandleRequest/HandleRequest.js'
-import * as IsSessionCacheEnabled from '../IsSessionCacheEnabled/IsSessionCacheEnabled.js'
-import * as Platform from '../Platform/Platform.js'
-import * as Protocol from '../Protocol/Protocol.js'
+import * as HandlePermission from '../HandlePermission/HandlePermission.ts'
+import * as HandleRequest from '../HandleRequest/HandleRequest.ts'
+import * as IsSessionCacheEnabled from '../IsSessionCacheEnabled/IsSessionCacheEnabled.ts'
+import * as Platform from '../Platform/Platform.ts'
+import * as Protocol from '../Protocol/Protocol.ts'
 
 // TODO maybe create a separate session for webviews
 export const createElectronSession = () => {

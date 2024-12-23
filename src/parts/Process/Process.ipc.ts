@@ -1,4 +1,4 @@
-import * as Process from './Process.js'
+import * as Process from './Process.ts'
 
 export const name = 'Process'
 

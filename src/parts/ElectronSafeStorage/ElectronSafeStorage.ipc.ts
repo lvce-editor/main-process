@@ -1,4 +1,4 @@
-import * as ElectronSafeStorage from './ElectronSafeStorage.js'
+import * as ElectronSafeStorage from './ElectronSafeStorage.ts'
 
 export const name = 'ElectronSafeStorage'
 

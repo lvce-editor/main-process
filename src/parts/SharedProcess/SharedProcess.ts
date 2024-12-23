@@ -1,7 +1,7 @@
 import * as IpcChildType from '../IpcChildType/IpcChildType.ts'
 import * as JsonRpc from '../JsonRpc/JsonRpc.ts'
 import * as LaunchSharedProcess from '../LaunchSharedProcess/LaunchSharedProcess.ts'
-import * as SharedProcessState from '../SharedProcessState/SharedProcessState.js'
+import * as SharedProcessState from '../SharedProcessState/SharedProcessState.ts'
 
 export const getOrCreate = async ({ method, env = {} }) => {
   if (!SharedProcessState.state.promise) {

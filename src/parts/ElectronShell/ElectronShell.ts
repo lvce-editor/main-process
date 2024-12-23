@@ -1,5 +1,5 @@
 import { shell } from 'electron'
-import * as OpenExternal from '../OpenExternal/OpenExternal.js'
+import * as OpenExternal from '../OpenExternal/OpenExternal.ts'
 
 export const showItemInFolder = (fullPath) => {
   shell.showItemInFolder(fullPath)
@@ -19,6 +19,6 @@ export const openPath = async (path) => {
  * @deprecated use Beep.beep instead
  */
 export const beep = () => {
-  const Beep = require('../Beep/Beep.js')
+  const Beep = require('../Beep/Beep.ts')
   Beep.beep()
 }

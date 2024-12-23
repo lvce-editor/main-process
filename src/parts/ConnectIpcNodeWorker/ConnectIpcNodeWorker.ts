@@ -1,5 +1,5 @@
 import { MessageChannel } from 'node:worker_threads'
-import * as TransferMessagePort from '../TransferMessagePort/TransferMessagePort.js'
+import * as TransferMessagePort from '../TransferMessagePort/TransferMessagePort.ts'
 
 export const connectIpc = async (ipc, browserWindowPort, ...params) => {
   const messageChannel = new MessageChannel()

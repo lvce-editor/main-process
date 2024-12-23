@@ -1,4 +1,4 @@
-import * as ElectronPowerSaveBlocker from './ElectronPowerSaveBlocker.js'
+import * as ElectronPowerSaveBlocker from './ElectronPowerSaveBlocker.ts'
 
 export const name = 'ElectronPowerSaveBlocker'
 

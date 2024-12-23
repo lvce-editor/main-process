@@ -1,6 +1,6 @@
-import * as CliCommandType from '../CliCommandType/CliCommandType.js'
-import * as CliForwardToSharedProcess from '../CliForwardToSharedProcess/CliForwardToSharedProcess.js'
-import * as ElectronApp from '../ElectronApp/ElectronApp.js'
+import * as CliCommandType from '../CliCommandType/CliCommandType.ts'
+import * as CliForwardToSharedProcess from '../CliForwardToSharedProcess/CliForwardToSharedProcess.ts'
+import * as ElectronApp from '../ElectronApp/ElectronApp.ts'
 
 /**
  * @enum {number}

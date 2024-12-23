@@ -1,4 +1,4 @@
-import * as DesktopCapturer from './DesktopCapturer.js'
+import * as DesktopCapturer from './DesktopCapturer.ts'
 
 export const name = 'DesktopCapturer'
 

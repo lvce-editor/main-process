@@ -1,6 +1,6 @@
 import { join } from 'path'
 import { pathToFileURL } from 'url'
-import * as Root from '../Root/Root.js'
+import * as Root from '../Root/Root.ts'
 
 /**
  *

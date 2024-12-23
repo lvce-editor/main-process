@@ -1,4 +1,4 @@
-import * as SplitLines from '../SplitLines/SplitLines.js'
+import * as SplitLines from '../SplitLines/SplitLines.ts'
 
 const RE_AT = /^ {4}at /
 const RE_JUST_PATH = /^(?:file:\/\/|\/|\\).*:\d+$/

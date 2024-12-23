@@ -1,4 +1,4 @@
-import * as CreateMessagePort from './CreateMessagePort.js'
+import * as CreateMessagePort from './CreateMessagePort.ts'
 
 export const name = 'CreateMessagePort'
 

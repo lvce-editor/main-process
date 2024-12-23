@@ -1,6 +1,6 @@
 import { IpcParentWithElectronUtilityProcess } from '@lvce-editor/ipc'
 import * as FormatUtilityProcessName from '../FormatUtilityProcessName/FormatUtilityProcessName.ts'
-import * as UtilityProcessState from '../UtilityProcessState/UtilityProcessState.js'
+import * as UtilityProcessState from '../UtilityProcessState/UtilityProcessState.ts'
 
 export const create = IpcParentWithElectronUtilityProcess.create
 

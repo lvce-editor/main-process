@@ -1,5 +1,5 @@
 import * as GetHelpfulChildProcessError from '../GetHelpfulChildProcessError/GetHelpfulChildProcessError.ts'
-import { VError } from '../VError/VError.js'
+import { VError } from '../VError/VError.ts'
 
 export class IpcError extends VError {
   constructor(message, stdout = '', stderr = '') {
