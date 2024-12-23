@@ -57,8 +57,6 @@ export const getModuleId = (commandId) => {
       return ModuleId.CreatePidMap
     case 'OpenExternal':
       return ModuleId.OpenExternal
-    case 'Process':
-      return ModuleId.Process
     case 'Platform':
       return ModuleId.Platform
     case 'GetWindowId':
@@ -85,8 +83,6 @@ export const getModuleId = (commandId) => {
       return ModuleId.CreateMessagePort
     case 'HandleElectronMessagePort':
       return ModuleId.HandleElectronMessagePort
-    case 'GetWindowId':
-      return ModuleId.GetWindowId
     case 'ElectronSession':
       return ModuleId.ElectronSession
     default:
