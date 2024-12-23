@@ -1,5 +1,5 @@
 import { shell } from 'electron'
 
-export const beep = () => {
+export const beep = (): void => {
   shell.beep()
 }

@@ -4,7 +4,7 @@ import * as ExitCode from '../ExitCode/ExitCode.js'
 import * as Process from '../Process/Process.js'
 import * as SharedProcess from '../SharedProcess/SharedProcess.js'
 
-export const handleCliArgs = async (parsedArgs) => {
+export const handleCliArgs = async (parsedArgs: any): Promise<any> => {
   try {
     await SharedProcess.invoke('HandleCliArgs.handleCliArgs', parsedArgs)
   } catch (error) {

@@ -5,15 +5,15 @@ import * as GetKeyBindingIdentifier from '../GetKeyBindingIdentifier/GetKeyBindi
 
 export const key = 'before-input'
 
-export const attach = (webContents, listener) => {
+export const attach = (webContents, listener): void => {
   webContents.on(ElectronWebContentsEventType.BeforeInputEvent, listener)
 }
 
-export const detach = (webContents, listener) => {
+export const detach = (webContents, listener): void => {
   webContents.off(ElectronWebContentsEventType.BeforeInputEvent, listener)
 }
 
-export const handler = (event, input) => {
+export const handler = (event, input): any => {
   if (input.type !== ElectronInputType.KeyDown) {
     return {
       result: undefined,

@@ -1,6 +1,6 @@
 import * as Performance from '../Performance/Performance.js'
 
-export const getPerformanceEntries = () => {
+export const getPerformanceEntries = (): any => {
   const entries = Performance.getEntries()
   const { timeOrigin } = Performance
   return {
@@ -9,6 +9,6 @@ export const getPerformanceEntries = () => {
   }
 }
 
-export const crashMainProcess = () => {
+export const crashMainProcess = (): void => {
   throw new Error('oops')
 }
