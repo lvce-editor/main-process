@@ -43,6 +43,7 @@ export default tseslint.config(
       'files/previewInjectedCode.js',
       'pages',
       'packages/build',
+      'packages/main-process/pages',
     ],
   },
   {
