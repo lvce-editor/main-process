@@ -73,6 +73,7 @@ export default tseslint.config(
       '@typescript-eslint/explicit-function-return-type': 'off',
       'n/no-process-exit': 'off',
       '@typescript-eslint/no-dynamic-delete': 'off',
+      '@typescript-eslint/no-extraneous-class': 'off',
     },
   },
 )
