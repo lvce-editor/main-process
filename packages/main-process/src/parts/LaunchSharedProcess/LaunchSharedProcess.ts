@@ -30,7 +30,7 @@ const handleChildDisconnect = () => {
 export const launchSharedProcess = async ({ method, env = {} }) => {
   Performance.mark(PerformanceMarkerType.WillStartSharedProcess)
   const sharedProcessPath = Platform.getSharedProcessPath()
-  const execArgv = GetSharedProcessArgv.getSharedProcessArgv()
+  const execArgv = GetSharedProcessArgv.getSharedProcessArgv(Platform.isProduction)
   const fullEnv = {
     ...process.env,
     ...env,
