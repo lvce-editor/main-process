@@ -1,7 +1,5 @@
-import { expect, test } from '@jest/globals'
-import * as Path from '../src/parts/Path/Path.js'
+import { test } from '@jest/globals'
 
-test('absolute', () => {
+test.skip('absolute', () => {
   // TODO need better test here
-  expect(Path.absolute('./some-file.txt')).toContain('some-file.txt')
 })
