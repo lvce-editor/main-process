@@ -62,7 +62,7 @@ test.skip('handlePortForMainProcess - error - command not found', async () => {
     id: 1,
     error: {
       message: 'method not found App.exit',
-      code: -32001,
+      code: -32_001,
       data: expect.stringMatching('Error: method not found App.exit'),
     },
   })
