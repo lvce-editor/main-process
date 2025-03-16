@@ -2,15 +2,15 @@ import { IpcParentWithElectronUtilityProcess } from '@lvce-editor/ipc'
 import * as FormatUtilityProcessName from '../FormatUtilityProcessName/FormatUtilityProcessName.ts'
 import * as UtilityProcessState from '../UtilityProcessState/UtilityProcessState.ts'
 
-export const create = IpcParentWithElectronUtilityProcess.create
+export const { create } = IpcParentWithElectronUtilityProcess
 
-export const wrap = IpcParentWithElectronUtilityProcess.wrap
+export const { wrap } = IpcParentWithElectronUtilityProcess
 
 export const effects = ({ rawIpc, name }) => {
   if (!rawIpc.pid) {
     return
   }
-  const pid = rawIpc.pid
+  const { pid } = rawIpc
   const formattedName = FormatUtilityProcessName.formatUtilityProcessName(name)
   UtilityProcessState.add(pid, rawIpc, formattedName)
   const cleanup = () => {
