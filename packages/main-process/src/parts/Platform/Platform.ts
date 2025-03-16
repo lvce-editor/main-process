@@ -39,6 +39,9 @@ export const getSessionId = () => {
 }
 
 export const getSharedProcessPath = () => {
+  if (process.env.LVCE_SHARED_PROCESS_PATH) {
+    return process.env.LVCE_SHARED_PROCESS_PATH
+  }
   if (isProduction) {
     return join(Root.root, 'packages', 'shared-process', 'src', 'sharedProcessMain.ts')
   }
