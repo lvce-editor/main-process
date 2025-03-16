@@ -16,7 +16,6 @@
     "lint": "eslint .",
     "postinstall": "lerna bootstrap --ci",
     "test": "lerna run test",
-    "test:watch": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --watch",
     "type-check": "tsc"
   },
   "prettier": {
