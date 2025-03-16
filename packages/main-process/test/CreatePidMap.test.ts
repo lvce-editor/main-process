@@ -30,7 +30,7 @@ test('createPidMap - detect chrome devtools', () => {
           },
           devToolsWebContents: {
             getOSProcessId() {
-              return 200152
+              return 200_152
             },
           },
         },
@@ -40,7 +40,7 @@ test('createPidMap - detect chrome devtools', () => {
       },
     ]
   })
-  expect(CreatePidMap.createPidMap()).toEqual({ 123: 'renderer', 200152: 'chrome-devtools' })
+  expect(CreatePidMap.createPidMap()).toEqual({ 123: 'renderer', 200_152: 'chrome-devtools' })
 })
 
 test('createPidMap - detect renderer', () => {
@@ -50,7 +50,7 @@ test('createPidMap - detect renderer', () => {
       {
         webContents: {
           getOSProcessId() {
-            return 200152
+            return 200_152
           },
         },
         getBrowserViews() {
@@ -60,7 +60,7 @@ test('createPidMap - detect renderer', () => {
     ]
   })
   expect(CreatePidMap.createPidMap()).toEqual({
-    200152: 'renderer',
+    200_152: 'renderer',
   })
 })
 
