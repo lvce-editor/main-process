@@ -1,5 +1,4 @@
 import eslint from '@eslint/js'
-import pluginJest from 'eslint-plugin-jest'
 import nodePlugin from 'eslint-plugin-n'
 import perfectionist from 'eslint-plugin-perfectionist'
 import tseslint from 'typescript-eslint'
@@ -31,7 +30,7 @@ export default tseslint.config(
     },
   },
   nodePlugin.configs['flat/recommended'],
-  pluginJest.configs['flat/recommended'],
+  // pluginJest.configs['flat/recommended'],
   {
     ignores: [
       'dist',
