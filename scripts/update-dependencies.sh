@@ -27,8 +27,8 @@ function updateDependencies {
 }
 
 updateDependencies &&
-cd packages/main-process && updateDependencies && cd .. &&
-cd packages/build        && updateDependencies && cd .. &&
+cd packages/main-process && updateDependencies && cd ../.. &&
+cd packages/build        && updateDependencies && cd ../.. &&
 
 echo "Great Success!"
 
