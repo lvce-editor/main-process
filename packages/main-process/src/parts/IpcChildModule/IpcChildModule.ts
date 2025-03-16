@@ -3,7 +3,6 @@ import {
   IpcChildWithElectronUtilityProcess,
   IpcChildWithNodeForkedProcess,
   IpcChildWithNodeWorker,
-  IpcChildWithWebSocket,
   IpcChildWithRendererProcess2,
 } from '@lvce-editor/ipc'
 import * as IpcChildType from '../IpcChildType/IpcChildType.ts'
@@ -14,8 +13,6 @@ export const getModule = (method) => {
       return IpcChildWithNodeForkedProcess
     case IpcChildType.NodeWorker:
       return IpcChildWithNodeWorker
-    case IpcChildType.WebSocket:
-      return IpcChildWithWebSocket
     case IpcChildType.ElectronUtilityProcess:
       return IpcChildWithElectronUtilityProcess
     case IpcChildType.ElectronMessagePort:
