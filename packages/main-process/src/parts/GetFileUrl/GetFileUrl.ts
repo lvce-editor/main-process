@@ -1,5 +1,5 @@
-import { join } from 'path'
-import { pathToFileURL } from 'url'
+import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
 import * as Root from '../Root/Root.ts'
 
 /**
