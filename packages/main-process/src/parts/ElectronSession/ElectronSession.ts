@@ -9,7 +9,7 @@ import * as Scheme from '../Scheme/Scheme.ts'
 import * as WebViewRequestHandler from '../WebViewRequestHandler/WebViewRequestHandler.ts'
 
 export const get = (): globalThis.Electron.Session => {
-  if (!ElectronSessionState.get()) {
+  if (!ElectronSessionState.has()) {
     ElectronSessionState.set(CreateElectronSession.createElectronSession())
   }
   return ElectronSessionState.get()
