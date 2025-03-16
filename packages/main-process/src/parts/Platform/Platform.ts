@@ -1,5 +1,5 @@
 import { homedir, tmpdir } from 'node:os'
-import { join } from 'node:path'
+import * as Path from '../Path/Path.ts'
 import * as Root from '../Root/Root.ts'
 
 const { env, platform } = process
@@ -12,21 +12,21 @@ const homeDirectory = homedir()
 
 export const applicationName = 'lvce-oss'
 
-const xdgCache = env.XDG_CACHE_HOME || (homeDirectory ? join(homeDirectory, '.cache') : undefined)
+const xdgCache = env.XDG_CACHE_HOME || (homeDirectory ? Path.join(homeDirectory, '.cache') : undefined)
 
-const xdgData = env.XDG_DATA_HOME || (homeDirectory ? join(homeDirectory, '.local', 'share') : undefined)
+const xdgData = env.XDG_DATA_HOME || (homeDirectory ? Path.join(homeDirectory, '.local', 'share') : undefined)
 
-const dataDir = join(xdgData || tmpdir(), applicationName)
+const dataDir = Path.join(xdgData || tmpdir(), applicationName)
 
 export const getBuiltinSelfTestPath = () => {
-  return process.env.BUILTIN_SELF_TEST_PATH || join(Root.root, 'extensions', 'builtin.self-test', 'bin', 'SelfTest.ts')
+  return process.env.BUILTIN_SELF_TEST_PATH || Path.join(Root.root, 'extensions', 'builtin.self-test', 'bin', 'SelfTest.ts')
 }
 
 export const getWebPath = () => {
-  return process.env.WEB_PATH || join(Root.root, 'packages', 'web', 'src', 'web.ts')
+  return process.env.WEB_PATH || Path.join(Root.root, 'packages', 'web', 'src', 'web.ts')
 }
 
-export const chromeUserDataPath = xdgCache ? join(xdgCache, applicationName, 'userdata') : ''
+export const chromeUserDataPath = xdgCache ? Path.join(xdgCache, applicationName, 'userdata') : ''
 
 export const version = '0.0.0-dev'
 
@@ -43,11 +43,11 @@ export const getSharedProcessPath = () => {
     return process.env.LVCE_SHARED_PROCESS_PATH
   }
   if (isProduction) {
-    return join(Root.root, 'packages', 'shared-process', 'src', 'sharedProcessMain.ts')
+    return Path.join(Root.root, 'packages', 'shared-process', 'src', 'sharedProcessMain.ts')
   }
-  return join(Root.root, 'packages', 'shared-process', 'src', 'sharedProcessMain.ts')
+  return Path.join(Root.root, 'packages', 'shared-process', 'src', 'sharedProcessMain.ts')
 }
 
 export const getChromeExtensionsPath = () => {
-  return join(dataDir, 'electron-browser-view-chrome-extensions')
+  return Path.join(dataDir, 'electron-browser-view-chrome-extensions')
 }
