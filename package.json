@@ -2,25 +2,27 @@
   "name": "@lvce-editor/main-process",
   "version": "0.0.0-dev",
   "description": "",
-  "main": "src/mainProcessMain.ts",
-  "type": "module",
-  "scripts": {
-    "postinstall": "lerna bootstrap --ci",
-    "test": "lerna run test",
-    "test:watch": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --watch",
-    "type-check": "tsc",
-    "build": "node scripts/build.js",
-    "lint": "eslint ."
-  },
   "keywords": [],
-  "author": "",
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/lvce-editor/main-process.git"
   },
-  "engines": {
-    "node": ">=22"
+  "license": "MIT",
+  "author": "",
+  "type": "module",
+  "main": "src/mainProcessMain.ts",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "lint": "eslint .",
+    "postinstall": "lerna bootstrap --ci",
+    "test": "lerna run test",
+    "test:watch": "node --unhandled-rejections=warn --experimental-vm-modules ./node_modules/jest/bin/jest.js --watch",
+    "type-check": "tsc"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "printWidth": 150
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
@@ -36,9 +38,7 @@
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.26.1"
   },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true,
-    "printWidth": 150
+  "engines": {
+    "node": ">=22"
   }
 }
