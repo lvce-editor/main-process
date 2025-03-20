@@ -1,7 +1,5 @@
-import * as Platform from '../Platform/Platform.ts'
-
-export const getSharedProcessArgv = () => {
-  if (Platform.isProduction) {
+export const getSharedProcessArgv = (isProduction: boolean) => {
+  if (isProduction) {
     return ['--enable-source-maps']
   }
   return []
