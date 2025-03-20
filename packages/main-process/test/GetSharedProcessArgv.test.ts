@@ -1,4 +1,4 @@
-import { jest, test, expect } from '@jest/globals'
+import { expect, test } from '@jest/globals'
 import * as GetSharedProcessArgv from '../src/parts/GetSharedProcessArgv/GetSharedProcessArgv.ts'
 
 test('getSharedProcessArgv - production', () => {
