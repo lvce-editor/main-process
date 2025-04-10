@@ -24,10 +24,10 @@
     "printWidth": 150
   },
   "devDependencies": {
-    "@lerna/legacy-package-management": "^8.2.1",
+    "@lerna/legacy-package-management": "^8.2.2",
     "@lvce-editor/eslint-config": "^1.37.0",
     "eslint": "^9.24.0",
-    "lerna": "^8.2.1",
+    "lerna": "^8.2.2",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3"
   },
