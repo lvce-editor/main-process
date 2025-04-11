@@ -8,8 +8,8 @@ export const getStats = (webContentsId) => {
   if (!contents) {
     return undefined
   }
-  const canGoBack = contents.canGoBack()
-  const canGoForward = contents.canGoForward()
+  const canGoBack = contents.navigationHistory.canGoBack()
+  const canGoForward = contents.navigationHistory.canGoForward()
   const url = contents.getURL()
   const title = contents.getTitle()
   return {
