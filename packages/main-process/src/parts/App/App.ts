@@ -46,8 +46,9 @@ export const hydrate = async () => {
   // see https://github.com/microsoft/playwright/issues/12345
 
   const parsedCliArgs = ParseCliArgs.parseCliArgs(Argv.argv)
-  const handled = await Cli.handleFastCliArgsMaybe(parsedCliArgs) // TODO don't like the side effect here
-  if (handled) {
+  const moduleId = Cli.canHandleFastCliArgs(parsedCliArgs)
+  if (moduleId) {
+    await Cli.handleFastCliArgs(moduleId, parsedCliArgs)
     return
   }
   if (Platform.isLinux && Platform.chromeUserDataPath) {

@@ -17,8 +17,12 @@ const handleArgs = (moduleId: number, parsedArgs: any): any => {
   return module.handleCliArgs(parsedArgs)
 }
 
-export const handleFastCliArgsMaybe = async (parsedArgs: any): Promise<boolean> => {
+export const canHandleFastCliArgs = (parsedArgs: any): number => {
   const moduleId = GetCliModuleId.getCliModuleId(parsedArgs)
+  return moduleId
+}
+
+export const handleFastCliArgs = async (moduleId: number, parsedArgs: any): Promise<boolean> => {
   if (moduleId) {
     await ElectronApp.whenReady()
     return handleArgs(moduleId, parsedArgs)
