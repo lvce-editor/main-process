@@ -1,11 +1,10 @@
-import { ElectronMessagePortRpcClient } from '@lvce-editor/rpc'
+import { ElectronMessagePortRpcClient, ElectronUtilityProcessRpcParent } from '@lvce-editor/rpc'
 import * as CommandMapRef from '../CommandMapRef/CommandMapRef.ts'
 import * as ExitCode from '../ExitCode/ExitCode.ts'
 import * as GetPortTuple from '../GetPortTuple/GetPortTuple.ts'
 import * as GetSharedProcessArgv from '../GetSharedProcessArgv/GetSharedProcessArgv.ts'
 import * as HandleIpc from '../HandleIpc/HandleIpc.ts'
 import * as IpcId from '../IpcId/IpcId.ts'
-import * as IpcParent from '../IpcParent/IpcParent.ts'
 import * as JsonRpc from '../JsonRpc/JsonRpc.ts'
 import * as Logger from '../Logger/Logger.ts'
 import * as Performance from '../Performance/Performance.ts'
@@ -36,14 +35,19 @@ export const launchSharedProcess = async ({ method, env = {} }) => {
     ...process.env,
     ...env,
   }
-  const sharedProcess = await IpcParent.create({
-    method,
+  const sharedProcessRpc = await ElectronUtilityProcessRpcParent.create({
     env: fullEnv,
     argv: [],
     execArgv,
     path: sharedProcessPath,
     name: 'shared-process',
+    commandMap: CommandMapRef.commandMapRef,
+    // @ts-ignore
+    requiresSocket: RequiresSocket.requiresSocket,
   })
+
+  // @ts-ignore
+  const sharedProcess = sharedProcessRpc.ipc
   // @ts-ignore
   sharedProcess._rawIpc.on('error', handleChildError)
   // @ts-ignore
