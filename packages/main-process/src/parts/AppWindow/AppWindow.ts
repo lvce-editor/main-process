@@ -1,17 +1,15 @@
+import { ElectronWebContentsRpcClient } from '@lvce-editor/rpc'
 import { BrowserWindow } from 'electron'
+import * as CommandMapRef from '../CommandMapRef/CommandMapRef.ts'
 import * as ElectronApplicationMenu from '../ElectronApplicationMenu/ElectronApplicationMenu.ts'
 import * as Session from '../ElectronSession/ElectronSession.ts'
 import * as ErrorHandling from '../ErrorHandling/ErrorHandling.ts'
-import * as HandleIpc from '../HandleIpc/HandleIpc.ts'
-import * as IpcChild from '../IpcChild/IpcChild.ts'
-import * as IpcChildType from '../IpcChildType/IpcChildType.ts'
 import * as LifeCycle from '../LifeCycle/LifeCycle.ts'
 import * as Logger from '../Logger/Logger.ts'
 import * as Performance from '../Performance/Performance.ts'
 import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMarkerType.ts'
 import { VError } from '../VError/VError.ts'
 import { WindowLoadError } from '../WindowLoadError/WindowLoadError.ts'
-
 // TODO impossible to test these methods
 // and ensure that there is no memory leak
 
@@ -65,11 +63,9 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
     }
   }
   window.on('close', handleWindowClose)
-
-  const ipc = await IpcChild.listen({
-    method: IpcChildType.RendererProcess2,
+  await ElectronWebContentsRpcClient.create({
     webContents: window.webContents,
+    commandMap: CommandMapRef.commandMapRef,
   })
-  HandleIpc.handleIpc(ipc)
   await loadUrl(window, url)
 }
