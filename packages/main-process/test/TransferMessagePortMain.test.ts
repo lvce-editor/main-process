@@ -3,7 +3,7 @@ import * as TransferMessagePortMain from '../src/parts/TransferMessagePortMain/T
 
 test('transferMessagePortMain - error', async () => {
   const ipc = {
-    sendAndTransfer: jest.fn(() => {
+    invokeAndTransfer: jest.fn(() => {
       throw new TypeError('x is not a function')
     }),
   }

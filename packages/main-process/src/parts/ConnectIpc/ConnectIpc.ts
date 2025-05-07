@@ -13,7 +13,7 @@ const getModule = (method: number): any => {
   }
 }
 
-export const connectIpc = async (method, ipc, browserWindowPort, ipcId): Promise<any> => {
+export const connectIpc = async (method, rpc, browserWindowPort, ipcId): Promise<any> => {
   const connectIpc = getModule(method)
-  return connectIpc(ipc, browserWindowPort, ipcId)
+  return connectIpc(rpc, browserWindowPort, ipcId)
 }
