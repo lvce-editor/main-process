@@ -62,7 +62,8 @@ export const launchSharedProcess = async ({ method, env = {} }) => {
   // ipc instead of sending it directly?
   const { port1, port2 } = GetPortTuple.getPortTuple()
 
-  await JsonRpc.invokeAndTransfer(sharedProcess, 'HandleElectronMessagePort.handleElectronMessagePort', port2, IpcId.MainProcess)
+  await sharedProcessRpc.invokeAndTransfer('HandleElectronMessagePort.handleElectronMessagePort', port2, IpcId.MainProcess)
+
   await ElectronMessagePortRpcClient.create({
     commandMap: CommandMapRef.commandMapRef,
     requiresSocket: RequiresSocket.requiresSocket,
