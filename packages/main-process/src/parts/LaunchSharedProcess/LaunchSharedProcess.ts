@@ -54,7 +54,6 @@ export const launchSharedProcess = async ({ method, env = {} }) => {
   sharedProcess._rawIpc.on('exit', handleChildExit)
   // @ts-ignore
   sharedProcess._rawIpc.on('disconnect', handleChildDisconnect)
-  HandleIpc.handleIpc(sharedProcess)
 
   // create secondary ipc to support transferring objects
   // from shared process to main process
