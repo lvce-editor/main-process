@@ -3,6 +3,7 @@ import * as Beep from '../Beep/Beep.ts'
 import * as Crash from '../Crash/Crash.ts'
 import * as CreateMessagePort from '../CreateMessagePort/CreateMessagePort.ts'
 import * as CreatePidMap from '../CreatePidMap/CreatePidMap.ts'
+import * as CreateUtilityProcessRpc from '../CreateUtilityProcessRpc/CreateUtilityProcessRpc.ts'
 import * as DesktopCapturer from '../DesktopCapturer/DesktopCapturer.ts'
 import * as ElectronApplicationMenu from '../ElectronApplicationMenu/ElectronApplicationMenu.ts'
 import * as ElectronBeep from '../ElectronBeep/ElectronBeep.ts'
@@ -33,9 +34,10 @@ export const commandMap = {
   'AppWindow.createAppWindow': AppWindow.createAppWindow,
   'Beep.beep': Beep.beep,
   'Crash.crashMainProcess': Crash.crashMainProcess,
-  'DesktopCapturer.getSources': DesktopCapturer.getSources,
   'CreateMessagePort.createMessagePort': CreateMessagePort.createMessagePort,
   'CreatePidMap.createPidMap': CreatePidMap.createPidMap,
+  'CreateUtilityProcessRpc.createUtilityProcessRpc': CreateUtilityProcessRpc.createUtilityProcessRpc,
+  'DesktopCapturer.getSources': DesktopCapturer.getSources,
   'ElectronApplicationMenu.setItems': ElectronApplicationMenu.setItems,
   'ElectronBeep.beep': ElectronBeep.beep,
   'ElectronContentTracing.startRecording': ElectronContentTracing.startRecording,
