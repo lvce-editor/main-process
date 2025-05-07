@@ -1,9 +1,9 @@
+import { ElectronMessagePortRpcClient } from '@lvce-editor/rpc'
+import * as CommandMapRef from '../CommandMapRef/CommandMapRef.ts'
 import * as ExitCode from '../ExitCode/ExitCode.ts'
 import * as GetPortTuple from '../GetPortTuple/GetPortTuple.ts'
 import * as GetSharedProcessArgv from '../GetSharedProcessArgv/GetSharedProcessArgv.ts'
 import * as HandleIpc from '../HandleIpc/HandleIpc.ts'
-import * as IpcChild from '../IpcChild/IpcChild.ts'
-import * as IpcChildType from '../IpcChildType/IpcChildType.ts'
 import * as IpcId from '../IpcId/IpcId.ts'
 import * as IpcParent from '../IpcParent/IpcParent.ts'
 import * as JsonRpc from '../JsonRpc/JsonRpc.ts'
@@ -12,6 +12,7 @@ import * as Performance from '../Performance/Performance.ts'
 import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMarkerType.ts'
 import * as Platform from '../Platform/Platform.ts'
 import * as Process from '../Process/Process.ts'
+import * as RequiresSocket from '../RequiresSocket/RequiresSocket.ts'
 import * as SharedProcessState from '../SharedProcessState/SharedProcessState.ts'
 
 const handleChildError = (error) => {
@@ -56,12 +57,14 @@ export const launchSharedProcess = async ({ method, env = {} }) => {
   // TODO let shared process ask for secondary
   // ipc instead of sending it directly?
   const { port1, port2 } = GetPortTuple.getPortTuple()
-  const childIpc = await IpcChild.listen({
-    method: IpcChildType.ElectronMessagePort,
+
+  await JsonRpc.invokeAndTransfer(sharedProcess, 'HandleElectronMessagePort.handleElectronMessagePort', port2, IpcId.MainProcess)
+  await ElectronMessagePortRpcClient.create({
+    commandMap: CommandMapRef.commandMapRef,
+    requiresSocket: RequiresSocket.requiresSocket,
     messagePort: port1,
   })
-  HandleIpc.handleIpc(childIpc)
-  await JsonRpc.invokeAndTransfer(sharedProcess, 'HandleElectronMessagePort.handleElectronMessagePort', port2, IpcId.MainProcess)
+
   // @ts-ignore
   SharedProcessState.state.sharedProcess = sharedProcess
   Performance.mark(PerformanceMarkerType.DidStartSharedProcess)
