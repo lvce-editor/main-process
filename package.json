@@ -16,7 +16,8 @@
     "lint": "eslint .",
     "postinstall": "lerna bootstrap --ci",
     "test": "lerna run test",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "build:watch": "./packages/build/node_modules/.bin/esbuild --format=esm --bundle --external:node:buffer --external:electron --external:ws --external:node:* --watch packages/main-process/src/mainProcessMain.ts --outfile=.tmp/dist/dist/mainProcessMain.js"
   },
   "prettier": {
     "semi": false,
