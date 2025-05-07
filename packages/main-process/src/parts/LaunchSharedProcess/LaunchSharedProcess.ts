@@ -69,8 +69,6 @@ export const launchSharedProcess = async ({ method, env = {} }) => {
     messagePort: port1,
   })
 
-  // @ts-ignore
-  SharedProcessState.state.sharedProcess = sharedProcess
   Performance.mark(PerformanceMarkerType.DidStartSharedProcess)
-  return sharedProcess
+  return sharedProcessRpc
 }

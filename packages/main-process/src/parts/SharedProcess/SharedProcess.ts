@@ -15,19 +15,19 @@ export const send = async (method, ...params) => {
   const ipc = await getOrCreate({
     method: IpcChildType.ElectronUtilityProcess,
   })
-  JsonRpc.send(ipc, method, ...params)
+  JsonRpc.send(ipc.ipc, method, ...params)
 }
 
 export const invoke = async (method, ...params) => {
   const ipc = await getOrCreate({
     method: IpcChildType.ElectronUtilityProcess,
   })
-  return JsonRpc.invoke(ipc, method, ...params)
+  return JsonRpc.invoke(ipc.ipc, method, ...params)
 }
 
 export const invokeAndTransfer = async (transfer, method, ...params) => {
   const ipc = await getOrCreate({
     method: IpcChildType.ElectronUtilityProcess,
   })
-  return JsonRpc.invokeAndTransfer(ipc, transfer, method, ...params)
+  return JsonRpc.invokeAndTransfer(ipc.ipc, transfer, method, ...params)
 }
