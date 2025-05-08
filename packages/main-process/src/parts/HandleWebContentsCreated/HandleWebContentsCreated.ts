@@ -5,6 +5,7 @@ import * as Logger from '../Logger/Logger.ts'
 import * as ShouldAllowNavigation from '../ShouldAllowNavigation/ShouldAllowNavigation.ts'
 
 const handleWebContentsWindowOpen = ({ url }) => {
+  // @ts-ignore
   void ElectronShell.openExternal(url)
   return {
     action: ElectronWindowOpenActionType.Deny,
