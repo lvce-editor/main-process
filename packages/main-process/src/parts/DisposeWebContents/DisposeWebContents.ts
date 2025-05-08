@@ -1,8 +1,6 @@
-/**
- *
- * @param {Electron.WebContents} webContents
- */
-export const disposeWebContents = (webContents) => {
+import type { WebContents } from 'electron'
+
+export const disposeWebContents = (webContents: WebContents) => {
   if (webContents.close) {
     // electron v22
     webContents.close()
