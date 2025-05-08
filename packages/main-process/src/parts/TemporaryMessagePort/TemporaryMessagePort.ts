@@ -42,13 +42,13 @@ export const sendTo = async (port, name, ipcId) => {
 }
 
 // TODO use rpc id, and then use rpc.invokeAndtransfer
-export const sendTo2 = async (port, rpcId) => {
+export const sendTo2 = async (port: any, targetRpcId: number, sourceRpcId: number) => {
   Assert.object(port)
-  const rpc = RpcRegistry.get(rpcId)
+  const rpc = RpcRegistry.get(targetRpcId)
   if (!rpc) {
-    throw new Error(`rpc ${rpcId} not found`)
+    throw new Error(`rpc ${targetRpcId} not found`)
   }
-  await rpc.invokeAndTransfer('HandleElectronMessagePort.handleElectronMessagePort', port, rpcId)
+  await rpc.invokeAndTransfer('HandleElectronMessagePort.handleElectronMessagePort', port, sourceRpcId)
 }
 
 // todo dispose the rpc by rpc id
