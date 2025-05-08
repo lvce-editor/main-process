@@ -26,6 +26,9 @@ export const createPortTuple = async (id1, id2) => {
   await SharedProcess.invokeAndTransfer('TemporaryMessagePort.handlePorts', port1, port2, id1, id2)
 }
 
+/**
+ * @deprecated
+ */
 export const sendTo = async (port, name, ipcId) => {
   Assert.string(name)
   Assert.object(port)
