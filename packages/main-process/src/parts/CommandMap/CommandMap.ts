@@ -78,7 +78,7 @@ export const commandMap = {
   'ElectronWebContentsViewFunctions.reload': ElectronWebContentsViewFunctions.reload,
   'ElectronWebContentsViewFunctions.resizeBrowserView': ElectronWebContentsViewFunctions.resizeBrowserView,
   'ElectronWebContentsViewFunctions.setBackgroundColor': ElectronWebContentsViewFunctions.setBackgroundColor,
-  'ElectronWebContentsViewFunctions.setFallthroughKeyBindings': ElectronWebContentsViewFunctions.setFallthroughKeyBindings,
+  'ElectronWebContentsViewFunctions.setFallthroughKeyBindings': ElectronWebContentsViewFunctions.setFallThroughKeyBindings,
   'ElectronWebContentsViewFunctions.setIframeSrc': ElectronWebContentsViewFunctions.setIframeSrc,
   'ElectronWebContentsViewFunctions.setIframeSrcFallback': ElectronWebContentsViewFunctions.setIframeSrcFallback,
   'ElectronWebContentsViewFunctions.show': ElectronWebContentsViewFunctions.show,
@@ -101,5 +101,6 @@ export const commandMap = {
   'TemporaryMessagePort.createPortTuple': TemporaryMessagePort.createPortTuple,
   'TemporaryMessagePort.dispose': TemporaryMessagePort.dispose,
   'TemporaryMessagePort.sendTo': TemporaryMessagePort.sendTo,
+  'TemporaryMessagePort.sendTo2': TemporaryMessagePort.sendTo2,
   'Trash.trash': Trash.trash,
 }

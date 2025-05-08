@@ -1,3 +1,4 @@
+import * as RpcRegistry from '@lvce-editor/rpc-registry'
 import * as Assert from '../Assert/Assert.ts'
 import * as FormatUtilityProcessName from '../FormatUtilityProcessName/FormatUtilityProcessName.ts'
 import * as GetPortTuple from '../GetPortTuple/GetPortTuple.ts'
@@ -30,12 +31,21 @@ export const sendTo = async (port, name, ipcId) => {
   Assert.object(port)
   const formattedName = FormatUtilityProcessName.formatUtilityProcessName(name)
   const utilityProcess = UtilityProcessState.getByName(formattedName)
+
   const utilityProcessIpc = IpcParentWithElectronUtilityProcess.wrap(utilityProcess)
   HandleIpc.handleIpc(utilityProcessIpc)
   await JsonRpc.invokeAndTransfer(utilityProcessIpc, 'HandleElectronMessagePort.handleElectronMessagePort', port, ipcId)
   HandleIpc.unhandleIpc(utilityProcessIpc)
 }
 
+// TODO use rpc id, and then use rpc.invokeAndtransfer
+export const sendTo2 = async (port, rpcId) => {
+  Assert.object(port)
+  const rpc = RpcRegistry.get(rpcId)
+  await rpc.invokeAndTransfer('HandleElectronMessagePort.handleElectronMessagePort', port, rpcId)
+}
+
+// todo dispose the rpc by rpc id
 export const dispose = (name) => {
   Assert.string(name)
   const formattedName = FormatUtilityProcessName.formatUtilityProcessName(name)
