@@ -1,14 +1,11 @@
 import * as IsProtocolHandleApiSupported from '../IsProtocolHandleApiSupported/IsProtocolHandleApiSupported.ts'
 import * as PrivilegedSchemes from '../PrivilegedSchemes/PrivilegedSchemes.ts'
 
-/**
- *
- * @param {Electron.Protocol} protocol
- * @param {string} name
- * @param {(request: GlobalRequest) => Promise<GlobalResponse>} handleRequest
- * @returns
- */
-export const handle = (protocol, name, handleRequest) => {
+interface RequestHandler {
+  (request: GlobalRequest): Promise<GlobalResponse>
+}
+
+export const handle = (protocol: Electron.Protocol, name: string, handleRequest: RequestHandler) => {
   if (IsProtocolHandleApiSupported.isProtocolHandleApiSupported(protocol)) {
     protocol.handle(name, handleRequest)
     return
@@ -16,11 +13,6 @@ export const handle = (protocol, name, handleRequest) => {
   throw new Error('protocol.handle api is not supported')
 }
 
-/**
- *
- * @param {Electron.Protocol} protocol
- * @returns
- */
-export const enable = (protocol) => {
+export const enable = (protocol: Electron.Protocol) => {
   protocol.registerSchemesAsPrivileged(PrivilegedSchemes.privilegedSchems)
 }
