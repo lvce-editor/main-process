@@ -7,5 +7,7 @@ export const createUtilityProcessRpc = async (options) => {
     commandMap: CommandMapRef.commandMapRef,
     ...options,
   })
-  RpcRegistry.set(options.rpcId, rpc)
+
+  const rpcId = options.rpcId || options.ipcId
+  RpcRegistry.set(rpcId, rpc)
 }
