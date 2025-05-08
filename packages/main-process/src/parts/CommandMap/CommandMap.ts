@@ -66,21 +66,41 @@ export const commandMap = {
   'ElectronWebContentsView.createWebContentsView': ElectronWebContentsView.createWebContentsView,
   'ElectronWebContentsView.disposeWebContentsView': ElectronWebContentsView.disposeWebContentsView,
   'ElectronWebContentsViewFunctions.addToWindow': ElectronWebContentsViewFunctions.addToWindow,
-  'ElectronWebContentsViewFunctions.backward': ElectronWebContentsViewFunctions.backward,
-  'ElectronWebContentsViewFunctions.cancelNavigation': ElectronWebContentsViewFunctions.cancelNavigation,
-  'ElectronWebContentsViewFunctions.copyImageAt': ElectronWebContentsViewFunctions.copyImageAt,
-  'ElectronWebContentsViewFunctions.focus': ElectronWebContentsViewFunctions.focus,
-  'ElectronWebContentsViewFunctions.forward': ElectronWebContentsViewFunctions.forward,
-  'ElectronWebContentsViewFunctions.getStats': ElectronWebContentsViewFunctions.getStats,
+  'ElectronWebContentsViewFunctions.backward': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.backward),
+  'ElectronWebContentsViewFunctions.cancelNavigation': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.cancelNavigation,
+  ),
+  'ElectronWebContentsViewFunctions.copyImageAt': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.copyImageAt,
+  ),
+  'ElectronWebContentsViewFunctions.focus': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.focus),
+  'ElectronWebContentsViewFunctions.forward': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.forward),
+  'ElectronWebContentsViewFunctions.getStats': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.getStats),
   'ElectronWebContentsViewFunctions.hide': ElectronWebContentsViewFunctions.hide,
-  'ElectronWebContentsViewFunctions.inspectElement': ElectronWebContentsViewFunctions.inspectElement,
-  'ElectronWebContentsViewFunctions.openDevtools': ElectronWebContentsViewFunctions.openDevtools,
-  'ElectronWebContentsViewFunctions.reload': ElectronWebContentsViewFunctions.reload,
-  'ElectronWebContentsViewFunctions.resizeBrowserView': ElectronWebContentsViewFunctions.resizeBrowserView,
-  'ElectronWebContentsViewFunctions.setBackgroundColor': ElectronWebContentsViewFunctions.setBackgroundColor,
-  'ElectronWebContentsViewFunctions.setFallthroughKeyBindings': ElectronWebContentsViewFunctions.setFallThroughKeyBindings,
-  'ElectronWebContentsViewFunctions.setIframeSrc': ElectronWebContentsViewFunctions.setIframeSrc,
-  'ElectronWebContentsViewFunctions.setIframeSrcFallback': ElectronWebContentsViewFunctions.setIframeSrcFallback,
+  'ElectronWebContentsViewFunctions.inspectElement': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.inspectElement,
+  ),
+  'ElectronWebContentsViewFunctions.openDevtools': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.openDevtools,
+  ),
+  'ElectronWebContentsViewFunctions.reload': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.reload),
+  ),
+  'ElectronWebContentsViewFunctions.resizeBrowserView': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.resizeBrowserView,
+  ),
+  'ElectronWebContentsViewFunctions.setBackgroundColor': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.setBackgroundColor,
+  ),
+  'ElectronWebContentsViewFunctions.setFallthroughKeyBindings': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.setFallThroughKeyBindings,
+  ),
+  'ElectronWebContentsViewFunctions.setIframeSrc': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.setIframeSrc,
+  ),
+  'ElectronWebContentsViewFunctions.setIframeSrcFallback': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.setIframeSrcFallback,
+  ),
   'ElectronWebContentsViewFunctions.show': ElectronWebContentsViewFunctions.show,
   'ElectronWindow.executeWebContentsFunction': ElectronWindow.executeWebContentsFunction,
   'ElectronWindow.executeWindowFunction': ElectronWindow.executeWindowFunction,
