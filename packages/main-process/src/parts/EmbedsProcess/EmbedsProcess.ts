@@ -1,25 +1,18 @@
-import * as JsonRpc from '../JsonRpc/JsonRpc.ts'
-
-const state = {
-  ipc: undefined,
-}
-
-export const set = (ipc) => {
-  state.ipc = ipc
-}
+import * as RpcRegistry from '@lvce-editor/rpc-registry'
+import * as IpcId from '../IpcId/IpcId.ts'
 
 export const invoke = (method, ...params) => {
-  const { ipc } = state
-  if (!ipc) {
+  const rpc = RpcRegistry.get(IpcId.EmbedsProcess)
+  if (!rpc) {
     return
   }
-  return JsonRpc.invoke(ipc, method, ...params)
+  return rpc.invoke(method, ...params)
 }
 
 export const send = (method, ...params) => {
-  const { ipc } = state
-  if (!ipc) {
+  const rpc = RpcRegistry.get(IpcId.EmbedsProcess)
+  if (!rpc) {
     return
   }
-  JsonRpc.send(ipc, method, ...params)
+  return rpc.send(method, ...params)
 }
