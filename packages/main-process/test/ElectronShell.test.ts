@@ -29,6 +29,7 @@ test.skip('showItemInFolder', () => {
 test.skip('beep', async () => {
   // @ts-expect-error
   electron.shell.beep.mockImplementation(() => {})
+  // @ts-ignore
   await ElectronShell.beep()
   expect(electron.shell.beep).toHaveBeenCalledTimes(1)
   expect(electron.shell.beep).toHaveBeenCalledWith()
@@ -37,6 +38,7 @@ test.skip('beep', async () => {
 test.skip('openExternal', async () => {
   // @ts-expect-error
   electron.shell.openExternal.mockImplementation(() => {})
+  // @ts-ignore
   await ElectronShell.openExternal('https://example.com')
   expect(electron.shell.openExternal).toHaveBeenCalledTimes(1)
   expect(electron.shell.openExternal).toHaveBeenCalledWith('https://example.com')
