@@ -8,6 +8,6 @@ export const createUtilityProcessRpc = async (options) => {
     ...options,
   })
 
-  const rpcId = options.rpcId || options.ipcId
+  const rpcId = options.targetRpcId || options.rpcId || options.ipcId
   RpcRegistry.set(rpcId, rpc)
 }
