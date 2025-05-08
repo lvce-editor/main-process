@@ -17,6 +17,7 @@ import * as ElectronSafeStorage from '../ElectronSafeStorage/ElectronSafeStorage
 import * as ElectronScreen from '../ElectronScreen/ElectronScreen.ts'
 import * as ElectronSession from '../ElectronSession/ElectronSession.ts'
 import * as ElectronShell from '../ElectronShell/ElectronShell.ts'
+import * as ElectronWebContents from '../ElectronWebContents/ElectronWebContents.ts'
 import * as ElectronWebContentsView from '../ElectronWebContentsView/ElectronWebContentsView.ts'
 import * as ElectronWebContentsViewFunctions from '../ElectronWebContentsViewFunctions/ElectronWebContentsViewFunctions.ts'
 import * as ElectronWindow from '../ElectronWindow/ElectronWindow.ts'
@@ -62,6 +63,9 @@ export const commandMap = {
   'ElectronShell.openExternal': OpenExternal.openExternal,
   'ElectronShell.openPath': ElectronShell.openPath,
   'ElectronShell.showItemInFolder': ElectronShell.showItemInFolder,
+  'ElectronWebContents.callFunction': ElectronWebContents.callFunction,
+  'ElectronWebContents.dispose': ElectronWebContents.dispose,
+  'ElectronWebContents.getStats': ElectronWebContents.getStats,
   'ElectronWebContentsView.attachEventListeners': ElectronWebContentsView.attachEventListeners,
   'ElectronWebContentsView.createWebContentsView': ElectronWebContentsView.createWebContentsView,
   'ElectronWebContentsView.disposeWebContentsView': ElectronWebContentsView.disposeWebContentsView,
