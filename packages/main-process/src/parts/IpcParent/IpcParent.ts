@@ -4,6 +4,7 @@ import * as IpcParentModule from '../IpcParentModule/IpcParentModule.ts'
  *
  * @param {*} param0
  * @returns {Promise<any>}
+ * @deprecated
  */
 export const create = async ({ method, ...options }) => {
   const module = await IpcParentModule.getModule(method)
