@@ -1,3 +1,4 @@
+import type { BrowserView, WebContents } from 'electron';
 import { BrowserWindow } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
 import * as Debug from '../Debug/Debug.ts'
@@ -20,15 +21,7 @@ export const wrapBrowserViewCommand = (fn) => {
   return wrappedCommand
 }
 
-/**
- *
- * @param {Electron.BrowserView} view
- * @param {number} x
- * @param {number} y
- * @param {number} width
- * @param {number} height
- */
-export const resizeBrowserView = (view, x, y, width, height) => {
+export const resizeBrowserView = (view: BrowserView, x: number, y: number, width: number, height: number) => {
   Assert.object(view)
   Assert.number(x)
   Assert.number(y)
@@ -51,12 +44,8 @@ export const setIframeSrcFallback = async (view, code, message) => {
   })
 }
 
-/**
- *
- * @param {Electron.WebContents} webContents
- */
 // @ts-ignore
-const getTitle = (webContents) => {
+const getTitle = (webContents: WebContents) => {
   const title = webContents.getTitle()
   if (title) {
     return title
@@ -64,12 +53,7 @@ const getTitle = (webContents) => {
   return webContents.getURL()
 }
 
-/**
- *
- * @param {Electron.BrowserView} view
- * @param {string} iframeSrc
- */
-export const setIframeSrc = async (view, iframeSrc) => {
+export const setIframeSrc = async (view: BrowserView, iframeSrc: string) => {
   try {
     Assert.object(view)
     Assert.string(iframeSrc)
@@ -82,62 +66,41 @@ export const setIframeSrc = async (view, iframeSrc) => {
     throw betterError
   }
 }
-/**
- *
- * @param {Electron.BrowserView} view
- */
-export const focus = (view) => {
+
+export const focus = (view: BrowserView) => {
   const { webContents } = view
   webContents.focus()
 }
 
-/**
- *
- * @param {Electron.BrowserView} view
- */
-export const openDevtools = (view) => {
+export const openDevtools = (view: BrowserView) => {
   const { webContents } = view
   // TODO return promise that resolves once devtools are actually open
   webContents.openDevTools()
 }
-/**
- *
- * @param {Electron.BrowserView} view
- */
-export const reload = (view) => {
+
+export const reload = (view: BrowserView) => {
   const { webContents } = view
   webContents.reload()
 }
-/**
- *
- * @param {Electron.BrowserView} view
- */
-export const forward = (view) => {
+
+export const forward = (view: BrowserView) => {
   const { webContents } = view
-  webContents.goForward()
+  webContents.navigationHistory.goForward()
 }
 
-/**
- *
- * @param {Electron.BrowserView} view
- */
-export const backward = (view) => {
+export const backward = (view: BrowserView) => {
   // TODO return promise that resolves once devtools are actually open
   const { webContents } = view
-  webContents.goBack()
+  webContents.navigationHistory.goBack()
 }
 
-/**
- *
- * @param {Electron.BrowserView} view
- */
-export const cancelNavigation = (view) => {
+export const cancelNavigation = (view: BrowserView) => {
   const { webContents } = view
   ElectronWebContentsViewState.setCanceled(webContents.id)
   Debug.debug(`[main process] canceled navigation to ${webContents.getURL()}`)
   webContents.stop()
-  if (webContents.canGoBack()) {
-    webContents.goBack()
+  if (webContents.navigationHistory.canGoBack()) {
+    webContents.navigationHistory.goBack()
   }
 }
 
