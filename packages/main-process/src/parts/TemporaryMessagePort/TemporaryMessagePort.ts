@@ -45,6 +45,9 @@ export const sendTo = async (port, name, ipcId) => {
 export const sendTo2 = async (port, rpcId) => {
   Assert.object(port)
   const rpc = RpcRegistry.get(rpcId)
+  if (!rpc) {
+    throw new Error(`rpc ${rpcId} not found`)
+  }
   await rpc.invokeAndTransfer('HandleElectronMessagePort.handleElectronMessagePort', port, rpcId)
 }
 
