@@ -1,18 +1,16 @@
+import { ElectronMessagePortRpcClient } from '@lvce-editor/rpc'
+import * as RpcRegistry from '@lvce-editor/rpc-registry'
 import * as Assert from '../Assert/Assert.ts'
-import * as EmbedsProcess from '../EmbedsProcess/EmbedsProcess.ts'
-import * as HandleIpc from '../HandleIpc/HandleIpc.ts'
-import * as IpcChild from '../IpcChild/IpcChild.ts'
-import * as IpcChildType from '../IpcChildType/IpcChildType.ts'
+import * as CommandMapRef from '../CommandMapRef/CommandMapRef.ts'
 import * as IpcId from '../IpcId/IpcId.ts'
+import * as RequiresSocket from '../RequiresSocket/RequiresSocket.ts'
 
-export const handleElectronMessagePort = async (messagePort, ipcId) => {
+export const handleElectronMessagePort = async (messagePort, rpcId) => {
   Assert.object(messagePort)
-  const ipc = await IpcChild.listen({
-    method: IpcChildType.ElectronMessagePort,
-    messagePort,
+  const rpc = await ElectronMessagePortRpcClient.create({
+    messagePort: messagePort,
+    commandMap: CommandMapRef.commandMapRef,
+    requiresSocket: RequiresSocket.requiresSocket,
   })
-  HandleIpc.handleIpc(ipc)
-  if (ipcId === IpcId.EmbedsProcess) {
-    EmbedsProcess.set(ipc)
-  }
+  RpcRegistry.set(IpcId.EmbedsProcess, rpc)
 }
