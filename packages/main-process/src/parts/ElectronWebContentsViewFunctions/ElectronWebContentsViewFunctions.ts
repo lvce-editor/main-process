@@ -93,6 +93,12 @@ export const getDomTree = async (view: WebContentsView) => {
   return slimCode
 }
 
+export const insertCss = async (view: WebContentsView, code: string) => {
+  const { webContents } = view
+  const key = await webContents.insertCSS(code)
+  return key
+}
+
 export const reload = (view: BrowserView) => {
   const { webContents } = view
   webContents.reload()

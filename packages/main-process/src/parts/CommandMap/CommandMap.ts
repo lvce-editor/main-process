@@ -79,6 +79,7 @@ export const commandMap = {
     ElectronWebContentsViewFunctions.copyImageAt,
   ),
   'ElectronWebContentsViewFunctions.focus': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.focus),
+  'ElectronWebContentsViewFunctions.insertCss': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.insertCss),
   'ElectronWebContentsViewFunctions.forward': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.forward),
   'ElectronWebContentsViewFunctions.getStats': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.getStats),
   'ElectronWebContentsViewFunctions.hide': ElectronWebContentsViewFunctions.hide,

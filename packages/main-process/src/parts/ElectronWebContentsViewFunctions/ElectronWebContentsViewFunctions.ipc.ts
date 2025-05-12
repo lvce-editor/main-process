@@ -20,5 +20,6 @@ export const Commands = {
   setIframeSrc: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.setIframeSrc),
   setIframeSrcFallback: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.setIframeSrcFallback),
   show: ElectronWebContentsViewFunctions.show,
-  getDomTree: ElectronWebContentsViewFunctions.getDomTree,
+  getDomTree: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.getDomTree),
+  insertCss: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.insertCss),
 }
