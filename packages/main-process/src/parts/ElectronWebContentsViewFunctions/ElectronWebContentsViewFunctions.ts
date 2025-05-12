@@ -1,4 +1,4 @@
-import type { BrowserView, WebContents } from 'electron';
+import type { BrowserView, WebContents, WebContentsView } from 'electron'
 import { BrowserWindow } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
 import * as Debug from '../Debug/Debug.ts'
@@ -76,6 +76,21 @@ export const openDevtools = (view: BrowserView) => {
   const { webContents } = view
   // TODO return promise that resolves once devtools are actually open
   webContents.openDevTools()
+}
+
+const getSlimCode = (html: string): string => {
+  let result = html
+  result = result.replaceAll(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, '')
+  result = result.replaceAll(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style\s*>/gi, '')
+  return result
+}
+
+export const getDomTree = async (view: WebContentsView) => {
+  const { webContents } = view
+  const code = `document.body.outerHTML`
+  const result = await webContents.executeJavaScript(code)
+  const slimCode = getSlimCode(result)
+  return slimCode
 }
 
 export const reload = (view: BrowserView) => {
