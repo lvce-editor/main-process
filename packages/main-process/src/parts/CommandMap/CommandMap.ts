@@ -70,6 +70,7 @@ export const commandMap = {
   'ElectronWebContentsView.createWebContentsView': ElectronWebContentsView.createWebContentsView,
   'ElectronWebContentsView.disposeWebContentsView': ElectronWebContentsView.disposeWebContentsView,
   'ElectronWebContentsViewFunctions.addToWindow': ElectronWebContentsViewFunctions.addToWindow,
+  'ElectronWebContentsViewFunctions.getDomTree': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.getDomTree),
   'ElectronWebContentsViewFunctions.backward': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.backward),
   'ElectronWebContentsViewFunctions.cancelNavigation': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.cancelNavigation,
