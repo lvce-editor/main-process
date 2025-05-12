@@ -80,6 +80,9 @@ export const commandMap = {
   ),
   'ElectronWebContentsViewFunctions.focus': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.focus),
   'ElectronWebContentsViewFunctions.insertCss': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.insertCss),
+  'ElectronWebContentsViewFunctions.executeJavaScript': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.executeJavaScript,
+  ),
   'ElectronWebContentsViewFunctions.forward': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.forward),
   'ElectronWebContentsViewFunctions.getStats': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.getStats),
   'ElectronWebContentsViewFunctions.hide': ElectronWebContentsViewFunctions.hide,
