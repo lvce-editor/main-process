@@ -22,4 +22,5 @@ export const Commands = {
   show: ElectronWebContentsViewFunctions.show,
   getDomTree: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.getDomTree),
   insertCss: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.insertCss),
+  executeJavaScript: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.executeJavaScript),
 }
