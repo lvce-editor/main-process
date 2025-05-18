@@ -92,6 +92,13 @@ export const getDomTree = async (view: WebContentsView) => {
   const slimCode = getSlimCode(result)
   return slimCode
 }
+export const getConsolLogs = async (view: WebContentsView) => {
+  const { webContents } = view
+  const code = `document.body.outerHTML`
+  const result = await webContents.executeJavaScript(code)
+  const slimCode = getSlimCode(result)
+  return slimCode
+}
 
 export const insertCss = async (view: WebContentsView, code: string) => {
   const { webContents } = view
@@ -206,10 +213,10 @@ export const setFallThroughKeyBindings = (fallthroughKeyBindings) => {
 /**
  * @param {Electron.BrowserView} view
  */
-export const getStats = (view) => {
+export const getStats = (view: BrowserView) => {
   const { webContents } = view
-  const canGoBack = webContents.canGoBack()
-  const canGoForward = webContents.canGoForward()
+  const canGoBack = webContents.navigationHistory.canGoBack()
+  const canGoForward = webContents.navigationHistory.canGoForward()
   const url = webContents.getURL()
   const title = webContents.getTitle()
   return {
