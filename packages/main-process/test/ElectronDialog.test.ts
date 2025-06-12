@@ -44,7 +44,9 @@ test.skip('showMessageBox', async () => {
   })
   expect(Electron.dialog.showMessageBox).toHaveBeenCalledTimes(1)
   expect(Electron.dialog.showMessageBox).toHaveBeenCalledWith(
+    // @ts-ignore
     {},
+    // @ts-ignore
     {
       buttons: ['copy', 'ok'],
       cancelId: 1,
