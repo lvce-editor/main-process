@@ -7,7 +7,6 @@
     "url": "https://github.com/lvce-editor/main-process.git"
   },
   "license": "MIT",
-  "author": "",
   "type": "module",
   "main": "src/mainProcessMain.ts",
   "scripts": {
