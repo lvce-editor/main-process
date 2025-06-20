@@ -59,10 +59,10 @@
     "minimist": "^1.2.8"
   },
   "devDependencies": {
-    "@jest/globals": "^30.0.0",
+    "@jest/globals": "^30.0.2",
     "@types/debug": "^4.1.12",
-    "electron": "36.4.0",
-    "jest": "^30.0.0",
+    "electron": "36.5.0",
+    "jest": "^30.0.2",
     "ts-jest": "^29.4.0"
   },
   "engines": {
