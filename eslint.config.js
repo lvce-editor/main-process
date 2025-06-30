@@ -19,6 +19,7 @@ export default [
       'n/no-process-exit': 'off',
 
       '@typescript-eslint/no-deprecated': 'off',
+      'jest/no-restricted-jest-methods':'off'
     },
   },
 ]
