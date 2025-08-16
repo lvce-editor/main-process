@@ -1,7 +1,6 @@
 {
   "name": "@lvce-editor/main-process",
   "version": "0.0.0-dev",
-  "description": "",
   "repository": {
     "type": "git",
     "url": "https://github.com/lvce-editor/main-process.git"

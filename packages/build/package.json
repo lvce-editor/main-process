@@ -6,7 +6,6 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "description": "",
   "devDependencies": {
     "@babel/preset-typescript": "^7.27.1",
     "@lvce-editor/verror": "^1.7.0",
