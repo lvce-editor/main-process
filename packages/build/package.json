@@ -6,7 +6,6 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "description": "",
   "devDependencies": {
     "@babel/preset-typescript": "^7.27.1",
     "@lvce-editor/verror": "^1.7.0",
@@ -14,7 +13,7 @@
     "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@types/node": "^22.9.0",
-    "esbuild": "^0.25.8",
+    "esbuild": "^0.25.9",
     "execa": "^9.6.0",
     "rollup": "^4.46.2"
   }
