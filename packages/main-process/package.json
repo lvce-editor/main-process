@@ -47,10 +47,10 @@
   },
   "dependencies": {
     "@lvce-editor/assert": "^1.4.0",
-    "@lvce-editor/ipc": "^14.4.0",
+    "@lvce-editor/ipc": "^14.5.0",
     "@lvce-editor/json-rpc": "^7.0.0",
     "@lvce-editor/pretty-error": "^2.0.0",
-    "@lvce-editor/rpc": "^4.14.0",
+    "@lvce-editor/rpc": "^4.15.0",
     "@lvce-editor/rpc-registry": "^2.73.0",
     "@lvce-editor/verror": "^1.7.0",
     "debug": "^4.4.1",
@@ -58,10 +58,10 @@
     "minimist": "^1.2.8"
   },
   "devDependencies": {
-    "@jest/globals": "^30.0.5",
+    "@jest/globals": "^30.1.1",
     "@types/debug": "^4.1.12",
-    "electron": "37.3.1",
-    "jest": "^30.0.5",
+    "electron": "37.4.0",
+    "jest": "^30.1.1",
     "ts-jest": "^29.4.1"
   },
   "engines": {
