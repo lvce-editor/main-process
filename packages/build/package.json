@@ -9,12 +9,12 @@
   "devDependencies": {
     "@babel/preset-typescript": "^7.27.1",
     "@lvce-editor/verror": "^1.7.0",
-    "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-commonjs": "^28.0.6",
-    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-babel": "^6.1.0",
+    "@rollup/plugin-commonjs": "^28.0.8",
+    "@rollup/plugin-node-resolve": "^16.0.3",
     "@types/node": "^22.9.0",
-    "esbuild": "^0.25.10",
+    "esbuild": "^0.25.11",
     "execa": "^9.6.0",
-    "rollup": "^4.52.2"
+    "rollup": "^4.52.4"
   }
 }
