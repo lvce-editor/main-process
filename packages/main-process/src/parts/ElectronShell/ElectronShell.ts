@@ -1,7 +1,9 @@
 import { shell } from 'electron'
+import { normalizePath } from '../NormalizePath/NormalizePath.ts'
 
 export const showItemInFolder = (fullPath: string): void => {
-  shell.showItemInFolder(fullPath)
+  const normalized = normalizePath(fullPath)
+  shell.showItemInFolder(normalized)
 }
 
 export const openPath = async (path: string): Promise<void> => {
