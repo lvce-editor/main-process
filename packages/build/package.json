@@ -10,11 +10,11 @@
     "@babel/preset-typescript": "^7.28.5",
     "@lvce-editor/verror": "^1.7.0",
     "@rollup/plugin-babel": "^6.1.0",
-    "@rollup/plugin-commonjs": "^28.0.9",
+    "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@types/node": "^22.9.0",
-    "esbuild": "^0.25.11",
+    "esbuild": "^0.25.12",
     "execa": "^9.6.0",
-    "rollup": "^4.52.5"
+    "rollup": "^4.53.1"
   }
 }
