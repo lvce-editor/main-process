@@ -51,7 +51,7 @@
     "@lvce-editor/json-rpc": "^7.0.0",
     "@lvce-editor/pretty-error": "^2.0.0",
     "@lvce-editor/rpc": "^4.20.0",
-    "@lvce-editor/rpc-registry": "^4.9.0",
+    "@lvce-editor/rpc-registry": "^5.1.0",
     "@lvce-editor/verror": "^1.7.0",
     "debug": "^4.4.3",
     "electron-unhandled": "^5.0.0",
@@ -61,7 +61,7 @@
     "@jest/globals": "^30.2.0",
     "@types/debug": "^4.1.12",
     "@types/node": "^24.9.2",
-    "electron": "39.2.3",
+    "electron": "39.2.4",
     "jest": "^30.2.0",
     "ts-jest": "^29.4.5"
   },
