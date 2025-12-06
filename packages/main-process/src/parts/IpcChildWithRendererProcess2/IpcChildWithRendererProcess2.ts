@@ -5,22 +5,22 @@ export const listen = ({ webContentsIpc }) => {
 const preloadChannelType = 'port'
 
 const createSyntheticEvent = (event, message) => {
-  const { sender, ports } = event
+  const { ports, sender } = event
   const data = {
     ...message,
     params: [...message.params, ...ports],
   }
   const target = {
-    sender,
-    sendAndTransfer(message, transfer) {
-      this.sender.postMessage(preloadChannelType, message, transfer)
+    isDiposed() {
+      return this.sender.isDestroyed()
     },
     send(message) {
       this.sender.postMessage(preloadChannelType, message)
     },
-    isDiposed() {
-      return this.sender.isDestroyed()
+    sendAndTransfer(message, transfer) {
+      this.sender.postMessage(preloadChannelType, message, transfer)
     },
+    sender,
   }
   const syntheticEvent = {
     data,
@@ -31,10 +31,6 @@ const createSyntheticEvent = (event, message) => {
 
 export const wrap = (webContentsIpc) => {
   return {
-    webContentsIpc,
-    send(message) {
-      throw new Error('not implemented')
-    },
     on(event, listener) {
       const wrappedListener = (event, message) => {
         const syntheticEvent = createSyntheticEvent(event, message)
@@ -42,5 +38,9 @@ export const wrap = (webContentsIpc) => {
       }
       this.webContentsIpc.on(preloadChannelType, wrappedListener)
     },
+    send(message) {
+      throw new Error('not implemented')
+    },
+    webContentsIpc,
   }
 }

@@ -7,9 +7,9 @@ beforeEach(() => {
 jest.unstable_mockModule('electron', () => {
   return {
     contentTracing: {
-      stopRecording: jest.fn(),
-      startRecording: jest.fn(),
       decryptString: jest.fn(),
+      startRecording: jest.fn(),
+      stopRecording: jest.fn(),
     },
   }
 })

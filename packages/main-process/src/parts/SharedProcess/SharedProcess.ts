@@ -2,10 +2,10 @@ import * as IpcChildType from '../IpcChildType/IpcChildType.ts'
 import * as LaunchSharedProcess from '../LaunchSharedProcess/LaunchSharedProcess.ts'
 import * as SharedProcessState from '../SharedProcessState/SharedProcessState.ts'
 
-export const getOrCreate = async ({ method, env = {} }): Promise<any> => {
+export const getOrCreate = async ({ env = {}, method }): Promise<any> => {
   if (!SharedProcessState.state.promise) {
     // @ts-ignore
-    SharedProcessState.state.promise = LaunchSharedProcess.launchSharedProcess({ method, env })
+    SharedProcessState.state.promise = LaunchSharedProcess.launchSharedProcess({ env, method })
   }
   return SharedProcessState.state.promise
 }

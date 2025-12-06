@@ -5,14 +5,14 @@ jest.unstable_mockModule('electron', () => {
     app: {
       name: '',
     },
-    screen: {},
-    net: {},
-    BrowserWindow: class {},
-    shell: {},
-    ipcMain: {},
-    MessageChannelMain: class {},
     ApplicationMenu: class {},
+    BrowserWindow: class {},
+    ipcMain: {},
     Menu: class {},
+    MessageChannelMain: class {},
+    net: {},
+    screen: {},
+    shell: {},
   }
 })
 
@@ -39,8 +39,8 @@ test.skip('handlePortForMainProcess - error - command not found', async () => {
     on(event, listener) {
       _listener = listener
     },
-    start() {},
     postMessage: jest.fn(),
+    start() {},
   }
   const event = {
     ports: [port],
@@ -50,20 +50,20 @@ test.skip('handlePortForMainProcess - error - command not found', async () => {
   App.handlePortForMainProcess(event)
   await _listener({
     data: {
+      id: 1,
+      jsonrpc: '2.0',
       method: 'App.exit',
       params: [],
-      jsonrpc: '2.0',
-      id: 1,
     },
   })
   expect(port.postMessage).toHaveBeenCalledTimes(1)
   expect(port.postMessage).toHaveBeenCalledWith({
-    jsonrpc: '2.0',
-    id: 1,
     error: {
-      message: 'method not found App.exit',
       code: -32_001,
       data: expect.stringMatching('Error: method not found App.exit'),
+      message: 'method not found App.exit',
     },
+    id: 1,
+    jsonrpc: '2.0',
   })
 })

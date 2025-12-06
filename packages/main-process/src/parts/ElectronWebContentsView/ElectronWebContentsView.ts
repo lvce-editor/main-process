@@ -31,7 +31,7 @@ export const attachEventListeners = (webContentsId) => {
   for (const value of values) {
     const wrappedListener = (...args) => {
       // @ts-ignore
-      const { result, messages } = value.handler(...args)
+      const { messages, result } = value.handler(...args)
       for (const message of messages) {
         const [key, ...rest] = message
         EmbedsProcess.send(`ElectronWebContents.${key}`, webContentsId, ...rest)
@@ -50,7 +50,7 @@ export const disposeWebContentsView = (browserViewId) => {
   if (!instance) {
     return
   }
-  const { view, browserWindow } = instance
+  const { browserWindow, view } = instance
   ElectronWebContentsViewState.remove(browserViewId)
   browserWindow.contentView.removeChildView(view)
 }

@@ -7,8 +7,8 @@ import * as RequiresSocket from '../RequiresSocket/RequiresSocket.ts'
 export const handleElectronMessagePort = async (messagePort, rpcId) => {
   Assert.object(messagePort)
   const rpc = await ElectronMessagePortRpcClient.create({
-    messagePort: messagePort,
     commandMap: CommandMapRef.commandMapRef,
+    messagePort: messagePort,
     requiresSocket: RequiresSocket.requiresSocket,
   })
   if (rpcId) {

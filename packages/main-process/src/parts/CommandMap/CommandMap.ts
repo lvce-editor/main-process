@@ -70,7 +70,6 @@ export const commandMap = {
   'ElectronWebContentsView.createWebContentsView': ElectronWebContentsView.createWebContentsView,
   'ElectronWebContentsView.disposeWebContentsView': ElectronWebContentsView.disposeWebContentsView,
   'ElectronWebContentsViewFunctions.addToWindow': ElectronWebContentsViewFunctions.addToWindow,
-  'ElectronWebContentsViewFunctions.getDomTree': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.getDomTree),
   'ElectronWebContentsViewFunctions.backward': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.backward),
   'ElectronWebContentsViewFunctions.cancelNavigation': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.cancelNavigation,
@@ -78,17 +77,18 @@ export const commandMap = {
   'ElectronWebContentsViewFunctions.copyImageAt': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.copyImageAt,
   ),
-  'ElectronWebContentsViewFunctions.focus': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.focus),
-  'ElectronWebContentsViewFunctions.insertCss': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.insertCss),
   'ElectronWebContentsViewFunctions.executeJavaScript': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.executeJavaScript,
   ),
+  'ElectronWebContentsViewFunctions.focus': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.focus),
+  'ElectronWebContentsViewFunctions.forward': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.forward),
+  'ElectronWebContentsViewFunctions.getDomTree': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.getDomTree),
+  'ElectronWebContentsViewFunctions.getStats': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.getStats),
+  'ElectronWebContentsViewFunctions.hide': ElectronWebContentsViewFunctions.hide,
+  'ElectronWebContentsViewFunctions.insertCss': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.insertCss),
   'ElectronWebContentsViewFunctions.insertJavaScript': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.executeJavaScript,
   ),
-  'ElectronWebContentsViewFunctions.forward': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.forward),
-  'ElectronWebContentsViewFunctions.getStats': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.getStats),
-  'ElectronWebContentsViewFunctions.hide': ElectronWebContentsViewFunctions.hide,
   'ElectronWebContentsViewFunctions.inspectElement': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.inspectElement,
   ),

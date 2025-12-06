@@ -4,6 +4,9 @@ import * as Debug from '../Debug/Debug.ts'
 
 export const parseCliArgs = (argv) => {
   const CLI_OPTIONS = {
+    alias: {
+      version: 'v',
+    },
     boolean: [
       CliCommandType.Version,
       CliCommandType.Help,
@@ -12,9 +15,6 @@ export const parseCliArgs = (argv) => {
       CliCommandType.Web,
       CliCommandType.SandBox,
     ],
-    alias: {
-      version: 'v',
-    },
     default: {
       sandbox: false,
     },

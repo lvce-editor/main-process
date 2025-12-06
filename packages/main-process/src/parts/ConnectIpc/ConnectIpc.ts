@@ -4,10 +4,10 @@ import * as IpcParentType from '../IpcParentType/IpcParentType.ts'
 
 const getModule = (method: number): any => {
   switch (method) {
-    case IpcParentType.NodeWorker:
-      return ConnectIpcNodeWorker.connectIpc
     case IpcParentType.ElectronUtilityProcess:
       return ConnectIpcElectronUtilityProcess.connectIpc
+    case IpcParentType.NodeWorker:
+      return ConnectIpcNodeWorker.connectIpc
     default:
       throw new Error('unexpected ipc type')
   }

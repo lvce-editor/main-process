@@ -53,14 +53,14 @@ const getBeforeRequestResponseXhrHead = (url) => {
 
 const getBeforeRequestResponseXhr = (method, url) => {
   switch (method) {
-    case HttpMethod.Post:
-      return getBeforeRequestResponseXhrPost(url)
     case HttpMethod.Get:
       return getBeforeRequestResponseXhrGet(url)
     case HttpMethod.Head:
       return getBeforeRequestResponseXhrHead(url)
     case HttpMethod.Options:
       return getBeforeRequestResponseXhrOptions(url)
+    case HttpMethod.Post:
+      return getBeforeRequestResponseXhrPost(url)
     default:
       return {}
   }

@@ -11,7 +11,7 @@ export const detach = (webContents, listener) => {
 
 export const handler = (event, title) => {
   return {
-    result: undefined,
     messages: [['handleTitleUpdated', title]],
+    result: undefined,
   }
 }

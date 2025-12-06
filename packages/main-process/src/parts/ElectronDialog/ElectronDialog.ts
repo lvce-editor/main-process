@@ -29,14 +29,14 @@ export const showOpenDialog = async (title, properties) => {
  * @returns
  */
 export const showMessageBox = async ({
-  message,
   buttons,
-  type = ElectronMessageBoxType.Error,
-  detail,
-  title,
-  windowId = -1,
-  productName,
   defaultId,
+  detail,
+  message,
+  productName,
+  title,
+  type = ElectronMessageBoxType.Error,
+  windowId = -1,
 }) => {
   Assert.string(message)
   Assert.array(buttons)
@@ -51,15 +51,15 @@ export const showMessageBox = async ({
     message = message.message
   }
   const result = await Electron.dialog.showMessageBox(window, {
-    // @ts-ignore
-    type,
-    message,
-    title: title || productName,
     buttons,
     cancelId: 1,
-    detail,
-    noLink: true,
     defaultId,
+    detail,
+    message,
+    noLink: true,
+    title: title || productName,
+    // @ts-ignore
+    type,
   })
   const selectedButtonIndex = result.response
   return selectedButtonIndex

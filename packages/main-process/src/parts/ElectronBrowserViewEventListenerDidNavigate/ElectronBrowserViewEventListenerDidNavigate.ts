@@ -12,7 +12,7 @@ export const detach = (webContents, listener) => {
 
 export const handler = (event, url) => {
   return {
-    result: undefined,
     messages: [['handleDidNavigate', url]],
+    result: undefined,
   }
 }

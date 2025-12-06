@@ -7,13 +7,13 @@ beforeEach(() => {
 
 jest.unstable_mockModule('electron', () => {
   return {
-    dialog: {
-      showMessageBox: jest.fn(),
-    },
     BrowserWindow: {
       getFocusedWindow() {
         return {}
       },
+    },
+    dialog: {
+      showMessageBox: jest.fn(),
     },
   }
 })
@@ -37,10 +37,10 @@ test.skip('showMessageBox', async () => {
   })
   // @ts-ignore
   await ElectronDialog.showMessageBox({
-    message: 'test',
     buttons: ['copy', 'ok'],
-    type: ElectronMessageBoxType.Info,
     detail: 'test detail',
+    message: 'test',
+    type: ElectronMessageBoxType.Info,
   })
   expect(Electron.dialog.showMessageBox).toHaveBeenCalledTimes(1)
   expect(Electron.dialog.showMessageBox).toHaveBeenCalledWith(

@@ -6,8 +6,8 @@ beforeEach(() => {
 
 jest.unstable_mockModule('../src/parts/Logger/Logger.js', () => {
   return {
-    info: jest.fn(),
     error: jest.fn(),
+    info: jest.fn(),
   }
 })
 
@@ -43,8 +43,6 @@ test.skip('handleUncaughtExceptionMonitor', () => {
   // @ts-expect-error
   PrettyError.prepare.mockImplementation(() => {
     return {
-      message: 'oops',
-      stack: 'at main (/test/packages/main-process/src/mainProcessMain.js:19:11)',
       codeFrame: `  17 |
   18 |   if (Math) {
 > 19 |     throw new Error('oops')
@@ -52,6 +50,8 @@ test.skip('handleUncaughtExceptionMonitor', () => {
   20 |   }
   21 | }
   22 |`,
+      message: 'oops',
+      stack: 'at main (/test/packages/main-process/src/mainProcessMain.js:19:11)',
     }
   })
   // @ts-ignore
@@ -78,8 +78,6 @@ test.skip('handleUnhandledRejection', () => {
   // @ts-expect-error
   PrettyError.prepare.mockImplementation(() => {
     return {
-      message: 'oops',
-      stack: 'at main (/test/packages/main-process/src/mainProcessMain.js:19:11)',
       codeFrame: `    17 |
     18 |   if (Math) {
   > 19 |     throw new Error('oops')
@@ -87,6 +85,8 @@ test.skip('handleUnhandledRejection', () => {
     20 |   }
     21 | }
     22 |`,
+      message: 'oops',
+      stack: 'at main (/test/packages/main-process/src/mainProcessMain.js:19:11)',
       type: 'Error',
     }
   })
@@ -117,14 +117,14 @@ test.skip('handleUnhandledRejection - syntax error', () => {
   // @ts-expect-error
   PrettyError.prepare.mockImplementation(() => {
     return {
-      message: 'Cannot use import statement outside a module',
-      stack: `    at/test/packages/main-process/src/parts/IpcParentWithNodeWorker/IpcParentWithNodeWorker.js:1
-    at async Promise.all (index 0)`,
       codeFrame: `> 1 | import * as Assert from '../Assert/Assert.js'
     | ^
   2 | import { Worker } from 'node:worker_threads'
   3 | const GetFirstNodeWorkerEvent = require('../GetFirstNodeWorkerEvent/GetFirstNodeWorkerEvent.js')
   4 |`,
+      message: 'Cannot use import statement outside a module',
+      stack: `    at/test/packages/main-process/src/parts/IpcParentWithNodeWorker/IpcParentWithNodeWorker.js:1
+    at async Promise.all (index 0)`,
       type: 'SyntaxError',
     }
   })

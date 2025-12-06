@@ -15,8 +15,8 @@ export const getStats = (webContentsId) => {
   return {
     canGoBack,
     canGoForward,
-    url,
     title,
+    url,
   }
 }
 

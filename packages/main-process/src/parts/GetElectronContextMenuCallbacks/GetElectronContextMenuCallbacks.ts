@@ -1,17 +1,17 @@
 import * as Promises from '../Promises/Promises.ts'
 
 export const getElectronCallbacks = () => {
-  const { resolve, promise } = Promises.withResolvers()
+  const { promise, resolve } = Promises.withResolvers()
   const handleClick = (menuItem) => {
     resolve({
-      type: 'click',
       data: menuItem,
+      type: 'click',
     })
   }
   const handleClose = () => {
     resolve({
-      type: 'close',
       data: undefined,
+      type: 'close',
     })
   }
   return {

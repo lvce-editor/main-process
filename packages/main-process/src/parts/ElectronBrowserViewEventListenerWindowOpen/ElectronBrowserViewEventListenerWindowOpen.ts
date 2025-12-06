@@ -12,36 +12,36 @@ export const detach = (webContents, listener) => {
   webContents.setWindowOpenHandler(null)
 }
 
-export const handler = ({ url, disposition, features, frameName, referrer, postBody }) => {
+export const handler = ({ disposition, features, frameName, postBody, referrer, url }) => {
   if (url === 'about:blank') {
     return {
+      messages: [],
       result: {
         action: ElectronWindowOpenActionType.Allow,
       },
-      messages: [],
     }
   }
   if (disposition === ElectronDispositionType.BackgroundTab) {
     return {
+      messages: [['handleWindowOpen', url]],
       result: {
         action: ElectronWindowOpenActionType.Deny,
       },
-      messages: [['handleWindowOpen', url]],
     }
   }
   if (disposition === ElectronDispositionType.NewWindow) {
     return {
+      messages: [],
       result: {
         action: ElectronWindowOpenActionType.Allow,
       },
-      messages: [],
     }
   }
   Logger.info(`[main-process] blocked popup for ${url}`)
   return {
+    messages: [],
     result: {
       action: ElectronWindowOpenActionType.Deny,
     },
-    messages: [],
   }
 }

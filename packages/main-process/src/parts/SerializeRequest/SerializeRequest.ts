@@ -12,7 +12,7 @@ const serializeRequestHeaders = (headers) => {
  */
 export const serializeRequest = (request) => {
   return {
-    url: request.url,
     headers: serializeRequestHeaders(request.headers),
+    url: request.url,
   }
 }

@@ -17,10 +17,10 @@ import * as SharedProcess from '../SharedProcess/SharedProcess.ts'
 export const handlePort = async (browserWindowPort, ipcId) => {
   const method = IpcParentType.ElectronUtilityProcess
   const sharedProcess = await SharedProcess.getOrCreate({
-    method,
     env: {
       FOLDER: '',
     },
+    method,
   })
   await ConnectIpc.connectIpc(method, sharedProcess, browserWindowPort, ipcId)
 }

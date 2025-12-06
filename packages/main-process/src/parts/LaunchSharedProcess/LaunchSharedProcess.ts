@@ -24,7 +24,7 @@ const handleChildDisconnect = () => {
   Logger.info('[main process] shared process disconnected')
 }
 
-export const launchSharedProcess = async ({ method, env = {} }) => {
+export const launchSharedProcess = async ({ env = {}, method }) => {
   Performance.mark(PerformanceMarkerType.WillStartSharedProcess)
   const sharedProcessPath = Platform.getSharedProcessPath()
   const execArgv = GetSharedProcessArgv.getSharedProcessArgv(Platform.isProduction)
@@ -33,12 +33,12 @@ export const launchSharedProcess = async ({ method, env = {} }) => {
     ...env,
   }
   const sharedProcessRpc = await ElectronUtilityProcessRpcParent.create({
-    env: fullEnv,
     argv: [],
-    execArgv,
-    path: sharedProcessPath,
-    name: 'shared-process',
     commandMap: CommandMapRef.commandMapRef,
+    env: fullEnv,
+    execArgv,
+    name: 'shared-process',
+    path: sharedProcessPath,
     // @ts-ignore
     requiresSocket: RequiresSocket.requiresSocket,
   })
@@ -62,8 +62,8 @@ export const launchSharedProcess = async ({ method, env = {} }) => {
 
   await ElectronMessagePortRpcClient.create({
     commandMap: CommandMapRef.commandMapRef,
-    requiresSocket: RequiresSocket.requiresSocket,
     messagePort: port1,
+    requiresSocket: RequiresSocket.requiresSocket,
   })
 
   Performance.mark(PerformanceMarkerType.DidStartSharedProcess)

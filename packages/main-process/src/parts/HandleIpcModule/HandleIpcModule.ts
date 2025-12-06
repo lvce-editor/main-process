@@ -7,12 +7,12 @@ import * as IpcId from '../IpcId/IpcId.ts'
 export const getModule = (ipcId) => {
   Assert.number(ipcId)
   switch (ipcId) {
+    case IpcId.RendererProcess:
+      return HandleIpcRendererProcess
     case IpcId.SharedProcess:
       return HandleIpcSharedProcess
     case IpcId.UtilityProcess:
       return HandleIpcUtilityProcess
-    case IpcId.RendererProcess:
-      return HandleIpcRendererProcess
     default:
       throw new Error(`unexpected incoming ipc`)
   }

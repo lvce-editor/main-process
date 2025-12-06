@@ -4,11 +4,11 @@ export const mark = (key) => {
 
 const toUiEntry = (performanceEntry) => {
   return {
-    name: performanceEntry.name,
-    entryType: performanceEntry.entryType,
-    startTime: performanceEntry.startTime,
-    duration: performanceEntry.duration,
     detail: performanceEntry.detail,
+    duration: performanceEntry.duration,
+    entryType: performanceEntry.entryType,
+    name: performanceEntry.name,
+    startTime: performanceEntry.startTime,
   }
 }
 

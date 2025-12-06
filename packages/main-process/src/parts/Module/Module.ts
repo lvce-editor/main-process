@@ -17,6 +17,10 @@ export const load = async (moduleId) => {
       return import('../CreatePidMap/CreatePidMap.ipc.ts')
     case ModuleId.DesktopCapturer:
       return import('../DesktopCapturer/DesktopCapturer.ipc.ts')
+    case ModuleId.Developer:
+      return import('../ElectronDeveloper/ElectronDeveloper.ipc.ts')
+    case ModuleId.Dialog:
+      return import('../ElectronDialog/ElectronDialog.ipc.ts')
     case ModuleId.ElectronApplicationMenu:
       return import('../ElectronApplicationMenu/ElectronApplicationMenu.ipc.ts')
     case ModuleId.ElectronClipBoard:
@@ -25,10 +29,6 @@ export const load = async (moduleId) => {
       return import('../ElectronContentTracing/ElectronContentTracing.ipc.ts')
     case ModuleId.ElectronContextMenu:
       return import('../ElectronContextMenu/ElectronContextMenu.ipc.ts')
-    case ModuleId.Developer:
-      return import('../ElectronDeveloper/ElectronDeveloper.ipc.ts')
-    case ModuleId.Dialog:
-      return import('../ElectronDialog/ElectronDialog.ipc.ts')
     case ModuleId.ElectronNet:
       return import('../ElectronNet/ElectronNet.ipc.ts')
     case ModuleId.ElectronNetLog:
@@ -37,38 +37,38 @@ export const load = async (moduleId) => {
       return import('../ElectronPowerSaveBlocker/ElectronPowerSaveBlocker.ipc.ts')
     case ModuleId.ElectronSafeStorage:
       return import('../ElectronSafeStorage/ElectronSafeStorage.ipc.ts')
-    case ModuleId.ElectronShell:
-      return import('../ElectronShell/ElectronShell.ipc.ts')
-    case ModuleId.Window:
-      return import('../ElectronWindow/ElectronWindow.ipc.ts')
-    case ModuleId.ElectronWindowProcessExplorer:
-      return import('../ElectronWindowProcessExplorer/ElectronWindowProcessExplorer.ipc.ts')
-    case ModuleId.IpcParent:
-      return import('../IpcParent/IpcParent.ipc.ts')
-    case ModuleId.OpenExternal:
-      return import('../OpenExternal/OpenExternal.ipc.ts')
-    case ModuleId.Process:
-      return import('../Process/Process.ipc.ts')
-    case ModuleId.Exit:
-      return import('../Exit/Exit.ipc.ts')
     case ModuleId.ElectronScreen:
       return import('../ElectronScreen/ElectronScreen.ipc.ts')
-    case ModuleId.TemporaryMessagePort:
-      return import('../TemporaryMessagePort/TemporaryMessagePort.ipc.ts')
+    case ModuleId.ElectronSession:
+      return import('../ElectronSession/ElectronSession.ipc.ts')
+    case ModuleId.ElectronShell:
+      return import('../ElectronShell/ElectronShell.ipc.ts')
     case ModuleId.ElectronWebContents:
       return import('../ElectronWebContents/ElectronWebContents.ipc.ts')
     case ModuleId.ElectronWebContentsView:
       return import('../ElectronWebContentsView/ElectronWebContentsView.ipc.ts')
     case ModuleId.ElectronWebContentsViewFunctions:
       return import('../ElectronWebContentsViewFunctions/ElectronWebContentsViewFunctions.ipc.ts')
-    case ModuleId.HandleElectronMessagePort:
-      return import('../HandleElectronMessagePort/HandleElectronMessagePort.ipc.ts')
+    case ModuleId.ElectronWindowProcessExplorer:
+      return import('../ElectronWindowProcessExplorer/ElectronWindowProcessExplorer.ipc.ts')
+    case ModuleId.Exit:
+      return import('../Exit/Exit.ipc.ts')
     case ModuleId.GetWindowId:
       return import('../GetWindowId/GetWindowId.ipc.ts')
-    case ModuleId.ElectronSession:
-      return import('../ElectronSession/ElectronSession.ipc.ts')
+    case ModuleId.HandleElectronMessagePort:
+      return import('../HandleElectronMessagePort/HandleElectronMessagePort.ipc.ts')
+    case ModuleId.IpcParent:
+      return import('../IpcParent/IpcParent.ipc.ts')
+    case ModuleId.OpenExternal:
+      return import('../OpenExternal/OpenExternal.ipc.ts')
+    case ModuleId.Process:
+      return import('../Process/Process.ipc.ts')
+    case ModuleId.TemporaryMessagePort:
+      return import('../TemporaryMessagePort/TemporaryMessagePort.ipc.ts')
     case ModuleId.Trash:
       return import('../Trash/Trash.ipc.ts')
+    case ModuleId.Window:
+      return import('../ElectronWindow/ElectronWindow.ipc.ts')
     default:
       throw new ModuleNotFoundError(moduleId)
   }
