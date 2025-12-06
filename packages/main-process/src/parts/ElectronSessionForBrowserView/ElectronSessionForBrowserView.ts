@@ -14,9 +14,9 @@ const isAllowedPermission = (permission: string): boolean => {
   switch (permission) {
     case ElectronPermissionType.ClipBoardRead:
     case ElectronPermissionType.ClipBoardSanitizedWrite:
-    case ElectronPermissionType.WindowPlacement:
     case ElectronPermissionType.FullScreen:
     case ElectronPermissionType.GeoLocation:
+    case ElectronPermissionType.WindowPlacement:
       return true
     default:
       return false

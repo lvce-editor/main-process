@@ -6,7 +6,7 @@ export const { create } = IpcParentWithElectronUtilityProcess
 
 export const { wrap } = IpcParentWithElectronUtilityProcess
 
-export const effects = ({ rawIpc, name }) => {
+export const effects = ({ name, rawIpc }) => {
   if (!rawIpc.pid) {
     return
   }

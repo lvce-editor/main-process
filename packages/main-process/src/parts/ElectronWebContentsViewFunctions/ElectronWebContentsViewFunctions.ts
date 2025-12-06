@@ -28,10 +28,10 @@ export const resizeBrowserView = (view: BrowserView, x: number, y: number, width
   Assert.number(width)
   Assert.number(height)
   view.setBounds({
+    height,
+    width,
     x,
     y,
-    width,
-    height,
   })
 }
 
@@ -145,7 +145,7 @@ export const show = (id) => {
     Debug.debug('[main-process] failed to show browser view', id)
     return
   }
-  const { view, browserWindow } = state
+  const { browserWindow, view } = state
   browserWindow.contentView.addChildView(view)
 }
 
@@ -165,7 +165,7 @@ export const hide = (id) => {
     Debug.debug('[main-process] failed to hide browser view', id)
     return
   }
-  const { view, browserWindow } = state
+  const { browserWindow, view } = state
   browserWindow.contentView.removeChildView(view)
 }
 
@@ -222,7 +222,7 @@ export const getStats = (view: BrowserView) => {
   return {
     canGoBack,
     canGoForward,
-    url,
     title,
+    url,
   }
 }

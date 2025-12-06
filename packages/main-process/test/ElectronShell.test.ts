@@ -7,10 +7,10 @@ beforeEach(() => {
 jest.unstable_mockModule('electron', () => {
   return {
     shell: {
-      showItemInFolder: jest.fn(),
       beep: jest.fn(),
       openExternal: jest.fn(),
       openPath: jest.fn(),
+      showItemInFolder: jest.fn(),
     },
   }
 })

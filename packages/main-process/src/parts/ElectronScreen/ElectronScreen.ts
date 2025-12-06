@@ -13,7 +13,7 @@ export const getHeight = () => {
 export const getBounds = () => {
   const primaryDisplay = screen.getPrimaryDisplay()
   return {
-    width: primaryDisplay.bounds.width,
     height: primaryDisplay.bounds.height,
+    width: primaryDisplay.bounds.width,
   }
 }

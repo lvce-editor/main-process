@@ -11,17 +11,17 @@ afterEach(async () => {
 
 test.skip('get', async () => {
   const fakeSession = {
-    x: 42,
+    handle() {},
+    protocol: {
+      handle() {},
+      registerFileProtocol() {},
+    },
+    setPermissionCheckHandler() {},
+    setPermissionRequestHandler() {},
     webRequest: {
       onHeadersReceived() {},
     },
-    protocol: {
-      registerFileProtocol() {},
-      handle() {},
-    },
-    setPermissionRequestHandler() {},
-    setPermissionCheckHandler() {},
-    handle() {},
+    x: 42,
   }
   jest.unstable_mockModule('electron', () => {
     return {
@@ -62,18 +62,18 @@ test.skip('handlePermissionCheck - allow writing to clipboard', async () => {
    */
   let _permissionCheckHandler
   const fakeSession = {
-    x: 42,
-    webRequest: {
-      onHeadersReceived() {},
-    },
     protocol: {
-      registerFileProtocol() {},
       handle() {},
+      registerFileProtocol() {},
     },
-    setPermissionRequestHandler() {},
     setPermissionCheckHandler(fn) {
       _permissionCheckHandler = fn
     },
+    setPermissionRequestHandler() {},
+    webRequest: {
+      onHeadersReceived() {},
+    },
+    x: 42,
   }
   jest.unstable_mockModule('electron', () => {
     return {
@@ -95,18 +95,18 @@ test.skip('handlePermissionRequests - allow reading from', async () => {
    */
   let _permissionRequestHandler
   const fakeSession = {
-    x: 42,
-    webRequest: {
-      onHeadersReceived() {},
-    },
     protocol: {
-      registerFileProtocol() {},
       handle() {},
+      registerFileProtocol() {},
     },
+    setPermissionCheckHandler() {},
     setPermissionRequestHandler(fn) {
       _permissionRequestHandler = fn
     },
-    setPermissionCheckHandler() {},
+    webRequest: {
+      onHeadersReceived() {},
+    },
+    x: 42,
   }
   jest.unstable_mockModule('electron', () => {
     return {

@@ -3,34 +3,18 @@ import * as KeyCode from '../KeyCode/KeyCode.ts'
 
 export const getKeyCode = (key) => {
   switch (key) {
+    case Key.Backquote:
+      return KeyCode.Backquote
+    case Key.Backslash:
+      return KeyCode.Backslash
     case Key.Backspace:
       return KeyCode.Backspace
-    case Key.Tab:
-      return KeyCode.Tab
-    case Key.Escape:
-      return KeyCode.Escape
-    case Key.Enter:
-      return KeyCode.Enter
-    case Key.Space:
-      return KeyCode.Space
-    case Key.PageUp:
-      return KeyCode.PageUp
-    case Key.PageDown:
-      return KeyCode.PageDown
-    case Key.End:
-      return KeyCode.End
-    case Key.Home:
-      return KeyCode.Home
-    case Key.LeftArrow:
-      return KeyCode.LeftArrow
-    case Key.UpArrow:
-      return KeyCode.UpArrow
-    case Key.RightArrow:
-      return KeyCode.RightArrow
-    case Key.DownArrow:
-      return KeyCode.DownArrow
-    case Key.Insert:
-      return KeyCode.Insert
+    case Key.BracketLeft:
+      return KeyCode.BracketLeft
+    case Key.BracketRight:
+      return KeyCode.BracketRight
+    case Key.Comma:
+      return KeyCode.Comma
     case Key.Delete:
       return KeyCode.Delete
     case Key.Digit0:
@@ -53,6 +37,68 @@ export const getKeyCode = (key) => {
       return KeyCode.Digit8
     case Key.Digit9:
       return KeyCode.Digit9
+    case Key.DownArrow:
+      return KeyCode.DownArrow
+    case Key.End:
+      return KeyCode.End
+    case Key.Enter:
+      return KeyCode.Enter
+    case Key.Equal:
+      return KeyCode.Equal
+    case Key.Escape:
+      return KeyCode.Escape
+    case Key.F1:
+      return KeyCode.F1
+    case Key.F10:
+      return KeyCode.F10
+    case Key.F11:
+      return KeyCode.F11
+    case Key.F12:
+      return KeyCode.F12
+    case Key.F13:
+      return KeyCode.F13
+    case Key.F14:
+      return KeyCode.F14
+    case Key.F15:
+      return KeyCode.F15
+    case Key.F16:
+      return KeyCode.F16
+    case Key.F17:
+      return KeyCode.F17
+    case Key.F18:
+      return KeyCode.F18
+    case Key.F19:
+      return KeyCode.F19
+    case Key.F2:
+      return KeyCode.F2
+    case Key.F20:
+      return KeyCode.F20
+    case Key.F21:
+      return KeyCode.F21
+    case Key.F22:
+      return KeyCode.F22
+    case Key.F23:
+      return KeyCode.F23
+    case Key.F24:
+      return KeyCode.F24
+    case Key.F3:
+      return KeyCode.F3
+    case Key.F4:
+      return KeyCode.F4
+    case Key.F5:
+      return KeyCode.F5
+    case Key.F6:
+      return KeyCode.F6
+    case Key.F7:
+      return KeyCode.F7
+    case Key.F8:
+      return KeyCode.F8
+    case Key.F9:
+      return KeyCode.F9
+    case Key.Home:
+      return KeyCode.Home
+    case Key.Insert:
+      return KeyCode.Insert
     case Key.KeyA:
       return KeyCode.KeyA
     case Key.KeyB:
@@ -105,80 +151,34 @@ export const getKeyCode = (key) => {
       return KeyCode.KeyY
     case Key.KeyZ:
       return KeyCode.KeyZ
-    case Key.F1:
-      return KeyCode.F1
-    case Key.F2:
-      return KeyCode.F2
-    case Key.F3:
-      return KeyCode.F3
-    case Key.F4:
-      return KeyCode.F4
-    case Key.F5:
-      return KeyCode.F5
-    case Key.F6:
-      return KeyCode.F6
-    case Key.F7:
-      return KeyCode.F7
-    case Key.F8:
-      return KeyCode.F8
-    case Key.F9:
-      return KeyCode.F9
-    case Key.F10:
-      return KeyCode.F10
-    case Key.F11:
-      return KeyCode.F11
-    case Key.F12:
-      return KeyCode.F12
-    case Key.F13:
-      return KeyCode.F13
-    case Key.F14:
-      return KeyCode.F14
-    case Key.F15:
-      return KeyCode.F15
-    case Key.F16:
-      return KeyCode.F16
-    case Key.F17:
-      return KeyCode.F17
-    case Key.F18:
-      return KeyCode.F18
-    case Key.F19:
-      return KeyCode.F19
-    case Key.F20:
-      return KeyCode.F20
-    case Key.F21:
-      return KeyCode.F21
-    case Key.F22:
-      return KeyCode.F22
-    case Key.F23:
-      return KeyCode.F23
-    case Key.F24:
-      return KeyCode.F24
-    case Key.SemiColon:
-      return KeyCode.SemiColon
-    case Key.Equal:
-      return KeyCode.Equal
-    case Key.Comma:
-      return KeyCode.Comma
+    case Key.LeftArrow:
+      return KeyCode.LeftArrow
     case Key.Minus:
       return KeyCode.Minus
+    case Key.PageDown:
+      return KeyCode.PageDown
+    case Key.PageUp:
+      return KeyCode.PageUp
     case Key.Period:
       return KeyCode.Period
-    case Key.Slash:
-      return KeyCode.Slash
-    case Key.Backquote:
-      return KeyCode.Backquote
-    case Key.BracketLeft:
-      return KeyCode.BracketLeft
-    case Key.Backslash:
-      return KeyCode.Backslash
-    case Key.BracketRight:
-      return KeyCode.BracketRight
-    case Key.Quote:
-      return KeyCode.Quote
-    case Key.Star:
-      return KeyCode.Star
     case Key.Plus:
       return KeyCode.Plus
+    case Key.Quote:
+      return KeyCode.Quote
+    case Key.RightArrow:
+      return KeyCode.RightArrow
+    case Key.SemiColon:
+      return KeyCode.SemiColon
+    case Key.Slash:
+      return KeyCode.Slash
+    case Key.Space:
+      return KeyCode.Space
+    case Key.Star:
+      return KeyCode.Star
+    case Key.Tab:
+      return KeyCode.Tab
+    case Key.UpArrow:
+      return KeyCode.UpArrow
     default:
       return KeyCode.Unknown
   }

@@ -12,7 +12,7 @@ export const detach = (webContents, listener) => {
 
 export const handler = () => {
   return {
-    result: undefined,
     messages: [['handleBrowserViewDestroyed']],
+    result: undefined,
   }
 }

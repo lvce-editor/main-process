@@ -1,9 +1,9 @@
 import * as Assert from '../Assert/Assert.ts'
 
 const state = {
-  views: Object.create(null),
-  fallThroughKeyBindings: [],
   canceled: Object.create(null),
+  fallThroughKeyBindings: [],
+  views: Object.create(null),
 }
 
 export const add = (id, browserWindow, view) => {

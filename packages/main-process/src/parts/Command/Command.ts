@@ -3,8 +3,8 @@ import * as ModuleMap from '../ModuleMap/ModuleMap.ts'
 
 const state = {
   commands: Object.create(null),
-  pendingModules: Object.create(null),
   async load(moduleId) {},
+  pendingModules: Object.create(null),
 }
 
 const initializeModule = (module) => {

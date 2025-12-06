@@ -14,8 +14,8 @@ export const targetMessagePort = async (messagePort, message) => {
 
 export const upgradeMessagePort = (port) => {
   return {
-    type: 'send',
     method: 'HandleElectronMessagePort.handleElectronMessagePort',
     params: [port],
+    type: 'send',
   }
 }

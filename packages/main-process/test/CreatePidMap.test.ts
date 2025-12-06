@@ -24,18 +24,18 @@ test('createPidMap - detect chrome devtools', () => {
   electron.BrowserWindow.getAllWindows.mockImplementation(() => {
     return [
       {
+        getBrowserViews() {
+          return []
+        },
         webContents: {
-          getOSProcessId() {
-            return 123
-          },
           devToolsWebContents: {
             getOSProcessId() {
               return 200_152
             },
           },
-        },
-        getBrowserViews() {
-          return []
+          getOSProcessId() {
+            return 123
+          },
         },
       },
     ]
@@ -48,13 +48,13 @@ test('createPidMap - detect renderer', () => {
   electron.BrowserWindow.getAllWindows.mockImplementation(() => {
     return [
       {
+        getBrowserViews() {
+          return []
+        },
         webContents: {
           getOSProcessId() {
             return 200_152
           },
-        },
-        getBrowserViews() {
-          return []
         },
       },
     ]

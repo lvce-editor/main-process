@@ -9,8 +9,8 @@ export const add = (pid, process, name) => {
   Assert.object(process)
   Assert.string(name)
   state.all[pid] = {
-    process,
     name,
+    process,
   }
 }
 

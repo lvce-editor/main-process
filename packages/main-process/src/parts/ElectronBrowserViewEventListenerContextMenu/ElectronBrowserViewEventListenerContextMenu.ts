@@ -12,7 +12,7 @@ export const detach = (webContents, listener) => {
 
 export const handler = (event, params) => {
   return {
-    result: undefined,
     messages: [['handleContextMenu', params]],
+    result: undefined,
   }
 }

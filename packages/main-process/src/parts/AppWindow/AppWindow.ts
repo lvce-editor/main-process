@@ -64,8 +64,8 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
   }
   window.on('close', handleWindowClose)
   await ElectronWebContentsRpcClient.create({
-    webContents: window.webContents,
     commandMap: CommandMapRef.commandMapRef,
+    webContents: window.webContents,
   })
   await loadUrl(window, url)
 }

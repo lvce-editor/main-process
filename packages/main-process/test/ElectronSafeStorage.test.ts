@@ -7,9 +7,9 @@ beforeEach(() => {
 jest.unstable_mockModule('electron', () => {
   return {
     safeStorage: {
-      isEncryptionAvailable: jest.fn(),
-      encryptString: jest.fn(),
       decryptString: jest.fn(),
+      encryptString: jest.fn(),
+      isEncryptionAvailable: jest.fn(),
     },
   }
 })

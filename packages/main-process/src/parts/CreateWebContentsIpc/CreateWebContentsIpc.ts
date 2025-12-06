@@ -2,15 +2,15 @@ import * as ElectronPreloadChannelType from '../ElectronPreloadChannelType/Elect
 
 export const createWebContentsIpc = (webContents) => {
   return {
-    webContents,
+    isDisposed() {
+      return this.webContents.isDestroyed()
+    },
     send(message) {
       this.webContents.postMessage(ElectronPreloadChannelType.Port, message)
     },
     sendAndTransfer(message, transfer) {
       this.webContents.postMessage(ElectronPreloadChannelType.Port, message, transfer)
     },
-    isDisposed() {
-      return this.webContents.isDestroyed()
-    },
+    webContents,
   }
 }

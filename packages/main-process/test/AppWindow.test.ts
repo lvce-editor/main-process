@@ -23,35 +23,35 @@ jest.unstable_mockModule('electron', () => {
   // @ts-ignore
   BrowserWindow.prototype.setAutoHideMenuBar = jest.fn()
   return {
-    session: {
-      fromPartition() {
-        return {
-          webRequest: {
-            onHeadersReceived() {},
-          },
-          protocol: {
-            registerFileProtocol() {},
-            handle() {},
-          },
-          setPermissionRequestHandler() {},
-          setPermissionCheckHandler() {},
-        }
-      },
-    },
+    BrowserWindow,
+    Menu: class {},
+    MessageChannelMain: class {},
+    net: {},
     screen: {
       getPrimaryDisplay() {
         return {
           bounds: {
-            width: 10,
             height: 10,
+            width: 10,
           },
         }
       },
     },
-    BrowserWindow,
-    net: {},
-    Menu: class {},
-    MessageChannelMain: class {},
+    session: {
+      fromPartition() {
+        return {
+          protocol: {
+            handle() {},
+            registerFileProtocol() {},
+          },
+          setPermissionCheckHandler() {},
+          setPermissionRequestHandler() {},
+          webRequest: {
+            onHeadersReceived() {},
+          },
+        }
+      },
+    },
   }
 })
 

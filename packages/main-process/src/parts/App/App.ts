@@ -32,8 +32,8 @@ import * as SingleInstanceLock from '../SingleInstanceLock/SingleInstanceLock.ts
 export const hydrate = async () => {
   ElectronApplicationMenu.setMenu(null) // performance
   unhandled({
-    showDialog: true,
     logger() {}, // already exists in mainProcessMain.js
+    showDialog: true,
   })
 
   // TODO electron error ERROR:sandbox_linux.cc(364)] InitializeSandbox() called with multiple threads in process gpu-process

@@ -3,23 +3,23 @@ import * as Scheme from '../Scheme/Scheme.ts'
 
 export const privilegedSchems = [
   {
-    scheme: Platform.scheme,
     privileges: {
-      standard: true,
-      secure: true,
-      supportFetchAPI: true,
-      stream: true,
       codeCache: true,
+      secure: true,
+      standard: true,
+      stream: true,
+      supportFetchAPI: true,
     },
+    scheme: Platform.scheme,
   },
   {
-    scheme: Scheme.WebView,
     privileges: {
-      standard: true,
-      secure: true,
-      supportFetchAPI: true,
-      stream: true,
       codeCache: true,
+      secure: true,
+      standard: true,
+      stream: true,
+      supportFetchAPI: true,
     },
+    scheme: Scheme.WebView,
   },
 ]
