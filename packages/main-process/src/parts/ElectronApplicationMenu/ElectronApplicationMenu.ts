@@ -11,7 +11,7 @@ const click = async (menuItem: Electron.MenuItem, browserWindow: Electron.BaseWi
   if (!browserWindow) {
     return
   }
-  await SharedProcess.send('ElectronApplicationMenu.handleClick', browserWindow.id, menuItem.label)
+  await SharedProcess.send('TitleBar.handleElectronMenuClick', browserWindow.id, menuItem.label)
 }
 
 export interface RawItem {
