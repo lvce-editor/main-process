@@ -2,7 +2,6 @@ import * as Electron from 'electron'
 import unhandled from 'electron-unhandled' // TODO this might slow down initial startup
 import { spawn } from 'node:child_process'
 import * as AppPaths from '../AppPaths/AppPaths.ts'
-import * as Argv from '../Argv/Argv.ts'
 import * as Cli from '../Cli/Cli.ts'
 import * as CommandLineSwitches from '../CommandLineSwitches/CommandLineSwitches.ts'
 import * as Debug from '../Debug/Debug.ts'
@@ -19,7 +18,6 @@ import * as HandleWindowAllClosed from '../HandleWindowAllClosed/HandleWindowAll
 import * as ParseCliArgs from '../ParseCliArgs/ParseCliArgs.ts'
 import * as Performance from '../Performance/Performance.ts'
 import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMarkerType.ts'
-import * as Platform from '../Platform/Platform.ts'
 import * as Process from '../Process/Process.ts'
 import * as Protocol from '../Protocol/Protocol.ts'
 import * as SingleInstanceLock from '../SingleInstanceLock/SingleInstanceLock.ts'
@@ -29,7 +27,7 @@ import * as SingleInstanceLock from '../SingleInstanceLock/SingleInstanceLock.ts
 // currently launching shared process takes 170ms
 // which means first paint is delayed by a lot
 
-export const hydrate = async () => {
+export const hydrate = async (isLinux: boolean, chromeUserDataPath: string, argv: readonly string[]) => {
   ElectronApplicationMenu.setMenu(null) // performance
   unhandled({
     logger() {}, // already exists in mainProcessMain.js
@@ -45,20 +43,20 @@ export const hydrate = async () => {
   // before being able to test multi-window behavior
   // see https://github.com/microsoft/playwright/issues/12345
 
-  const parsedCliArgs = ParseCliArgs.parseCliArgs(Argv.argv)
+  const parsedCliArgs = ParseCliArgs.parseCliArgs(argv)
   const moduleId = Cli.canHandleFastCliArgs(parsedCliArgs)
   if (moduleId) {
     await Cli.handleFastCliArgs(moduleId, parsedCliArgs)
     return
   }
-  if (Platform.isLinux && Platform.chromeUserDataPath) {
-    AppPaths.setUserDataPath(Platform.chromeUserDataPath)
-    AppPaths.setSessionDataPath(Platform.chromeUserDataPath)
-    AppPaths.setCrashDumpsPath(Platform.chromeUserDataPath)
-    AppPaths.setLogsPath(Platform.chromeUserDataPath)
+  if (isLinux && chromeUserDataPath) {
+    AppPaths.setUserDataPath(chromeUserDataPath)
+    AppPaths.setSessionDataPath(chromeUserDataPath)
+    AppPaths.setCrashDumpsPath(chromeUserDataPath)
+    AppPaths.setLogsPath(chromeUserDataPath)
   }
 
-  const hasLock = SingleInstanceLock.requestSingleInstanceLock(Argv.argv)
+  const hasLock = SingleInstanceLock.requestSingleInstanceLock(argv)
   if (!hasLock) {
     Debug.debug('[info] quitting because no lock')
     Exit.exit()
@@ -67,7 +65,7 @@ export const hydrate = async () => {
 
   // TODO tree shake out the .env.DEV check: reading from env variables is expensive
   if (process.stdout.isTTY && !parsedCliArgs.wait && !process.env.DEV) {
-    spawn(Process.execPath, Argv.argv.slice(1), {
+    spawn(Process.execPath, argv.slice(1), {
       detached: true,
       stdio: 'ignore',
     })
