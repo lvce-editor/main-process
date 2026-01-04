@@ -2,7 +2,7 @@ import { Menu } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
 import * as SharedProcess from '../SharedProcess/SharedProcess.ts'
 
-export const setMenu = (menu: Electron.Menu): void => {
+export const setMenu = (menu: Electron.Menu | null): void => {
   Menu.setApplicationMenu(menu)
 }
 
