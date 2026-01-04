@@ -13,7 +13,7 @@ const click = async (menuItem: Electron.MenuItem, browserWindow: Electron.BaseWi
   await SharedProcess.send('ElectronApplicationMenu.handleClick', browserWindow.id, menuItem.label)
 }
 
-interface RawItem {
+export interface RawItem {
   readonly label: string
   readonly submenu?: readonly RawItem[]
 }
