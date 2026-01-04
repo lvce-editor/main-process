@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Menu } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
 import * as SharedProcess from '../SharedProcess/SharedProcess.ts'
