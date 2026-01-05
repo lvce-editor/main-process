@@ -10,6 +10,7 @@ export const openContextMenu = async (menuItems: readonly any[], x: number, y: n
   const { handleClick, handleClose, promise } = GetElectronContextMenuCallbacks.getElectronCallbacks()
   const template = GetElectronMenuItems.getElectronMenuItems(menuItems, handleClick)
   const menu = Menu.buildFromTemplate(template)
+  // TODO pass window id
   const window = BrowserWindow.getFocusedWindow()
   if (!window) {
     return {
