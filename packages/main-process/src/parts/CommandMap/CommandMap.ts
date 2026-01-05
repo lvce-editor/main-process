@@ -8,6 +8,7 @@ import * as DesktopCapturer from '../DesktopCapturer/DesktopCapturer.ts'
 import * as ElectronApplicationMenu from '../ElectronApplicationMenu/ElectronApplicationMenu.ts'
 import * as ElectronBeep from '../ElectronBeep/ElectronBeep.ts'
 import * as ElectronContentTracing from '../ElectronContentTracing/ElectronContentTracing.ts'
+import * as ElectronContextMenu from '../ElectronContextMenu/ElectronContextMenu.ts'
 import * as ElectronDeveloper from '../ElectronDeveloper/ElectronDeveloper.ts'
 import * as ElectronDialog from '../ElectronDialog/ElectronDialog.ts'
 import * as ElectronNet from '../ElectronNet/ElectronNet.ts'
@@ -43,6 +44,7 @@ export const commandMap = {
   'ElectronBeep.beep': ElectronBeep.beep,
   'ElectronContentTracing.startRecording': ElectronContentTracing.startRecording,
   'ElectronContentTracing.stopRecording': ElectronContentTracing.stopRecording,
+  'ElectronContextMenu.openContextMenu': ElectronContextMenu.openContextMenu,
   'ElectronDeveloper.crashMainProcess': ElectronDeveloper.crashMainProcess,
   'ElectronDeveloper.getPerformanceEntries': ElectronDeveloper.getPerformanceEntries,
   'ElectronDialog.showMessageBox': ElectronDialog.showMessageBox,
