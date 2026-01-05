@@ -22,14 +22,6 @@ jest.unstable_mockModule('electron-unhandled', () => {
   }
 })
 
-jest.unstable_mockModule('../src/parts/Command/Command.js', () => {
-  return {
-    execute() {
-      throw new Error('method not found App.exit')
-    },
-  }
-})
-
 const App = await import('../src/parts/App/App.js')
 
 test.skip('handlePortForMainProcess - error - command not found', async () => {
