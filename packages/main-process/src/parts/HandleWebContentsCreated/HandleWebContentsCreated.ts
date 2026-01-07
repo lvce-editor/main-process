@@ -1,12 +1,11 @@
-import * as ElectronShell from '../ElectronShell/ElectronShell.ts'
 import * as ElectronWebContentsEventType from '../ElectronWebContentsEventType/ElectronWebContentsEventType.ts'
 import * as ElectronWindowOpenActionType from '../ElectronWindowOpenActionType/ElectronWindowOpenActionType.ts'
 import * as Logger from '../Logger/Logger.ts'
+import { openExternal } from '../OpenExternal/OpenExternal.ts'
 import * as ShouldAllowNavigation from '../ShouldAllowNavigation/ShouldAllowNavigation.ts'
 
-const handleWebContentsWindowOpen = ({ url }) => {
-  // @ts-ignore
-  void ElectronShell.openExternal(url)
+const handleWebContentsWindowOpen = ({ url }: { url: string }) => {
+  void openExternal(url)
   return {
     action: ElectronWindowOpenActionType.Deny,
   }
@@ -17,7 +16,7 @@ const handleWebContentsWindowOpen = ({ url }) => {
  * @param {*} event
  * @param {Electron.WebContents} webContents
  */
-export const handleWebContentsCreated = (event, webContents) => {
+export const handleWebContentsCreated = (event, webContents: Electron.WebContents) => {
   /**
    *
    * @param {import('electron').Event<import('electron').WebContentsWillNavigateEventParams>} event
