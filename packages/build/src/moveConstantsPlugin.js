@@ -9,10 +9,10 @@ export function moveConstantsPlugin(options = {}) {
     constants = [
       { name: 'scheme', value: "'lvce-oss'" },
       { name: 'applicationName', value: "'lvce-oss'" },
-      { name: 'WebView', value: "'lvce-oss-webview'" }
+      { name: 'WebView', value: "'lvce-oss-webview'" },
     ],
     include = ['**/*.ts', '**/*.js'],
-    exclude = []
+    exclude = [],
   } = options
 
   const filter = createFilter(include, exclude)
@@ -30,11 +30,11 @@ export function moveConstantsPlugin(options = {}) {
       // Find and remove the constant declarations
       for (const constant of constants) {
         const { name, value } = constant
-        
+
         // Pattern to match: const name = value;
         // This handles both single quotes and double quotes
         const pattern = new RegExp(`const\\s+${name}\\s*=\\s*['"]${value.replace(/'/g, '')}['"]\\s*;`, 'g')
-        
+
         if (pattern.test(modifiedCode)) {
           // Remove the original declaration
           modifiedCode = modifiedCode.replace(pattern, '')
@@ -59,9 +59,7 @@ export function moveConstantsPlugin(options = {}) {
         }
 
         // Build the constants string
-        const constantsString = constantsToMove
-          .map(({ name, value }) => `const ${name} = ${value};`)
-          .join('\n')
+        const constantsString = constantsToMove.map(({ name, value }) => `const ${name} = ${value};`).join('\n')
 
         // Insert after imports
         const beforeImports = modifiedCode.slice(0, lastImportEnd)
@@ -71,6 +69,6 @@ export function moveConstantsPlugin(options = {}) {
       }
 
       return modifiedCode
-    }
+    },
   }
 }
