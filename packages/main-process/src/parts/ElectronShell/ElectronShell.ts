@@ -10,3 +10,7 @@ export const openPath = async (path: string): Promise<void> => {
   // TODO handle error
   await shell.openPath(path)
 }
+
+export const openExternal = async (url: string): Promise<void> => {
+  await shell.openExternal(url)
+}
