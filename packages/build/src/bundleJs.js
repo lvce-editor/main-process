@@ -5,6 +5,7 @@ import { join } from 'path'
 import { rollup } from 'rollup'
 import { root } from './root.js'
 import { default as commonjs } from '@rollup/plugin-commonjs'
+import { moveConstantsPlugin } from './moveConstantsPlugin.js'
 
 /**
  * @type {import('rollup').RollupOptions}
@@ -35,6 +36,7 @@ const options = {
     nodeResolve(),
     // @ts-ignore
     commonjs(),
+    moveConstantsPlugin(),
   ],
 }
 
