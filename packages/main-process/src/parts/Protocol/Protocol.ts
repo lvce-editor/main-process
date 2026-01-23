@@ -14,5 +14,5 @@ export const handle = (protocol: Electron.Protocol, name: string, handleRequest:
 }
 
 export const enable = (protocol: Electron.Protocol) => {
-  protocol.registerSchemesAsPrivileged(PrivilegedSchemes.privilegedSchems)
+  protocol.registerSchemesAsPrivileged(PrivilegedSchemes.privilegedSchemes)
 }

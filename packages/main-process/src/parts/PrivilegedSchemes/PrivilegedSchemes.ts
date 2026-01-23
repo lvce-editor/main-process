@@ -1,7 +1,7 @@
 import * as Platform from '../Platform/Platform.ts'
 import * as Scheme from '../Scheme/Scheme.ts'
 
-export const privilegedSchems = [
+export const privilegedSchemes = [
   {
     privileges: {
       codeCache: true,
