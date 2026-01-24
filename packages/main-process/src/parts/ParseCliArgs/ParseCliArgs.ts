@@ -1,6 +1,5 @@
 import minimist from 'minimist'
 import * as CliCommandType from '../CliCommandType/CliCommandType.ts'
-import * as Debug from '../Debug/Debug.ts'
 
 export const parseCliArgs = (argv) => {
   const CLI_OPTIONS = {
@@ -19,7 +18,6 @@ export const parseCliArgs = (argv) => {
       sandbox: false,
     },
   }
-  Debug.debug('[info] parsing argv')
   const relevantArgv = argv.slice(1)
   const parsedArgs = minimist(relevantArgv, CLI_OPTIONS)
   // TODO tree-shake this out

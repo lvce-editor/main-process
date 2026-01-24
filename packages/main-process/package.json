@@ -53,13 +53,11 @@
     "@lvce-editor/rpc": "^5.4.0",
     "@lvce-editor/rpc-registry": "^7.5.0",
     "@lvce-editor/verror": "^1.7.0",
-    "debug": "^4.4.3",
     "electron-unhandled": "^5.0.0",
     "minimist": "^1.2.8"
   },
   "devDependencies": {
     "@jest/globals": "^30.2.0",
-    "@types/debug": "^4.1.12",
     "@types/node": "^24.9.2",
     "electron": "40.0.0",
     "jest": "^30.2.0",

@@ -1,7 +1,6 @@
 import type { BrowserView, WebContents, WebContentsView } from 'electron'
 import { BrowserWindow } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
-import * as Debug from '../Debug/Debug.ts'
 import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
 import { VError } from '../VError/VError.ts'
 import * as WebContentsViewErrorPath from '../WebContentsViewErrorPath/WebContentsViewErrorPath.ts'
@@ -131,7 +130,6 @@ export const backward = (view: BrowserView) => {
 export const cancelNavigation = (view: BrowserView) => {
   const { webContents } = view
   ElectronWebContentsViewState.setCanceled(webContents.id)
-  Debug.debug(`[main process] canceled navigation to ${webContents.getURL()}`)
   webContents.stop()
   if (webContents.navigationHistory.canGoBack()) {
     webContents.navigationHistory.goBack()
@@ -142,7 +140,6 @@ export const show = (id) => {
   // console.log('[main-process] show browser view', id)
   const state = ElectronWebContentsViewState.get(id)
   if (!state) {
-    Debug.debug('[main-process] failed to show browser view', id)
     return
   }
   const { browserWindow, view } = state
@@ -162,7 +159,6 @@ export const addToWindow = (browserWindowId, browserViewId) => {
 export const hide = (id) => {
   const state = ElectronWebContentsViewState.get(id)
   if (!state) {
-    Debug.debug('[main-process] failed to hide browser view', id)
     return
   }
   const { browserWindow, view } = state
