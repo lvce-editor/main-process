@@ -4,7 +4,6 @@ import { spawn } from 'node:child_process'
 import * as AppPaths from '../AppPaths/AppPaths.ts'
 import * as Cli from '../Cli/Cli.ts'
 import * as CommandLineSwitches from '../CommandLineSwitches/CommandLineSwitches.ts'
-import * as Debug from '../Debug/Debug.ts'
 import * as ElectronApp from '../ElectronApp/ElectronApp.ts'
 import * as ElectronAppEventType from '../ElectronAppEventType/ElectronAppEventType.ts'
 import * as ElectronApplicationMenu from '../ElectronApplicationMenu/ElectronApplicationMenu.ts'
@@ -58,7 +57,6 @@ export const hydrate = async (isLinux: boolean, chromeUserDataPath: string, argv
 
   const hasLock = SingleInstanceLock.requestSingleInstanceLock(argv)
   if (!hasLock) {
-    Debug.debug('[info] quitting because no lock')
     Exit.exit()
     return
   }
@@ -87,5 +85,4 @@ export const hydrate = async (isLinux: boolean, chromeUserDataPath: string, argv
   Performance.mark(PerformanceMarkerType.AppReady)
 
   await HandleElectronReady.handleReady(parsedCliArgs, Process.cwd())
-  Debug.debug('[info] app window created')
 }
