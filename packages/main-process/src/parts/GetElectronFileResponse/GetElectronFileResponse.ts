@@ -1,9 +1,10 @@
+import { getElectronFileResponseConfig } from '../GetElectronFileResponseConfig/GetElectronFileResponseConfig.ts'
 import { getElectronFileResponseIpc } from '../GetElectronFileResponseIpc/GetElectronFileResponseIpc.ts'
+import { useIpcForResponse } from '../Platform/Platform.ts'
 
 export const getElectronFileResponse = async (url: string, request: any): Promise<Response> => {
-  const useIpc = true
-  if (useIpc) {
+  if (useIpcForResponse) {
     return getElectronFileResponseIpc(url, request)
   }
-  throw new Error(`unsupported`)
+  return getElectronFileResponseConfig(url, request)
 }
