@@ -1,16 +1,13 @@
-/**
- *
- * @param {Headers} headers
- */
-const serializeRequestHeaders = (headers) => {
+const serializeRequestHeaders = (headers: Headers): Record<string, string> => {
   return Object.fromEntries(headers)
 }
 
-/**
- *
- * @param {Request} request
- */
-export const serializeRequest = (request) => {
+export interface SerializedRequest {
+  headers: Record<string, string>
+  url: string
+}
+
+export const serializeRequest = (request: Request): SerializedRequest => {
   return {
     headers: serializeRequestHeaders(request.headers),
     url: request.url,
