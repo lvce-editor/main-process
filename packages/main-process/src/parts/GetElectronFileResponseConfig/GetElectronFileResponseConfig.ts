@@ -10,7 +10,7 @@ export const getElectronFileResponseConfig = async (url: string, request: any): 
   const relative = url.slice(scheme.length + 4)
   const actual = relative === '/' ? '/index.html' : relative
   const match = files[actual]
-  if (!match) {
+  if (match === undefined) {
     return new Response('Not Found', { status: 404 })
   }
   const responseHeaders = headers[match]
