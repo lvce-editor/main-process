@@ -3,7 +3,7 @@ import { getElectronFileResponseIpc } from '../GetElectronFileResponseIpc/GetEle
 import { useIpcForResponse } from '../Platform/Platform.ts'
 
 export const getElectronFileResponse = async (url: string, request: any): Promise<Response> => {
-  if (useIpcForResponse()) {
+  if (useIpcForResponse) {
     return getElectronFileResponseIpc(url, request)
   }
   return getElectronFileResponseConfig(url, request)
