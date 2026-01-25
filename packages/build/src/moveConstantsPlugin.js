@@ -25,6 +25,8 @@ export function moveConstantsPlugin(options = {}) {
       }
 
       let modifiedCode = code
+
+      modifiedCode = modifiedCode.replace(`JSON.parse('false')`, false)
       const constantsToMove = []
 
       // Find and remove the constant declarations
