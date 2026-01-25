@@ -11,6 +11,17 @@ const getRelativePath = (url: string) => {
   return relative
 }
 
+const getActualPath = (relative: string) => {
+  const actual = relative === '/' ? '/index.html' : relative
+  return actual
+}
+
+const getAbsolutePath = (relative: string) => {
+  const actual = getActualPath(relative)
+  const absolutePath = join(root, 'static', actual)
+  return absolutePath
+}
+
 export const getElectronFileResponseConfig = async (url: string, request: any): Promise<Response> => {
   const parsedConfig = getOrCreateConfig()
   const { files, headers } = parsedConfig
@@ -18,13 +29,13 @@ export const getElectronFileResponseConfig = async (url: string, request: any): 
   if (relative.startsWith('/remote')) {
     return getElectronFileResponseIpc(url, request)
   }
-  const actual = relative === '/' ? '/index.html' : relative
+  const actual = getActualPath(relative)
   const match = files[actual]
   if (match === undefined) {
     return getNotFoundResponse()
   }
   const responseHeaders = headers[match]
-  const absolutePath = join(root, 'static', actual)
+  const absolutePath = getAbsolutePath(match)
   if (!existsSync(absolutePath)) {
     return getNotFoundResponse()
   }
