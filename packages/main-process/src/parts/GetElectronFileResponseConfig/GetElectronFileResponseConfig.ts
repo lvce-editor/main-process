@@ -1,13 +1,22 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { getElectronFileResponseIpc } from '../GetElectronFileResponseIpc/GetElectronFileResponseIpc.ts'
 import { getOrCreateConfig } from '../GetOrCreateConfig/GetOrCreateConfig.ts'
 import { scheme } from '../Platform/Platform.ts'
 import { root } from '../Root/Root.ts'
 
+const getRelativePath = (url: string) => {
+  const relative = url.slice(scheme.length + 4)
+  return relative
+}
+
 export const getElectronFileResponseConfig = async (url: string, request: any): Promise<Response> => {
   const parsedConfig = getOrCreateConfig()
   const { files, headers } = parsedConfig
-  const relative = url.slice(scheme.length + 4)
+  const relative = getRelativePath(url)
+  if (relative.startsWith('/remote')) {
+    return getElectronFileResponseIpc(url, request)
+  }
   const actual = relative === '/' ? '/index.html' : relative
   const match = files[actual]
   if (match === undefined) {
