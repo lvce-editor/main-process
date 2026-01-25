@@ -1,6 +1,7 @@
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { getElectronFileResponseIpc } from '../GetElectronFileResponseIpc/GetElectronFileResponseIpc.ts'
+import { getFileResponse } from '../GetFileResponse/GetFileResponse.ts'
 import { getNotFoundResponse } from '../GetNotFoundResponse/GetNotFoundResponse.ts'
 import { getOrCreateConfig } from '../GetOrCreateConfig/GetOrCreateConfig.ts'
 import { scheme } from '../Platform/Platform.ts'
@@ -28,10 +29,5 @@ export const getElectronFileResponseConfig = async (url: string, request: any): 
   if (!existsSync(absolutePath)) {
     return getNotFoundResponse()
   }
-  const content = readFileSync(absolutePath, 'utf8')
-  const response = new Response(content, {
-    headers: responseHeaders,
-    status: 200,
-  })
-  return response
+  return getFileResponse(absolutePath, responseHeaders)
 }
