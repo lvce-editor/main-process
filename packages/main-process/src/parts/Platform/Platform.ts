@@ -34,7 +34,7 @@ export const commit = 'unknown commit'
 
 export const scheme = 'lvce-oss'
 
-export const useIpcForResponse = JSON.parse('false')
+export const useIpcForResponse = JSON.parse('true')
 
 export const getSessionId = () => {
   return process.env.SESSION_ID || `persist:${scheme}`
