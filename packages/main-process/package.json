@@ -51,7 +51,7 @@
     "@lvce-editor/json-rpc": "^7.2.0",
     "@lvce-editor/pretty-error": "^2.0.0",
     "@lvce-editor/rpc": "^5.5.0",
-    "@lvce-editor/rpc-registry": "^8.2.0",
+    "@lvce-editor/rpc-registry": "^8.3.0",
     "@lvce-editor/verror": "^1.7.0",
     "electron-unhandled": "^5.0.0",
     "minimist": "^1.2.8"
