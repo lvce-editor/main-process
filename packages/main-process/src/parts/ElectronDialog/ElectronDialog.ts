@@ -23,6 +23,31 @@ export const showOpenDialog = async (title, properties) => {
   return result.filePaths
 }
 
+interface SaveDialogResult {
+  readonly canceled: boolean
+  readonly filePath: string
+}
+
+export const showSaveDialog = async (title: string, properties: any[]): Promise<SaveDialogResult> => {
+  Assert.string(title)
+  Assert.array(properties)
+  const focusedWindow = ElectronWindow.getFocusedWindow()
+  if (!focusedWindow) {
+    return {
+      canceled: true,
+      filePath: '',
+    }
+  }
+  const result = await Electron.dialog.showSaveDialog(focusedWindow, {
+    properties,
+    title,
+  })
+  return {
+    canceled: result.canceled,
+    filePath: result.filePath,
+  }
+}
+
 /**
  *
  * @param {{message:string, buttons:string[], type:'error'|'info'|'question'|'none'|'warning', detail?:string, title?:string, windowId?:number, productName?:string, defaultId?:number  }} options
