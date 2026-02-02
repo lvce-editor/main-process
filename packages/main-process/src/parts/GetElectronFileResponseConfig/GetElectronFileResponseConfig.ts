@@ -1,27 +1,11 @@
 import { existsSync } from 'node:fs'
-import { join } from 'node:path'
+import { getAbsolutePath } from '../GetAbsolutePath/GetAbsolutePath.ts'
+import { getActualPath } from '../GetActualPath/GetActualPath.ts'
 import { getElectronFileResponseIpc } from '../GetElectronFileResponseIpc/GetElectronFileResponseIpc.ts'
 import { getFileResponse } from '../GetFileResponse/GetFileResponse.ts'
 import { getNotFoundResponse } from '../GetNotFoundResponse/GetNotFoundResponse.ts'
 import { getOrCreateConfig } from '../GetOrCreateConfig/GetOrCreateConfig.ts'
-import { scheme } from '../Platform/Platform.ts'
-import { root } from '../Root/Root.ts'
-
-const getRelativePath = (url: string) => {
-  const relative = url.slice(scheme.length + 4)
-  return relative
-}
-
-const getActualPath = (relative: string) => {
-  const actual = relative === '/' ? '/index.html' : relative
-  return actual
-}
-
-const getAbsolutePath = (relative: string) => {
-  const actual = getActualPath(relative)
-  const absolutePath = join(root, 'static', actual)
-  return absolutePath
-}
+import { getRelativePath } from '../GetRelativePath/GetRelativePath.ts'
 
 export const getElectronFileResponseConfig = async (url: string, request: any): Promise<Response> => {
   const parsedConfig = getOrCreateConfig()
