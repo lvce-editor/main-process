@@ -1,4 +1,5 @@
 import * as Electron from 'electron'
+import type { SaveDialogResult } from '../SaveDialogResult/SaveDialogResult.ts'
 import * as Assert from '../Assert/Assert.ts'
 import * as ElectronMessageBoxType from '../ElectronMessageBoxType/ElectronMessageBoxType.ts'
 import * as ElectronWindow from '../ElectronWindow/ElectronWindow.ts'
@@ -21,11 +22,6 @@ export const showOpenDialog = async (title, properties) => {
   }
   // TODO maybe return whole result (including canceled or not)
   return result.filePaths
-}
-
-interface SaveDialogResult {
-  readonly canceled: boolean
-  readonly filePath: string
 }
 
 export const showSaveDialog = async (title: string, properties: any[]): Promise<SaveDialogResult> => {
