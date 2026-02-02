@@ -1,6 +1,5 @@
-import type { SaveDialogResult } from '../SaveDialogResult/SaveDialogResult.ts'
-
 import * as Electron from 'electron'
+import type { SaveDialogResult } from '../SaveDialogResult/SaveDialogResult.ts'
 import * as Assert from '../Assert/Assert.ts'
 import * as ElectronMessageBoxType from '../ElectronMessageBoxType/ElectronMessageBoxType.ts'
 import * as ElectronWindow from '../ElectronWindow/ElectronWindow.ts'
