@@ -49,6 +49,7 @@ export const commandMap = {
   'ElectronDeveloper.getPerformanceEntries': ElectronDeveloper.getPerformanceEntries,
   'ElectronDialog.showMessageBox': ElectronDialog.showMessageBox,
   'ElectronDialog.showOpenDialog': ElectronDialog.showOpenDialog,
+  'ElectronDialog.showSaveDialog': ElectronDialog.showSaveDialog,
   'ElectronNet.getJson': ElectronNet.getJson,
   'ElectronNetLog.startLogging': ElectronNetLog.startLogging,
   'ElectronNetLog.stopLogging': ElectronNetLog.stopLogging,
