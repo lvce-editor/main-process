@@ -36,7 +36,7 @@ export const getElectronFileResponseConfig = async (url: string, request: any): 
     return getNotFoundResponse()
   }
   const responseHeaders = headers[match]
-  const absolutePath = getAbsolutePath(match)
+  const absolutePath = getAbsolutePath(actual)
   if (!existsSync(absolutePath)) {
     return getNotFoundResponse()
   }
