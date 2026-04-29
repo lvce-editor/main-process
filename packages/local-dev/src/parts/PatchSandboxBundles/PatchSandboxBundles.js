@@ -32,3 +32,7 @@ export const patchExtensionHostWorkerBundleContent = (content) => {
     'extension host worker platform',
   )
 }
+
+export const patchSharedProcessIsElectronContent = (content) => {
+  return replaceOrThrow(content, 'export const isElectron = false;', 'export const isElectron = true;', 'shared process electron flag')
+}

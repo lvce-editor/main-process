@@ -39,3 +39,9 @@ test('patchRendererProcessBundleContent is idempotent', () => {
 
   expect(result).toBe('const platform = Electron;')
 })
+
+test('patchSharedProcessIsElectronContent', () => {
+  const result = PatchSandboxBundles.patchSharedProcessIsElectronContent('export const isElectron = false;')
+
+  expect(result).toBe('export const isElectron = true;')
+})
