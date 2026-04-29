@@ -9,7 +9,6 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "extensionsToTreatAsEsm": [],
     "testMatch": [
       "**/test/**/*.test.js"
     ]

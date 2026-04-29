@@ -50,6 +50,10 @@ const getLocalDistRoot = () => {
   return join(GetWorkspaceRoot.workspaceRoot, '.tmp', 'dist')
 }
 
+const getElectronDistPath = (sandboxRoot) => {
+  return join(sandboxRoot, 'node_modules', 'electron', 'dist')
+}
+
 const writePackageJsonIfNeeded = async (sandboxRoot, packageJson) => {
   const packageJsonPath = join(sandboxRoot, 'package.json')
   if (!existsSync(packageJsonPath)) {
@@ -66,11 +70,16 @@ const writePackageJsonIfNeeded = async (sandboxRoot, packageJson) => {
 
 const ensureSandboxDependencies = async (sandboxRoot) => {
   const packageLockPath = join(sandboxRoot, 'package-lock.json')
+  const nodeModulesPath = join(sandboxRoot, 'node_modules')
   if (!existsSync(packageLockPath)) {
     await runCommand('npm', ['install', '--package-lock-only'], sandboxRoot)
   }
-  if (!existsSync(join(sandboxRoot, 'node_modules'))) {
+  if (!existsSync(nodeModulesPath)) {
     await runCommand('npm', ['ci'], sandboxRoot)
+    return
+  }
+  if (!existsSync(getElectronDistPath(sandboxRoot))) {
+    await runCommand('npm', ['rebuild', 'electron'], sandboxRoot)
   }
 }
 
