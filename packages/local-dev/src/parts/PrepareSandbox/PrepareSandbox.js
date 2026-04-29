@@ -67,10 +67,10 @@ const writePackageJsonIfNeeded = async (sandboxRoot, packageJson) => {
 const ensureSandboxDependencies = async (sandboxRoot) => {
   const packageLockPath = join(sandboxRoot, 'package-lock.json')
   if (!existsSync(packageLockPath)) {
-    await runCommand('npm', ['install', '--package-lock-only', '--ignore-scripts'], sandboxRoot)
+    await runCommand('npm', ['install', '--package-lock-only'], sandboxRoot)
   }
   if (!existsSync(join(sandboxRoot, 'node_modules'))) {
-    await runCommand('npm', ['ci', '--ignore-scripts'], sandboxRoot)
+    await runCommand('npm', ['ci'], sandboxRoot)
   }
 }
 
