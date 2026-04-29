@@ -2,6 +2,7 @@ import { cp, mkdir, readFile, readdir, rm, symlink, writeFile } from 'node:fs/pr
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import * as GetGeneratedPackageJson from '../GetGeneratedPackageJson/GetGeneratedPackageJson.js'
+import * as PatchSandboxBundles from '../PatchSandboxBundles/PatchSandboxBundles.js'
 import * as GetStaticAssetRoot from '../GetStaticAssetRoot/GetStaticAssetRoot.js'
 import * as GetWorkspaceRoot from '../GetWorkspaceRoot/GetWorkspaceRoot.js'
 
@@ -34,10 +35,13 @@ const writeJson = async (path, value) => {
 
 const patchMainProcessBundle = async (path) => {
   const content = await readFile(path, 'utf8')
-  const next = content
-    .replace(`const isLinux = platform === 'linux';`, `const isLinux = ${process.platform === 'linux'};`)
-    .replace(`const isProduction = false;`, `const isProduction = true;`)
-    .replace(`const useIpcForResponse = true;`, `const useIpcForResponse = false;`)
+  const next = PatchSandboxBundles.patchMainProcessBundleContent(content)
+  await writeFile(path, next)
+}
+
+const patchFile = async (path, patch) => {
+  const content = await readFile(path, 'utf8')
+  const next = patch(content)
   await writeFile(path, next)
 }
 
@@ -101,12 +105,18 @@ const prepareLayout = async (sandboxRoot) => {
   const assetRoot = GetStaticAssetRoot.getStaticAssetRoot(staticPath, staticEntries)
   const localDistRoot = getLocalDistRoot()
   const mainProcessBundlePath = join(sandboxRoot, 'dist', 'mainProcessMain.js')
+  const rendererProcessBundlePath = join(assetRoot, 'packages', 'renderer-process', 'dist', 'rendererProcessMain.js')
+  const rendererWorkerBundlePath = join(assetRoot, 'packages', 'renderer-worker', 'dist', 'rendererWorkerMain.js')
+  const extensionHostWorkerBundlePath = join(assetRoot, 'packages', 'extension-host-worker', 'dist', 'extensionHostWorkerMain.js')
 
   await copyDirectory(join(localDistRoot, 'dist'), join(sandboxRoot, 'dist'))
   await copyDirectory(join(localDistRoot, 'pages'), join(sandboxRoot, 'pages'))
   await copyDirectory(join(sharedProcessPackagePath, 'src'), join(sandboxRoot, 'src'))
   await cp(configJsonPath, join(sandboxRoot, 'config.json'))
   await patchMainProcessBundle(mainProcessBundlePath)
+  await patchFile(rendererProcessBundlePath, PatchSandboxBundles.patchRendererProcessBundleContent)
+  await patchFile(rendererWorkerBundlePath, PatchSandboxBundles.patchRendererWorkerBundleContent)
+  await patchFile(extensionHostWorkerBundlePath, PatchSandboxBundles.patchExtensionHostWorkerBundleContent)
 
   await mkdir(join(sandboxRoot, 'packages', 'shared-process'), { recursive: true })
   await mkdir(join(sandboxRoot, 'packages'), { recursive: true })
