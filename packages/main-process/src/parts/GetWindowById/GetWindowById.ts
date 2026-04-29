@@ -1,7 +1,7 @@
 import * as Electron from 'electron'
 import * as Assert from '../Assert/Assert.ts'
 
-export const getWindowById = (windowId) => {
+export const getWindowById = (windowId: number): Electron.BrowserWindow | null => {
   Assert.number(windowId)
   return Electron.BrowserWindow.fromId(windowId)
 }

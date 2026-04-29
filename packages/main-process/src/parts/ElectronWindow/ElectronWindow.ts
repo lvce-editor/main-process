@@ -2,6 +2,7 @@ import * as Electron from 'electron'
 import * as GetWindowById from '../GetWindowById/GetWindowById.ts'
 import * as Logger from '../Logger/Logger.ts'
 
+<<<<<<< HEAD
 const devtoolsBeforeInputListeners = new WeakMap<any, any>()
 
 const isToggleDevtoolsInput = (input) => {
@@ -52,6 +53,9 @@ const attachDevtoolsKeyListener = (browserWindow) => {
 }
 
 const getBrowserWindow = (browserWindowId) => {
+=======
+export const executeWindowFunction = (browserWindowId: number, key: string): void => {
+>>>>>>> origin/main
   const browserWindow = GetWindowById.getWindowById(browserWindowId)
   if (!browserWindow) {
     Logger.info(`[main-process] browser window not found ${browserWindow}`)
@@ -87,19 +91,24 @@ export const executeWindowFunction = (browserWindowId, key) => {
   browserWindow[key]()
 }
 
+<<<<<<< HEAD
 export const executeWebContentsFunction = (browserWindowId, key, ...args) => {
   const browserWindow = getBrowserWindow(browserWindowId)
+=======
+export const executeWebContentsFunction = (browserWindowId: number, key: string, ...args: readonly any[]): void => {
+  const browserWindow = GetWindowById.getWindowById(browserWindowId)
+>>>>>>> origin/main
   if (!browserWindow) {
     return
   }
   browserWindow.webContents[key](...args)
 }
 
-export const getFocusedWindow = () => {
+export const getFocusedWindow = (): Electron.BrowserWindow | undefined => {
   return Electron.BrowserWindow.getFocusedWindow() || undefined
 }
 
-export const findById = (windowId) => {
+export const findById = (windowId: number) => {
   return GetWindowById.getWindowById(windowId)
 }
 
@@ -114,7 +123,7 @@ export const getFocusedWindowId = () => {
   return browserWindow.id
 }
 
-export const getZoom = (windowId) => {
+export const getZoom = (windowId: number): number => {
   if (!windowId) {
     return 1
   }
