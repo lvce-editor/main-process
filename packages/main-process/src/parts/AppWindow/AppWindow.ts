@@ -35,9 +35,7 @@ const addDevDiagnostics = (window) => {
     Logger.info(`[app window console] level=${level} source=${sourceId}:${line} message=${message}`)
   })
   window.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedUrl, isMainFrame) => {
-    Logger.error(
-      `[app window did-fail-load] code=${errorCode} mainFrame=${isMainFrame} url=${validatedUrl} error=${errorDescription}`,
-    )
+    Logger.error(`[app window did-fail-load] code=${errorCode} mainFrame=${isMainFrame} url=${validatedUrl} error=${errorDescription}`)
   })
   window.webContents.on('render-process-gone', (_event, details) => {
     Logger.error(`[app window render-process-gone] reason=${details.reason} exitCode=${details.exitCode}`)
