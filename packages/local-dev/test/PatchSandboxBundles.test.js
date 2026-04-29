@@ -1,4 +1,4 @@
-import * as PatchSandboxBundles from '../src/parts/PatchSandboxBundles/PatchSandboxBundles.js'
+import * as PatchSandboxBundles from '../src/parts/PatchSandboxBundles/PatchSandboxBundles.ts'
 
 test('patchMainProcessBundleContent', () => {
   const content = `const isLinux = platform === 'linux';\nconst isProduction = false;\nconst useIpcForResponse = true;\n`

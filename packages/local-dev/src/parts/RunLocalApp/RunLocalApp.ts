@@ -1,10 +1,15 @@
 import { spawn } from 'node:child_process'
 import { join } from 'node:path'
-import * as GetElectronPath from '../GetElectronPath/GetElectronPath.js'
+import * as GetElectronPath from '../GetElectronPath/GetElectronPath.ts'
+import type { ParsedCliArgs } from '../ParseCliArgs/ParseCliArgs.ts'
+import type { PreparedSandbox } from '../PrepareSandbox/PrepareSandbox.ts'
 
-export const runLocalApp = async ({ electronArgs }, { sandboxRoot, sharedProcessPath }) => {
+export const runLocalApp = async (
+  { electronArgs }: Pick<ParsedCliArgs, 'electronArgs'>,
+  { sandboxRoot, sharedProcessPath }: PreparedSandbox,
+): Promise<void> => {
   const electronPath = GetElectronPath.getElectronPath(join(sandboxRoot, 'node_modules', 'electron'), process.platform)
-  await new Promise((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     const child = spawn(electronPath, ['.', ...electronArgs], {
       cwd: sandboxRoot,
       env: {
@@ -19,7 +24,7 @@ export const runLocalApp = async ({ electronArgs }, { sandboxRoot, sharedProcess
     child.on('error', reject)
     child.on('exit', (code) => {
       if (code === 0 || code === null) {
-        resolve(undefined)
+        resolve()
         return
       }
       reject(new Error(`Electron exited with code ${code}`))

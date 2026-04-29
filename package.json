@@ -11,8 +11,8 @@
   "scripts": {
     "build": "node packages/build/src/build.js",
     "build:watch": "./packages/build/node_modules/.bin/esbuild --format=esm --bundle --external:node:buffer --external:electron --external:ws --external:node:* --watch packages/main-process/src/mainProcessMain.ts --outfile=.tmp/dist/dist/mainProcessMain.js",
-    "dev:prepare": "node packages/local-dev/src/localDevMain.js prepare",
-    "dev:run": "node packages/local-dev/src/localDevMain.js run",
+    "dev:prepare": "node packages/local-dev/src/localDevMain.ts prepare",
+    "dev:run": "node packages/local-dev/src/localDevMain.ts run",
     "format": "prettier --write .",
     "postinstall": "lerna bootstrap --ci",
     "lint": "eslint .",

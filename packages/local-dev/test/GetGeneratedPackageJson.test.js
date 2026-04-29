@@ -1,4 +1,4 @@
-import * as GetGeneratedPackageJson from '../src/parts/GetGeneratedPackageJson/GetGeneratedPackageJson.js'
+import * as GetGeneratedPackageJson from '../src/parts/GetGeneratedPackageJson/GetGeneratedPackageJson.ts'
 
 test('getGeneratedPackageJson', () => {
   expect(GetGeneratedPackageJson.getGeneratedPackageJson('41.3.0', '0.80.10')).toEqual({

@@ -1,22 +1,35 @@
-import { cp, mkdir, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
+import { cp, mkdir, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import * as GetGeneratedPackageJson from '../GetGeneratedPackageJson/GetGeneratedPackageJson.js'
-import * as PatchSandboxBundles from '../PatchSandboxBundles/PatchSandboxBundles.js'
-import * as GetStaticAssetRoot from '../GetStaticAssetRoot/GetStaticAssetRoot.js'
-import * as GetWorkspaceRoot from '../GetWorkspaceRoot/GetWorkspaceRoot.js'
+import * as GetGeneratedPackageJson from '../GetGeneratedPackageJson/GetGeneratedPackageJson.ts'
+import * as GetStaticAssetRoot from '../GetStaticAssetRoot/GetStaticAssetRoot.ts'
+import * as GetWorkspaceRoot from '../GetWorkspaceRoot/GetWorkspaceRoot.ts'
+import * as PatchSandboxBundles from '../PatchSandboxBundles/PatchSandboxBundles.ts'
+import type { ParsedCliArgs } from '../ParseCliArgs/ParseCliArgs.ts'
 
-const runCommand = async (command, args, cwd) => {
+interface LocalDistPackageJson {
+  readonly dependencies: {
+    readonly electron: string
+  }
+}
+
+export interface PreparedSandbox {
+  readonly assetRoot: string
+  readonly sandboxRoot: string
+  readonly sharedProcessPath: string
+}
+
+const runCommand = async (command: string, args: readonly string[], cwd: string): Promise<void> => {
   const { spawn } = await import('node:child_process')
-  await new Promise((resolve, reject) => {
-    const child = spawn(command, args, {
+  await new Promise<void>((resolve, reject) => {
+    const child = spawn(command, [...args], {
       cwd,
       stdio: 'inherit',
     })
     child.on('error', reject)
     child.on('exit', (code) => {
       if (code === 0) {
-        resolve(undefined)
+        resolve()
         return
       }
       reject(new Error(`${command} ${args.join(' ')} failed with exit code ${code}`))
@@ -24,56 +37,56 @@ const runCommand = async (command, args, cwd) => {
   })
 }
 
-const readJson = async (path) => {
+const readJson = async <T>(path: string): Promise<T> => {
   const content = await readFile(path, 'utf8')
-  return JSON.parse(content)
+  return JSON.parse(content) as T
 }
 
-const writeJson = async (path, value) => {
+const writeJson = async (path: string, value: unknown): Promise<void> => {
   await writeFile(path, JSON.stringify(value, null, 2) + '\n')
 }
 
-const patchMainProcessBundle = async (path) => {
+const patchMainProcessBundle = async (path: string): Promise<void> => {
   const content = await readFile(path, 'utf8')
   const next = PatchSandboxBundles.patchMainProcessBundleContent(content)
   await writeFile(path, next)
 }
 
-const patchFile = async (path, patch) => {
+const patchFile = async (path: string, patch: (content: string) => string): Promise<void> => {
   const content = await readFile(path, 'utf8')
   const next = patch(content)
   await writeFile(path, next)
 }
 
-const ensureLink = async (target, source) => {
+const ensureLink = async (target: string, source: string): Promise<void> => {
   await rm(target, { force: true, recursive: true })
   await symlink(source, target, process.platform === 'win32' ? 'junction' : 'dir')
 }
 
-const copyDirectory = async (from, to) => {
+const copyDirectory = async (from: string, to: string): Promise<void> => {
   await rm(to, { force: true, recursive: true })
   await cp(from, to, { recursive: true })
 }
 
-const getSandboxRoot = () => {
+const getSandboxRoot = (): string => {
   return join(GetWorkspaceRoot.workspaceRoot, '.tmp', 'local-dev', `${process.platform}-${process.arch}`)
 }
 
-const getLocalDistRoot = () => {
+const getLocalDistRoot = (): string => {
   return join(GetWorkspaceRoot.workspaceRoot, '.tmp', 'dist')
 }
 
-const getElectronDistPath = (sandboxRoot) => {
+const getElectronDistPath = (sandboxRoot: string): string => {
   return join(sandboxRoot, 'node_modules', 'electron', 'dist')
 }
 
-const writePackageJsonIfNeeded = async (sandboxRoot, packageJson) => {
+const writePackageJsonIfNeeded = async (sandboxRoot: string, packageJson: GetGeneratedPackageJson.GeneratedPackageJson): Promise<boolean> => {
   const packageJsonPath = join(sandboxRoot, 'package.json')
   if (!existsSync(packageJsonPath)) {
     await writeJson(packageJsonPath, packageJson)
     return true
   }
-  const existing = await readJson(packageJsonPath)
+  const existing = await readJson<GetGeneratedPackageJson.GeneratedPackageJson>(packageJsonPath)
   if (JSON.stringify(existing) === JSON.stringify(packageJson)) {
     return false
   }
@@ -81,7 +94,7 @@ const writePackageJsonIfNeeded = async (sandboxRoot, packageJson) => {
   return true
 }
 
-const ensureSandboxDependencies = async (sandboxRoot) => {
+const ensureSandboxDependencies = async (sandboxRoot: string): Promise<void> => {
   const packageLockPath = join(sandboxRoot, 'package-lock.json')
   const nodeModulesPath = join(sandboxRoot, 'node_modules')
   if (!existsSync(packageLockPath)) {
@@ -96,7 +109,7 @@ const ensureSandboxDependencies = async (sandboxRoot) => {
   }
 }
 
-const prepareLayout = async (sandboxRoot) => {
+const prepareLayout = async (sandboxRoot: string): Promise<PreparedSandbox> => {
   const sharedProcessPackagePath = join(sandboxRoot, 'node_modules', '@lvce-editor', 'shared-process')
   const staticServerPackagePath = join(sandboxRoot, 'node_modules', '@lvce-editor', 'static-server')
   const staticPath = join(staticServerPackagePath, 'static')
@@ -134,7 +147,7 @@ const prepareLayout = async (sandboxRoot) => {
   }
 }
 
-export const prepareSandbox = async ({ build, lvceVersion }) => {
+export const prepareSandbox = async ({ build, lvceVersion }: Pick<ParsedCliArgs, 'build' | 'lvceVersion'>): Promise<PreparedSandbox> => {
   const sandboxRoot = getSandboxRoot()
   const localDistRoot = getLocalDistRoot()
 
@@ -142,7 +155,7 @@ export const prepareSandbox = async ({ build, lvceVersion }) => {
     await runCommand('npm', ['run', 'build'], GetWorkspaceRoot.workspaceRoot)
   }
 
-  const localPackageJson = await readJson(join(localDistRoot, 'package.json'))
+  const localPackageJson = await readJson<LocalDistPackageJson>(join(localDistRoot, 'package.json'))
   const electronVersion = localPackageJson.dependencies.electron
   const generatedPackageJson = GetGeneratedPackageJson.getGeneratedPackageJson(electronVersion, lvceVersion)
 

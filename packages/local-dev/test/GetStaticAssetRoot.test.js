@@ -1,4 +1,4 @@
-import * as GetStaticAssetRoot from '../src/parts/GetStaticAssetRoot/GetStaticAssetRoot.js'
+import * as GetStaticAssetRoot from '../src/parts/GetStaticAssetRoot/GetStaticAssetRoot.ts'
 
 test('getStaticAssetRoot', () => {
   expect(

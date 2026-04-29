@@ -1,4 +1,4 @@
-import * as GetElectronPath from '../src/parts/GetElectronPath/GetElectronPath.js'
+import * as GetElectronPath from '../src/parts/GetElectronPath/GetElectronPath.ts'
 
 test('getElectronPath - linux', () => {
   expect(GetElectronPath.getElectronPath('/sandbox/node_modules/electron', 'linux')).toBe('/sandbox/node_modules/electron/dist/electron')

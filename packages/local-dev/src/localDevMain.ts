@@ -1,8 +1,8 @@
-import * as ParseCliArgs from './parts/ParseCliArgs/ParseCliArgs.js'
-import * as PrepareSandbox from './parts/PrepareSandbox/PrepareSandbox.js'
-import * as RunLocalApp from './parts/RunLocalApp/RunLocalApp.js'
+import * as ParseCliArgs from './parts/ParseCliArgs/ParseCliArgs.ts'
+import * as PrepareSandbox from './parts/PrepareSandbox/PrepareSandbox.ts'
+import * as RunLocalApp from './parts/RunLocalApp/RunLocalApp.ts'
 
-const main = async () => {
+const main = async (): Promise<void> => {
   const parsed = ParseCliArgs.parseCliArgs(process.argv.slice(2))
   switch (parsed.command) {
     case 'prepare': {

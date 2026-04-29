@@ -1,4 +1,4 @@
-const replaceOrThrow = (content, occurrence, replacement, description) => {
+const replaceOrThrow = (content: string, occurrence: string, replacement: string, description: string): string => {
   if (content.includes(replacement)) {
     return content
   }
@@ -8,7 +8,7 @@ const replaceOrThrow = (content, occurrence, replacement, description) => {
   return content.replace(occurrence, replacement)
 }
 
-export const patchMainProcessBundleContent = (content) => {
+export const patchMainProcessBundleContent = (content: string): string => {
   let next = content
   next = replaceOrThrow(next, `const isLinux = platform === 'linux';`, `const isLinux = ${process.platform === 'linux'};`, 'main process linux flag')
   next = replaceOrThrow(next, `const isProduction = false;`, `const isProduction = true;`, 'main process production flag')
@@ -16,15 +16,15 @@ export const patchMainProcessBundleContent = (content) => {
   return next
 }
 
-export const patchRendererProcessBundleContent = (content) => {
+export const patchRendererProcessBundleContent = (content: string): string => {
   return replaceOrThrow(content, 'const platform = Remote;', 'const platform = Electron;', 'renderer process platform')
 }
 
-export const patchRendererWorkerBundleContent = (content) => {
+export const patchRendererWorkerBundleContent = (content: string): string => {
   return replaceOrThrow(content, 'const platform = Remote;', 'const platform = Electron$1;', 'renderer worker platform')
 }
 
-export const patchExtensionHostWorkerBundleContent = (content) => {
+export const patchExtensionHostWorkerBundleContent = (content: string): string => {
   return replaceOrThrow(
     content,
     'const platform = Remote; // TODO tree-shake this out in production',
@@ -33,6 +33,6 @@ export const patchExtensionHostWorkerBundleContent = (content) => {
   )
 }
 
-export const patchSharedProcessIsElectronContent = (content) => {
+export const patchSharedProcessIsElectronContent = (content: string): string => {
   return replaceOrThrow(content, 'export const isElectron = false;', 'export const isElectron = true;', 'shared process electron flag')
 }
