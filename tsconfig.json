@@ -1,5 +1,5 @@
 {
   "files": [],
   "include": [],
-  "references": [{ "path": "./packages/build" }, { "path": "./packages/main-process" }]
+  "references": [{ "path": "./packages/build" }, { "path": "./packages/local-dev" }, { "path": "./packages/main-process" }]
 }
