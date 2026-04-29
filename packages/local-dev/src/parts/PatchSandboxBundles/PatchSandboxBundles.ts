@@ -1,4 +1,4 @@
-const replaceOrThrow = (content: string, occurrence: string, replacement: string, description: string): string => {
+const replaceOrThrow = (content, occurrence, replacement, description) => {
   if (content.includes(replacement)) {
     return content
   }
@@ -8,7 +8,7 @@ const replaceOrThrow = (content: string, occurrence: string, replacement: string
   return content.replace(occurrence, replacement)
 }
 
-export const patchMainProcessBundleContent = (content: string): string => {
+export const patchMainProcessBundleContent = (content) => {
   let next = content
   next = replaceOrThrow(next, `const isLinux = platform === 'linux';`, `const isLinux = ${process.platform === 'linux'};`, 'main process linux flag')
   next = replaceOrThrow(next, `const isProduction = false;`, `const isProduction = true;`, 'main process production flag')
@@ -16,15 +16,15 @@ export const patchMainProcessBundleContent = (content: string): string => {
   return next
 }
 
-export const patchRendererProcessBundleContent = (content: string): string => {
+export const patchRendererProcessBundleContent = (content) => {
   return replaceOrThrow(content, 'const platform = Remote;', 'const platform = Electron;', 'renderer process platform')
 }
 
-export const patchRendererWorkerBundleContent = (content: string): string => {
+export const patchRendererWorkerBundleContent = (content) => {
   return replaceOrThrow(content, 'const platform = Remote;', 'const platform = Electron$1;', 'renderer worker platform')
 }
 
-export const patchExtensionHostWorkerBundleContent = (content: string): string => {
+export const patchExtensionHostWorkerBundleContent = (content) => {
   return replaceOrThrow(
     content,
     'const platform = Remote; // TODO tree-shake this out in production',
@@ -33,6 +33,6 @@ export const patchExtensionHostWorkerBundleContent = (content: string): string =
   )
 }
 
-export const patchSharedProcessIsElectronContent = (content: string): string => {
+export const patchSharedProcessIsElectronContent = (content) => {
   return replaceOrThrow(content, 'export const isElectron = false;', 'export const isElectron = true;', 'shared process electron flag')
 }

@@ -1,16 +1,4 @@
-export interface GeneratedPackageJson {
-  readonly name: string
-  readonly private: true
-  readonly type: 'module'
-  readonly main: string
-  readonly dependencies: {
-    readonly electron: string
-    readonly '@lvce-editor/shared-process': string
-    readonly '@lvce-editor/static-server': string
-  }
-}
-
-export const getGeneratedPackageJson = (electronVersion: string, lvceVersion: string): GeneratedPackageJson => {
+export const getGeneratedPackageJson = (electronVersion, lvceVersion) => {
   return {
     name: 'lvce-local-dev-runtime',
     private: true,

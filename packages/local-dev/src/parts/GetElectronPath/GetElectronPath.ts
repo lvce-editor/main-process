@@ -1,6 +1,6 @@
 import { join } from 'node:path'
 
-export const getElectronPath = (electronPackagePath: string, platform: NodeJS.Platform | string): string => {
+export const getElectronPath = (electronPackagePath, platform) => {
   switch (platform) {
     case 'darwin':
       return join(electronPackagePath, 'dist', 'Electron.app', 'Contents', 'MacOS', 'Electron')
