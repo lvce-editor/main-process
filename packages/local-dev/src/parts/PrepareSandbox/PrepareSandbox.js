@@ -32,6 +32,15 @@ const writeJson = async (path, value) => {
   await writeFile(path, JSON.stringify(value, null, 2) + '\n')
 }
 
+const patchMainProcessBundle = async (path) => {
+  const content = await readFile(path, 'utf8')
+  const next = content
+    .replace(`const isLinux = platform === 'linux';`, `const isLinux = ${process.platform === 'linux'};`)
+    .replace(`const isProduction = false;`, `const isProduction = true;`)
+    .replace(`const useIpcForResponse = true;`, `const useIpcForResponse = false;`)
+  await writeFile(path, next)
+}
+
 const ensureLink = async (target, source) => {
   await rm(target, { force: true, recursive: true })
   await symlink(source, target, process.platform === 'win32' ? 'junction' : 'dir')
@@ -87,13 +96,17 @@ const prepareLayout = async (sandboxRoot) => {
   const sharedProcessPackagePath = join(sandboxRoot, 'node_modules', '@lvce-editor', 'shared-process')
   const staticServerPackagePath = join(sandboxRoot, 'node_modules', '@lvce-editor', 'static-server')
   const staticPath = join(staticServerPackagePath, 'static')
+  const configJsonPath = join(staticServerPackagePath, 'config.json')
   const staticEntries = await readdir(staticPath)
   const assetRoot = GetStaticAssetRoot.getStaticAssetRoot(staticPath, staticEntries)
   const localDistRoot = getLocalDistRoot()
+  const mainProcessBundlePath = join(sandboxRoot, 'dist', 'mainProcessMain.js')
 
   await copyDirectory(join(localDistRoot, 'dist'), join(sandboxRoot, 'dist'))
   await copyDirectory(join(localDistRoot, 'pages'), join(sandboxRoot, 'pages'))
   await copyDirectory(join(sharedProcessPackagePath, 'src'), join(sandboxRoot, 'src'))
+  await cp(configJsonPath, join(sandboxRoot, 'config.json'))
+  await patchMainProcessBundle(mainProcessBundlePath)
 
   await mkdir(join(sandboxRoot, 'packages', 'shared-process'), { recursive: true })
   await mkdir(join(sandboxRoot, 'packages'), { recursive: true })
