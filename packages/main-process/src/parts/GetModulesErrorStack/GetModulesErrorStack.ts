@@ -16,23 +16,20 @@ const isPartOfMessage = (line) => {
   return RE_JUST_MESSAGE.test(line)
 }
 
-export const getModulesErrorStack = (stderr) => {
-  const lines = SplitLines.splitLines(stderr)
-  let startIndex = -1
-  const extraLines = []
+const getExtraLines = (lines) => {
   for (const line of lines) {
     if (isJustPath(line)) {
-      // @ts-ignore
-      extraLines.push(`    at ${line}`)
-      break
+      return [`    at ${line}`]
     }
   }
-  for (const [i, line] of lines.entries()) {
-    if (isStackLine(line)) {
-      startIndex = i
-      break
-    }
-  }
+  return []
+}
+
+const getStartIndex = (lines) => {
+  return lines.findIndex(isStackLine)
+}
+
+const getMessageStartIndex = (lines, startIndex) => {
   let messageStartIndex = startIndex - 1
   for (let i = messageStartIndex; i >= 0; i--) {
     const line = lines[i]
@@ -41,31 +38,51 @@ export const getModulesErrorStack = (stderr) => {
     }
     messageStartIndex = i
   }
-  if (startIndex === -1) {
-    return []
-  }
-  let endIndex = -1
+  return messageStartIndex
+}
+
+const getEndIndex = (lines, startIndex) => {
   for (let i = startIndex + 1; i < lines.length; i++) {
     const line = lines[i]
     if (!isStackLine(line)) {
-      endIndex = i
-      break
+      return i
     }
   }
-  if (endIndex === -1) {
-    endIndex = lines.length - 1
+  return lines.length - 1
+}
+
+const getSyntaxErrorMessageStartIndex = (lines, startIndex, messageStartIndex) => {
+  if (messageStartIndex !== startIndex - 1) {
+    return messageStartIndex
   }
+  for (let i = 0; i < startIndex; i++) {
+    const line = lines[i]
+    if (line.startsWith('SyntaxError: Named export')) {
+      return i
+    }
+  }
+  return messageStartIndex
+}
+
+const getMessage = (lines, startIndex, messageStartIndex) => {
+  const message = lines.slice(messageStartIndex, startIndex).join(' ')
+  if (message !== '') {
+    return message
+  }
+  const syntaxErrorMessageStartIndex = getSyntaxErrorMessageStartIndex(lines, startIndex, messageStartIndex)
+  return lines.slice(syntaxErrorMessageStartIndex, startIndex).join(' ').trim()
+}
+
+export const getModulesErrorStack = (stderr) => {
+  const lines = SplitLines.splitLines(stderr)
+  const extraLines = getExtraLines(lines)
+  const startIndex = getStartIndex(lines)
+  if (startIndex === -1) {
+    return []
+  }
+  const messageStartIndex = getMessageStartIndex(lines, startIndex)
+  const endIndex = getEndIndex(lines, startIndex)
   const stackLines = lines.slice(startIndex, endIndex)
-  let message = lines.slice(messageStartIndex, startIndex).join(' ')
-  if (message === '') {
-    for (let i = 0; i < startIndex; i++) {
-      const line = lines[i]
-      if (line.startsWith('SyntaxError: Named export')) {
-        messageStartIndex = i
-        break
-      }
-    }
-    message = lines.slice(messageStartIndex, startIndex).join(' ').trim()
-  }
+  const message = getMessage(lines, startIndex, messageStartIndex)
   return [message, ...extraLines, ...stackLines]
 }

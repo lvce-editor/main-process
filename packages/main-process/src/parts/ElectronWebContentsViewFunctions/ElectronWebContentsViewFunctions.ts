@@ -84,19 +84,20 @@ const getSlimCode = (html: string): string => {
   return result
 }
 
-export const getDomTree = async (view: WebContentsView) => {
+const getBodyOuterHtml = async (view: WebContentsView) => {
   const { webContents } = view
   const code = `document.body.outerHTML`
-  const result = await webContents.executeJavaScript(code)
-  const slimCode = getSlimCode(result)
-  return slimCode
+  return webContents.executeJavaScript(code)
 }
+
+export const getDomTree = async (view: WebContentsView) => {
+  const result = await getBodyOuterHtml(view)
+  return getSlimCode(result)
+}
+
 export const getConsolLogs = async (view: WebContentsView) => {
-  const { webContents } = view
-  const code = `document.body.outerHTML`
-  const result = await webContents.executeJavaScript(code)
-  const slimCode = getSlimCode(result)
-  return slimCode
+  const result = await getBodyOuterHtml(view)
+  return getSlimCode(result)
 }
 
 export const insertCss = async (view: WebContentsView, code: string) => {
