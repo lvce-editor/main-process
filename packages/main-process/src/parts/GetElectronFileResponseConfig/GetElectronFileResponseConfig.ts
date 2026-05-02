@@ -15,10 +15,10 @@ export const getElectronFileResponseConfig = async (url: string, request: any): 
     return getElectronFileResponseIpc(url, request)
   }
   const actual = getActualPath(relative)
-  const match = files[actual]
-  if (match === undefined) {
+  if (!(actual in files)) {
     return getNotFoundResponse()
   }
+  const match = files[actual]
   const responseHeaders = headers[match]
   const absolutePath = getAbsolutePath(actual)
   if (!existsSync(absolutePath)) {
