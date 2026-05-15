@@ -1,4 +1,4 @@
-import { beforeEach, expect, jest, test } from '@jest/globals'
+import { beforeEach, jest, test } from '@jest/globals'
 import EventEmitter from 'node:events'
 
 beforeEach(() => {
@@ -55,26 +55,8 @@ jest.unstable_mockModule('electron', () => {
   }
 })
 
-const electron = await import('electron')
-const AppWindow = await import('../src/parts/AppWindow/AppWindow.js')
+await import('../src/parts/AppWindow/AppWindow.ts')
 
-test.skip('createAppWindow', async () => {
-  // @ts-expect-error
-  electron.BrowserWindow.prototype.loadURL.mockImplementation(() => {})
-  // @ts-ignore
-  await AppWindow.createAppWindow([], '')
-  // @ts-expect-error
-  expect(AppWindowStates.add).toHaveBeenCalledTimes(1)
-})
+test.todo('createAppWindow')
 
-test.skip('createAppWindow - error', async () => {
-  // @ts-expect-error
-  electron.BrowserWindow.prototype.loadURL.mockImplementation(() => {
-    throw new Error("ERR_FAILED (-2) loading 'lvce-oss://-/'")
-  })
-  // TODO error message should be improved
-  // @ts-ignore
-  await expect(AppWindow.createAppWindow([], '')).rejects.toThrow(
-    new Error("Failed to load url lvce-oss://-/: ERR_FAILED (-2) loading 'lvce-oss://-/'"),
-  )
-})
+test.todo('createAppWindow - error')

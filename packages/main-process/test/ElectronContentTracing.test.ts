@@ -15,7 +15,7 @@ jest.unstable_mockModule('electron', () => {
 })
 
 const electron = await import('electron')
-const ElectronContentTracing = await import('../src/parts/ElectronContentTracing/ElectronContentTracing.js')
+const ElectronContentTracing = await import('../src/parts/ElectronContentTracing/ElectronContentTracing.ts')
 
 test('startRecording - error', async () => {
   // @ts-expect-error

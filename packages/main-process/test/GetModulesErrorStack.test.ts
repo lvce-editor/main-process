@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import * as GetModulesErrorStack from '../src/parts/GetModulesErrorStack/GetModulesErrorStack.js'
+import * as GetModulesErrorStack from '../src/parts/GetModulesErrorStack/GetModulesErrorStack.ts'
 
 test('getModulesErrorStack - esm error', () => {
   const stderr = `node:internal/modules/cjs/loader:1293

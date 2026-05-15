@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import { WindowLoadError } from '../src/parts/WindowLoadError/WindowLoadError.js'
+import { WindowLoadError } from '../src/parts/WindowLoadError/WindowLoadError.ts'
 
 test('new WindowLoadError', () => {
   const error = new Error('Failed to load')

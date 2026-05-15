@@ -1,4 +1,4 @@
-import { beforeEach, expect, jest, test } from '@jest/globals'
+import { beforeEach, jest, test } from '@jest/globals'
 
 beforeEach(() => {
   jest.resetAllMocks()
@@ -15,39 +15,12 @@ jest.unstable_mockModule('electron', () => {
   }
 })
 
-const electron = await import('electron')
-const ElectronShell = await import('../src/parts/ElectronShell/ElectronShell.js')
+await import('../src/parts/ElectronShell/ElectronShell.ts')
 
-test.skip('showItemInFolder', () => {
-  // @ts-expect-error
-  electron.shell.showItemInFolder.mockImplementation(() => {})
-  ElectronShell.showItemInFolder('/test/file.txt')
-  expect(electron.shell.showItemInFolder).toHaveBeenCalledTimes(1)
-  expect(electron.shell.showItemInFolder).toHaveBeenCalledWith('/test/file.txt')
-})
+test.todo('showItemInFolder')
 
-test.skip('beep', async () => {
-  // @ts-expect-error
-  electron.shell.beep.mockImplementation(() => {})
-  // @ts-ignore
-  await ElectronShell.beep()
-  expect(electron.shell.beep).toHaveBeenCalledTimes(1)
-  expect(electron.shell.beep).toHaveBeenCalledWith()
-})
+test.todo('beep')
 
-test.skip('openExternal', async () => {
-  // @ts-expect-error
-  electron.shell.openExternal.mockImplementation(() => {})
-  // @ts-ignore
-  await ElectronShell.openExternal('https://example.com')
-  expect(electron.shell.openExternal).toHaveBeenCalledTimes(1)
-  expect(electron.shell.openExternal).toHaveBeenCalledWith('https://example.com')
-})
+test.todo('openExternal')
 
-test.skip('openPath', async () => {
-  // @ts-expect-error
-  electron.shell.openPath.mockImplementation(() => {})
-  await ElectronShell.openPath('/test/file.txt')
-  expect(electron.shell.openPath).toHaveBeenCalledTimes(1)
-  expect(electron.shell.openPath).toHaveBeenCalledWith('/test/file.txt')
-})
+test.todo('openPath')

@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import * as Platform from '../src/parts/Platform/Platform.js'
+import * as Platform from '../src/parts/Platform/Platform.ts'
 
 test('isProduction', () => {
   expect(typeof Platform.isProduction).toBe('boolean')
