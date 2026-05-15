@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import * as ParseCliArgs from '../src/parts/ParseCliArgs/ParseCliArgs.js'
+import * as ParseCliArgs from '../src/parts/ParseCliArgs/ParseCliArgs.ts'
 
 test('parseCliArgs', () => {
   expect(ParseCliArgs.parseCliArgs(['/usr/lib/lvce-oss/lvce-oss', '/test/'])).toEqual({

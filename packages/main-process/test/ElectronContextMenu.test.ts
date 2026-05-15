@@ -9,7 +9,7 @@ jest.unstable_mockModule('electron', () => {
 })
 
 const electron = await import('electron')
-const ElectronClipBoard = await import('../src/parts/ElectronClipBoard/ElectronClipBoard.js')
+const ElectronClipBoard = await import('../src/parts/ElectronClipBoard/ElectronClipBoard.ts')
 
 test('writeText', () => {
   // @ts-expect-error

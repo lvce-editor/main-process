@@ -15,7 +15,7 @@ jest.unstable_mockModule('electron', () => {
   }
 })
 
-const Cli = await import('../src/parts/Cli/Cli.js')
+const Cli = await import('../src/parts/Cli/Cli.ts')
 
 test('handleFastCliArgsMaybe - nothing matches', async () => {
   const spy = jest.spyOn(console, 'info')

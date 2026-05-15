@@ -1,5 +1,4 @@
-import { beforeEach, expect, jest, test } from '@jest/globals'
-import * as ElectronMessageBoxType from '../src/parts/ElectronMessageBoxType/ElectronMessageBoxType.js'
+import { beforeEach, jest, test } from '@jest/globals'
 
 beforeEach(() => {
   jest.resetModules()
@@ -18,43 +17,13 @@ jest.unstable_mockModule('electron', () => {
   }
 })
 
-jest.unstable_mockModule('../src/parts/Platform/Platform.js', () => {
+jest.unstable_mockModule('../src/parts/Platform/Platform.ts', () => {
   return {
     applicationName: 'test-app',
     productNameLong: 'Test App',
   }
 })
 
-const ElectronDialog = await import('../src/parts/ElectronDialog/ElectronDialog.js')
-const Electron = await import('electron')
+await import('../src/parts/ElectronDialog/ElectronDialog.ts')
 
-test.skip('showMessageBox', async () => {
-  // @ts-expect-error
-  Electron.dialog.showMessageBox.mockImplementation(() => {
-    return {
-      response: 1,
-    }
-  })
-  // @ts-ignore
-  await ElectronDialog.showMessageBox({
-    buttons: ['copy', 'ok'],
-    detail: 'test detail',
-    message: 'test',
-    type: ElectronMessageBoxType.Info,
-  })
-  expect(Electron.dialog.showMessageBox).toHaveBeenCalledTimes(1)
-  expect(Electron.dialog.showMessageBox).toHaveBeenCalledWith(
-    // @ts-ignore
-    {},
-    // @ts-ignore
-    {
-      buttons: ['copy', 'ok'],
-      cancelId: 1,
-      detail: 'test detail',
-      message: 'test',
-      noLink: true,
-      title: 'Test App',
-      type: 'info',
-    },
-  )
-})
+test.todo('showMessageBox')
