@@ -59,7 +59,7 @@
   "devDependencies": {
     "@jest/globals": "^30.4.1",
     "@types/node": "^24.9.2",
-    "electron": "42.0.1",
+    "electron": "42.1.0",
     "jest": "^30.4.2",
     "ts-jest": "^29.4.9"
   },
