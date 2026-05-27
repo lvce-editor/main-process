@@ -26,7 +26,7 @@ const removeDevtoolsKeyListener = (devtoolsWebContents) => {
   devtoolsWebContents.off('before-input-event', listener)
 }
 
-const attachDevtoolsKeyListener = (browserWindow) => {
+const attachDevtoolsKeyListener = (browserWindow: Electron.BrowserWindow) => {
   const devtoolsWebContents = browserWindow.webContents.devToolsWebContents
   if (!devtoolsWebContents) {
     return
