@@ -27,6 +27,24 @@ const loadUrl = async (browserWindow, url) => {
   Performance.mark(PerformanceMarkerType.DidLoadUrl)
 }
 
+const addDevDiagnostics = (window) => {
+  if (!process.env.DEV) {
+    return
+  }
+  window.webContents.on('console-message', (_event, level, message, line, sourceId) => {
+    Logger.info(`[app window console] level=${level} source=${sourceId}:${line} message=${message}`)
+  })
+  window.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedUrl, isMainFrame) => {
+    Logger.error(`[app window did-fail-load] code=${errorCode} mainFrame=${isMainFrame} url=${validatedUrl} error=${errorDescription}`)
+  })
+  window.webContents.on('render-process-gone', (_event, details) => {
+    Logger.error(`[app window render-process-gone] reason=${details.reason} exitCode=${details.exitCode}`)
+  })
+  window.webContents.on('did-finish-load', () => {
+    Logger.info('[app window did-finish-load]')
+  })
+}
+
 // TODO avoid mixing BrowserWindow, childprocess and various lifecycle methods in one file -> separate concerns
 export const createAppWindow = async (windowOptions, parsedArgs, workingDirectory, titleBarItems, url) => {
   const session = Session.get()
@@ -39,6 +57,7 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
     },
   })
   Performance.mark(PerformanceMarkerType.DidCreateCodeWindow)
+  addDevDiagnostics(window)
 
   const handleReadyToShow = () => {
     // due to electron bug, zoom level needs to be set here,

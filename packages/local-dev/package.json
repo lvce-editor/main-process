@@ -1,0 +1,22 @@
+{
+  "name": "local-dev",
+  "version": "0.0.0-dev",
+  "private": true,
+  "type": "module",
+  "main": "src/localDevMain.ts",
+  "scripts": {
+    "test": "node --experimental-vm-modules ../main-process/node_modules/jest/bin/jest.js --runInBand"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "testMatch": [
+      "**/test/**/*.test.js"
+    ]
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
