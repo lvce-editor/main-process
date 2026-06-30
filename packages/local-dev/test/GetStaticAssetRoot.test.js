@@ -1,9 +1,10 @@
+import { join } from 'node:path'
 import * as GetStaticAssetRoot from '../src/parts/GetStaticAssetRoot/GetStaticAssetRoot.ts'
 
 test('getStaticAssetRoot', () => {
   expect(
     GetStaticAssetRoot.getStaticAssetRoot('/sandbox/node_modules/@lvce-editor/static-server/static', ['27c0844', 'index.html', 'favicon.ico']),
-  ).toBe('/sandbox/node_modules/@lvce-editor/static-server/static/27c0844')
+  ).toBe(join('/sandbox/node_modules/@lvce-editor/static-server/static', '27c0844'))
 })
 
 test('getStaticAssetRoot - no asset directory', () => {
