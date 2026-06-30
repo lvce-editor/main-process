@@ -24,6 +24,7 @@ export default [
       'unicorn/no-top-level-assignment-in-function': 'off',
       'unicorn/no-top-level-side-effects': 'off',
       'unicorn/no-useless-template-literals': 'off',
+      'unicorn/no-unsafe-string-replacement': 'off',
       'unicorn/prefer-boolean-return': 'off',
       'unicorn/prefer-https': 'off',
       'unicorn/prefer-promise-with-resolvers': 'off',
