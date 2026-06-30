@@ -17,7 +17,7 @@ jest.unstable_mockModule('electron', () => {
 })
 
 const electron = await import('electron')
-const ElectronWindow = await import('../src/parts/ElectronWindow/ElectronWindow.js')
+const ElectronWindow = await import('../src/parts/ElectronWindow/ElectronWindow.ts')
 
 beforeEach(() => {
   jest.resetAllMocks()

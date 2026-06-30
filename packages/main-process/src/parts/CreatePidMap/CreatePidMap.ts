@@ -3,7 +3,6 @@ import * as UtilityProcessState from '../UtilityProcessState/UtilityProcessState
 
 export const createPidMap = () => {
   const browserWindows = BrowserWindow.getAllWindows()
-  const browserViews = []
   const utilityProcesses = UtilityProcessState.getAll()
   const pidWindowMap = Object.create(null)
   for (const browserWindow of browserWindows) {
@@ -22,15 +21,6 @@ export const createPidMap = () => {
       const displayName = `browser-view-${viewWebContents.id}`
       pidWindowMap[pid] = displayName
     }
-  }
-  for (const { view } of browserViews) {
-    // @ts-ignore
-    const viewWebContents = view.webContents
-    const pid = viewWebContents.getOSProcessId()
-    if (pid in pidWindowMap) {
-      continue
-    }
-    pidWindowMap[pid] = `hidden-browser-view-${viewWebContents.id}`
   }
   for (const [pid, value] of utilityProcesses) {
     // @ts-ignore

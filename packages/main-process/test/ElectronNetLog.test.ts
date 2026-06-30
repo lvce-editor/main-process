@@ -14,7 +14,7 @@ jest.unstable_mockModule('electron', () => {
 })
 
 const electron = await import('electron')
-const ElectronNetLog = await import('../src/parts/ElectronNetLog/ElectronNetLog.js')
+const ElectronNetLog = await import('../src/parts/ElectronNetLog/ElectronNetLog.ts')
 
 test('startLogging - error', async () => {
   // @ts-expect-error

@@ -1,5 +1,5 @@
 import { beforeEach, expect, test } from '@jest/globals'
-import * as Performance from '../src/parts/Performance/Performance.js'
+import * as Performance from '../src/parts/Performance/Performance.ts'
 
 beforeEach(() => {
   Performance.clearMarks()
@@ -7,6 +7,7 @@ beforeEach(() => {
 
 test('mark', () => {
   Performance.mark('test')
+  expect(Performance.getEntries()).toHaveLength(1)
 })
 
 test('measure', () => {

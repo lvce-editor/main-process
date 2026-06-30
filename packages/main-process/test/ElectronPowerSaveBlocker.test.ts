@@ -14,7 +14,7 @@ jest.unstable_mockModule('electron', () => {
 })
 
 const electron = await import('electron')
-const ElectronPowerSaveBlocker = await import('../src/parts/ElectronPowerSaveBlocker/ElectronPowerSaveBlocker.js')
+const ElectronPowerSaveBlocker = await import('../src/parts/ElectronPowerSaveBlocker/ElectronPowerSaveBlocker.ts')
 
 test('start', () => {
   // @ts-expect-error

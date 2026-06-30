@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import * as GetHelpfulChildProcessError from '../src/parts/GetHelpfulChildProcessError/GetHelpfulChildProcessError.js'
+import * as GetHelpfulChildProcessError from '../src/parts/GetHelpfulChildProcessError/GetHelpfulChildProcessError.ts'
 
 test('getHelpfulChildProcessError - modules not supported in electron', () => {
   const stderr = `(node:120184) Warning: To load an ES module, set "type": "module" in the package.json or use the .mjs extension.

@@ -15,7 +15,7 @@ jest.unstable_mockModule('electron', () => {
 })
 
 const electron = await import('electron')
-const ElectronSafeStorage = await import('../src/parts/ElectronSafeStorage/ElectronSafeStorage.js')
+const ElectronSafeStorage = await import('../src/parts/ElectronSafeStorage/ElectronSafeStorage.ts')
 
 test('isEncryptionAvailable - error', () => {
   // @ts-expect-error

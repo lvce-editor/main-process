@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import * as Developer from '../src/parts/ElectronDeveloper/ElectronDeveloper.js'
+import * as Developer from '../src/parts/ElectronDeveloper/ElectronDeveloper.ts'
 
 test('getPerformanceEntries', () => {
   // see https://github.com/facebook/jest/issues/11629

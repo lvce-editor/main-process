@@ -16,7 +16,7 @@ jest.unstable_mockModule('electron', () => {
   }
 })
 
-const CreatePidMap = await import('../src/parts/CreatePidMap/CreatePidMap.js')
+const CreatePidMap = await import('../src/parts/CreatePidMap/CreatePidMap.ts')
 const electron = await import('electron')
 
 test('createPidMap - detect chrome devtools', () => {
