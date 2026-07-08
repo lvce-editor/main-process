@@ -92,6 +92,9 @@ test('executeWindowFunction - toggleDevtools - opens and closes from focused dev
   ElectronWindow.executeWindowFunction(1, 'toggleDevtools')
 
   expect(pageWebContents.openDevTools).toHaveBeenCalledTimes(1)
+  expect(pageWebContents.openDevTools).toHaveBeenCalledWith({
+    mode: 'bottom',
+  })
   expect(devtoolsWebContents.on).toHaveBeenCalledTimes(1)
   expect(devtoolsWebContents.on).toHaveBeenCalledWith('before-input-event', expect.any(Function))
   expect(devtoolsClosedListener).toEqual(expect.any(Function))

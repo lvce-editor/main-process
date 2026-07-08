@@ -3,6 +3,9 @@ import * as GetWindowById from '../GetWindowById/GetWindowById.ts'
 import * as Logger from '../Logger/Logger.ts'
 
 const devtoolsBeforeInputListeners = new WeakMap<any, any>()
+const devtoolsOptions = {
+  mode: 'bottom',
+}
 
 const isToggleDevtoolsInput = (input) => {
   if (input.type !== 'keyDown') {
@@ -72,7 +75,7 @@ const toggleDevtools = (browserWindow) => {
       attachDevtoolsKeyListener(browserWindow)
     })
   }
-  browserWindow.webContents.openDevTools()
+  browserWindow.webContents.openDevTools(devtoolsOptions)
 }
 
 export const executeWindowFunction = (browserWindowId, key) => {
