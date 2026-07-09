@@ -19,3 +19,7 @@ export const appendCommandLineSwitch = (commandLineSwitch, value) => {
 export const exit = (code) => {
   app.exit(code)
 }
+
+export const isPackagedDeb = () => {
+  return app.isPackaged && process.platform === 'linux' && !process.env.APPIMAGE
+}
