@@ -5,6 +5,7 @@ import * as CreateMessagePort from '../CreateMessagePort/CreateMessagePort.ts'
 import * as CreatePidMap from '../CreatePidMap/CreatePidMap.ts'
 import * as CreateUtilityProcessRpc from '../CreateUtilityProcessRpc/CreateUtilityProcessRpc.ts'
 import * as DesktopCapturer from '../DesktopCapturer/DesktopCapturer.ts'
+import * as ElectronApp from '../ElectronApp/ElectronApp.ts'
 import * as ElectronApplicationMenu from '../ElectronApplicationMenu/ElectronApplicationMenu.ts'
 import * as ElectronBeep from '../ElectronBeep/ElectronBeep.ts'
 import * as ElectronContentTracing from '../ElectronContentTracing/ElectronContentTracing.ts'
@@ -40,6 +41,7 @@ export const commandMap = {
   'CreatePidMap.createPidMap': CreatePidMap.createPidMap,
   'CreateUtilityProcessRpc.createUtilityProcessRpc': CreateUtilityProcessRpc.createUtilityProcessRpc,
   'DesktopCapturer.getSources': DesktopCapturer.getSources,
+  'ElectronApp.isPackagedDeb': ElectronApp.isPackagedDeb,
   'ElectronApplicationMenu.setItems': ElectronApplicationMenu.setItems,
   'ElectronBeep.beep': ElectronBeep.beep,
   'ElectronContentTracing.startRecording': ElectronContentTracing.startRecording,
