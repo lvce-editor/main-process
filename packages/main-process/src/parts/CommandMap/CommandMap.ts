@@ -23,6 +23,7 @@ import * as ElectronWebContents from '../ElectronWebContents/ElectronWebContents
 import * as ElectronWebContentsView from '../ElectronWebContentsView/ElectronWebContentsView.ts'
 import * as ElectronWebContentsViewFunctions from '../ElectronWebContentsViewFunctions/ElectronWebContentsViewFunctions.ts'
 import * as ElectronWindow from '../ElectronWindow/ElectronWindow.ts'
+import * as ElectronWindowGpuInfo from '../ElectronWindowGpuInfo/ElectronWindowGpuInfo.ts'
 import * as ElectronWindowProcessExplorer from '../ElectronWindowProcessExplorer/ElectronWindowProcessExplorer.ts'
 import * as Exit from '../Exit/Exit.ts'
 import * as GetWindowId from '../GetWindowId/GetWindowId.ts'
@@ -123,6 +124,7 @@ export const commandMap = {
   'ElectronWindow.executeWindowFunction': ElectronWindow.executeWindowFunction,
   'ElectronWindow.getFocusedWindowId': ElectronWindow.getFocusedWindowId,
   'ElectronWindow.getZoom': ElectronWindow.getZoom,
+  'ElectronWindowGpuInfo.open': ElectronWindowGpuInfo.open,
   'ElectronWindowProcessExplorer.open2': ElectronWindowProcessExplorer.open2,
   'Exit.exit': Exit.exit,
   'GetWindowId.getWindowId': GetWindowId.getWindowId,
