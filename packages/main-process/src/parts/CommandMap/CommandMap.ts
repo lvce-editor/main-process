@@ -81,6 +81,9 @@ export const commandMap = {
   'ElectronWebContentsViewFunctions.cancelNavigation': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.cancelNavigation,
   ),
+  'ElectronWebContentsViewFunctions.capturePage': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.capturePage,
+  ),
   'ElectronWebContentsViewFunctions.copyImageAt': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.copyImageAt,
   ),
