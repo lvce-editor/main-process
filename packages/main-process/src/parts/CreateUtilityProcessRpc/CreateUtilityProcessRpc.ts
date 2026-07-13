@@ -1,9 +1,9 @@
-import { ElectronUtilityProcessRpcParent } from '@lvce-editor/rpc'
 import * as RpcRegistry from '@lvce-editor/rpc-registry'
 import * as CommandMapRef from '../CommandMapRef/CommandMapRef.ts'
+import * as CreateElectronUtilityProcessRpc from '../CreateElectronUtilityProcessRpc/CreateElectronUtilityProcessRpc.ts'
 
 export const createUtilityProcessRpc = async (options) => {
-  const rpc = await ElectronUtilityProcessRpcParent.create({
+  const rpc = await CreateElectronUtilityProcessRpc.createElectronUtilityProcessRpc({
     commandMap: CommandMapRef.commandMapRef,
     ...options,
   })
