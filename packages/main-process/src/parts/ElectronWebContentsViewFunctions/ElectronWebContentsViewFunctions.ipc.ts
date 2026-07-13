@@ -6,6 +6,7 @@ export const Commands = {
   addToWindow: ElectronWebContentsViewFunctions.addToWindow,
   backward: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.backward),
   cancelNavigation: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.cancelNavigation),
+  capturePage: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.capturePage),
   copyImageAt: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.copyImageAt),
   executeJavaScript: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.executeJavaScript),
   focus: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.focus),
