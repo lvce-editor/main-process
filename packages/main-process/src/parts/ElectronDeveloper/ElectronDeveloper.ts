@@ -1,4 +1,5 @@
 import * as Performance from '../Performance/Performance.ts'
+export { takeWorkerHeapSnapshot } from '../TakeWorkerHeapSnapshot/TakeWorkerHeapSnapshot.ts'
 
 export const getPerformanceEntries = (): any => {
   const entries = Performance.getEntries()

@@ -50,6 +50,7 @@ export const commandMap = {
   'ElectronContextMenu.openContextMenu': ElectronContextMenu.openContextMenu,
   'ElectronDeveloper.crashMainProcess': ElectronDeveloper.crashMainProcess,
   'ElectronDeveloper.getPerformanceEntries': ElectronDeveloper.getPerformanceEntries,
+  'ElectronDeveloper.takeWorkerHeapSnapshot': ElectronDeveloper.takeWorkerHeapSnapshot,
   'ElectronDialog.showMessageBox': ElectronDialog.showMessageBox,
   'ElectronDialog.showOpenDialog': ElectronDialog.showOpenDialog,
   'ElectronDialog.showSaveDialog': ElectronDialog.showSaveDialog,
