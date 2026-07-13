@@ -5,4 +5,5 @@ export const name = 'ElectronDeveloper'
 export const Commands = {
   crashMainProcess: Developer.crashMainProcess,
   getPerformanceEntries: Developer.getPerformanceEntries,
+  takeWorkerHeapSnapshot: Developer.takeWorkerHeapSnapshot,
 }
