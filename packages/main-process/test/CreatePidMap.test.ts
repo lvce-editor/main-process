@@ -17,7 +17,12 @@ jest.unstable_mockModule('electron', () => {
 })
 
 const CreatePidMap = await import('../src/parts/CreatePidMap/CreatePidMap.ts')
+const UtilityProcessState = await import('../src/parts/UtilityProcessState/UtilityProcessState.ts')
 const electron = await import('electron')
+
+beforeEach(() => {
+  UtilityProcessState.state.all = Object.create(null)
+})
 
 test('createPidMap - detect chrome devtools', () => {
   // @ts-expect-error
@@ -70,4 +75,14 @@ test('createPidMap - unknown renderer', () => {
     return []
   })
   expect(CreatePidMap.createPidMap()).toEqual({})
+})
+
+test('createPidMap - utility process', () => {
+  // @ts-expect-error
+  electron.BrowserWindow.getAllWindows.mockReturnValue([])
+  UtilityProcessState.add(123, {}, 'file-system-process')
+
+  expect(CreatePidMap.createPidMap()).toEqual({
+    123: 'file-system-process',
+  })
 })

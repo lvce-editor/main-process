@@ -1,5 +1,6 @@
-import { ElectronMessagePortRpcClient, ElectronUtilityProcessRpcParent } from '@lvce-editor/rpc'
+import { ElectronMessagePortRpcClient } from '@lvce-editor/rpc'
 import * as CommandMapRef from '../CommandMapRef/CommandMapRef.ts'
+import * as CreateElectronUtilityProcessRpc from '../CreateElectronUtilityProcessRpc/CreateElectronUtilityProcessRpc.ts'
 import * as ExitCode from '../ExitCode/ExitCode.ts'
 import * as GetPortTuple from '../GetPortTuple/GetPortTuple.ts'
 import * as GetSharedProcessArgv from '../GetSharedProcessArgv/GetSharedProcessArgv.ts'
@@ -32,7 +33,7 @@ export const launchSharedProcess = async ({ env = {}, method }) => {
     ...process.env,
     ...env,
   }
-  const sharedProcessRpc = await ElectronUtilityProcessRpcParent.create({
+  const sharedProcessRpc = await CreateElectronUtilityProcessRpc.createElectronUtilityProcessRpc({
     argv: [],
     commandMap: CommandMapRef.commandMapRef,
     env: fullEnv,
