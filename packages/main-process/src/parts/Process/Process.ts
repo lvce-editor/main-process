@@ -42,6 +42,16 @@ export const getArgv = () => {
   return process.argv
 }
 
+export const writeStdout = (value) => {
+  Assert.string(value)
+  process.stdout.write(value)
+}
+
+export const writeStderr = (value) => {
+  Assert.string(value)
+  process.stderr.write(value)
+}
+
 export const { pid } = process
 
 export const { execPath } = process

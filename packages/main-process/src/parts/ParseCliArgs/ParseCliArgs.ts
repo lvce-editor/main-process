@@ -17,6 +17,7 @@ export const parseCliArgs = (argv) => {
     default: {
       sandbox: false,
     },
+    string: [CliCommandType.Prompt],
   }
   const relevantArgv = argv.slice(1)
   const parsedArgs = minimist(relevantArgv, CLI_OPTIONS)

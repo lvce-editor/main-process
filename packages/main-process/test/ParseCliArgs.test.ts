@@ -13,3 +13,17 @@ test('parseCliArgs', () => {
     web: false,
   })
 })
+
+test('parseCliArgs - prompt', () => {
+  expect(ParseCliArgs.parseCliArgs(['/usr/lib/lvce-oss/lvce-oss', '--prompt', 'Fix the tests'])).toMatchObject({
+    _: [],
+    prompt: 'Fix the tests',
+  })
+})
+
+test('parseCliArgs - prompt with equals', () => {
+  expect(ParseCliArgs.parseCliArgs(['/usr/lib/lvce-oss/lvce-oss', '--prompt=Fix the tests'])).toMatchObject({
+    _: [],
+    prompt: 'Fix the tests',
+  })
+})
