@@ -14,6 +14,7 @@ import * as HandleElectronReady from '../HandleElectronReady/HandleElectronReady
 import * as HandleSecondInstance from '../HandleSecondInstance/HandleSecondInstance.ts'
 import * as HandleWebContentsCreated from '../HandleWebContentsCreated/HandleWebContentsCreated.ts'
 import * as HandleWindowAllClosed from '../HandleWindowAllClosed/HandleWindowAllClosed.ts'
+import * as IsPromptMode from '../IsPromptMode/IsPromptMode.ts'
 import * as ParseCliArgs from '../ParseCliArgs/ParseCliArgs.ts'
 import * as Performance from '../Performance/Performance.ts'
 import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMarkerType.ts'
@@ -43,6 +44,7 @@ export const hydrate = async (isLinux: boolean, chromeUserDataPath: string, argv
   // see https://github.com/microsoft/playwright/issues/12345
 
   const parsedCliArgs = ParseCliArgs.parseCliArgs(argv)
+  const isPromptMode = IsPromptMode.isPromptMode(parsedCliArgs)
   const moduleId = Cli.canHandleFastCliArgs(parsedCliArgs)
   if (moduleId) {
     await Cli.handleFastCliArgs(moduleId, parsedCliArgs)
@@ -55,14 +57,16 @@ export const hydrate = async (isLinux: boolean, chromeUserDataPath: string, argv
     AppPaths.setLogsPath(chromeUserDataPath)
   }
 
-  const hasLock = SingleInstanceLock.requestSingleInstanceLock(argv)
-  if (!hasLock) {
-    Exit.exit()
-    return
+  if (!isPromptMode) {
+    const hasLock = SingleInstanceLock.requestSingleInstanceLock(argv)
+    if (!hasLock) {
+      Exit.exit()
+      return
+    }
   }
 
   // TODO tree shake out the .env.DEV check: reading from env variables is expensive
-  if (process.stdout.isTTY && !parsedCliArgs.wait && !process.env.DEV) {
+  if (process.stdout.isTTY && !parsedCliArgs.wait && !isPromptMode && !process.env.DEV) {
     spawn(Process.execPath, argv.slice(1), {
       detached: true,
       stdio: 'ignore',

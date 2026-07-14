@@ -9,4 +9,6 @@ export const Commands = {
   getNodeVersion: Process.getNodeVersion,
   getPid: Process.getPid,
   getV8Version: Process.getV8Version,
+  writeStderr: Process.writeStderr,
+  writeStdout: Process.writeStdout,
 }

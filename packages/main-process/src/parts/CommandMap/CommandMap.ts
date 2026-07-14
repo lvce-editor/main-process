@@ -141,6 +141,8 @@ export const commandMap = {
   'Process.getNodeVersion': Process.getNodeVersion,
   'Process.getPid': Process.getPid,
   'Process.getV8Version': Process.getV8Version,
+  'Process.writeStderr': Process.writeStderr,
+  'Process.writeStdout': Process.writeStdout,
   'TemporaryMessagePort.createPortTuple': TemporaryMessagePort.createPortTuple,
   'TemporaryMessagePort.dispose': TemporaryMessagePort.dispose,
   'TemporaryMessagePort.sendTo': TemporaryMessagePort.sendTo,

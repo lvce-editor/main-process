@@ -4,6 +4,7 @@ import * as CommandMapRef from '../CommandMapRef/CommandMapRef.ts'
 import * as ElectronApplicationMenu from '../ElectronApplicationMenu/ElectronApplicationMenu.ts'
 import * as Session from '../ElectronSession/ElectronSession.ts'
 import * as ErrorHandling from '../ErrorHandling/ErrorHandling.ts'
+import * as IsPromptMode from '../IsPromptMode/IsPromptMode.ts'
 import * as LifeCycle from '../LifeCycle/LifeCycle.ts'
 import * as Logger from '../Logger/Logger.ts'
 import * as Performance from '../Performance/Performance.ts'
@@ -65,7 +66,9 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
     // window .webContents.setZoomLevel(zoomLevel)
     window.show()
   }
-  window.once('ready-to-show', handleReadyToShow)
+  if (!IsPromptMode.isPromptMode(parsedArgs)) {
+    window.once('ready-to-show', handleReadyToShow)
+  }
   // TODO query applicarion menu items from shared process
   const menu = ElectronApplicationMenu.createTitleBar(titleBarItems)
   ElectronApplicationMenu.setMenu(menu)
