@@ -37,6 +37,38 @@ test('executeWindowFunction - toggleDevtools - no window', () => {
   expect(ElectronWindow.executeWindowFunction(1, 'toggleDevtools')).toBeUndefined()
 })
 
+test('executeWindowFunction - toggleFullScreen - enters full screen', () => {
+  const isFullScreen = jest.fn(() => false)
+  const setFullScreen = jest.fn()
+  mockWindow = {
+    id: 1,
+    isFullScreen,
+    setFullScreen,
+  }
+
+  ElectronWindow.executeWindowFunction(1, 'toggleFullScreen')
+
+  expect(isFullScreen).toHaveBeenCalledTimes(1)
+  expect(setFullScreen).toHaveBeenCalledTimes(1)
+  expect(setFullScreen).toHaveBeenCalledWith(true)
+})
+
+test('executeWindowFunction - toggleFullScreen - exits full screen', () => {
+  const isFullScreen = jest.fn(() => true)
+  const setFullScreen = jest.fn()
+  mockWindow = {
+    id: 1,
+    isFullScreen,
+    setFullScreen,
+  }
+
+  ElectronWindow.executeWindowFunction(1, 'toggleFullScreen')
+
+  expect(isFullScreen).toHaveBeenCalledTimes(1)
+  expect(setFullScreen).toHaveBeenCalledTimes(1)
+  expect(setFullScreen).toHaveBeenCalledWith(false)
+})
+
 test('executeWindowFunction - toggleDevtools - closes when already open', () => {
   const pageWebContents = {
     closeDevTools: jest.fn(),
