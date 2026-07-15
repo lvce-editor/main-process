@@ -78,6 +78,10 @@ const toggleDevtools = (browserWindow) => {
   browserWindow.webContents.openDevTools(devtoolsOptions)
 }
 
+const toggleFullScreen = (browserWindow: Electron.BrowserWindow) => {
+  browserWindow.setFullScreen(!browserWindow.isFullScreen())
+}
+
 export const executeWindowFunction = (browserWindowId, key) => {
   const browserWindow = getBrowserWindow(browserWindowId)
   if (!browserWindow) {
@@ -85,6 +89,10 @@ export const executeWindowFunction = (browserWindowId, key) => {
   }
   if (key === 'toggleDevtools') {
     toggleDevtools(browserWindow)
+    return
+  }
+  if (key === 'toggleFullScreen') {
+    toggleFullScreen(browserWindow)
     return
   }
   browserWindow[key]()
