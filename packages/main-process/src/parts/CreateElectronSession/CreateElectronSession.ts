@@ -1,4 +1,5 @@
 import * as Electron from 'electron'
+import * as GetCorsResponseHeaders from '../GetCorsResponseHeaders/GetCorsResponseHeaders.ts'
 import * as HandlePermission from '../HandlePermission/HandlePermission.ts'
 import * as HandleRequest from '../HandleRequest/HandleRequest.ts'
 import * as IsSessionCacheEnabled from '../IsSessionCacheEnabled/IsSessionCacheEnabled.ts'
@@ -10,10 +11,7 @@ const onHeadersReceivedCallback = (
   callback: (headersReceivedResponse: globalThis.Electron.HeadersReceivedResponse) => void,
 ) => {
   callback({
-    responseHeaders: {
-      'Access-Control-Allow-Origin': ['*'],
-      ...details.responseHeaders,
-    },
+    responseHeaders: GetCorsResponseHeaders.getCorsResponseHeaders(details.responseHeaders),
   })
 }
 
