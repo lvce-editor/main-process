@@ -31,6 +31,7 @@ import * as HandleElectronMessagePort from '../HandleElectronMessagePort/HandleE
 import * as IpcParent from '../IpcParent/IpcParent.ts'
 import * as OpenExternal from '../OpenExternal/OpenExternal.ts'
 import * as Process from '../Process/Process.ts'
+import * as ProcessId from '../ProcessId/ProcessId.ts'
 import * as TemporaryMessagePort from '../TemporaryMessagePort/TemporaryMessagePort.ts'
 import * as Trash from '../Trash/Trash.ts'
 
@@ -143,6 +144,7 @@ export const commandMap = {
   'Process.getV8Version': Process.getV8Version,
   'Process.writeStderr': Process.writeStderr,
   'Process.writeStdout': Process.writeStdout,
+  'ProcessId.getMainProcessId': ProcessId.getMainProcessId,
   'TemporaryMessagePort.createPortTuple': TemporaryMessagePort.createPortTuple,
   'TemporaryMessagePort.dispose': TemporaryMessagePort.dispose,
   'TemporaryMessagePort.sendTo': TemporaryMessagePort.sendTo,
