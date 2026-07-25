@@ -8,15 +8,17 @@
   "license": "MIT",
   "type": "module",
   "main": "src/mainProcessMain.ts",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "build": "node packages/build/src/build.js",
-    "build:watch": "./packages/build/node_modules/.bin/esbuild --format=esm --bundle --external:node:buffer --external:electron --external:ws --external:node:* --watch packages/main-process/src/mainProcessMain.ts --outfile=.tmp/dist/dist/mainProcessMain.js",
+    "build:watch": "npm exec --workspace=packages/build -- esbuild --format=esm --bundle --external:node:buffer --external:electron --external:ws --external:node:* --watch packages/main-process/src/mainProcessMain.ts --outfile=.tmp/dist/dist/mainProcessMain.js",
     "dev:prepare": "node packages/local-dev/src/localDevMain.ts prepare",
     "dev:run": "node packages/local-dev/src/localDevMain.ts run",
     "format": "prettier --write .",
-    "postinstall": "lerna bootstrap --ci",
     "lint": "eslint .",
-    "test": "lerna run test",
+    "test": "npm test --workspaces --if-present",
     "type-check": "tsc -b"
   },
   "prettier": {
@@ -25,10 +27,8 @@
     "printWidth": 150
   },
   "devDependencies": {
-    "@lerna/legacy-package-management": "^8.2.4",
     "@lvce-editor/eslint-config": "^17.0.3",
     "eslint": "^10.7.0",
-    "lerna": "^8.2.4",
     "prettier": "^3.9.5",
     "typescript": "^6.0.3"
   },

@@ -5,7 +5,7 @@
   "type": "module",
   "main": "src/localDevMain.ts",
   "scripts": {
-    "test": "node --experimental-vm-modules ../main-process/node_modules/jest/bin/jest.js --runInBand"
+    "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js --runInBand"
   },
   "jest": {
     "testEnvironment": "node",
