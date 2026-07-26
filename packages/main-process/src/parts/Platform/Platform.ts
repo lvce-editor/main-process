@@ -18,6 +18,10 @@ const xdgData = env.XDG_DATA_HOME || (homeDirectory ? Path.join(homeDirectory, '
 
 const dataDir = Path.join(xdgData || tmpdir(), applicationName)
 
+const xdgState = env.XDG_STATE_HOME || (homeDirectory ? Path.join(homeDirectory, '.local', 'state') : undefined)
+
+export const logsDir = Path.join(xdgState || tmpdir(), applicationName, 'logs')
+
 export const getBuiltinSelfTestPath = () => {
   return process.env.BUILTIN_SELF_TEST_PATH || Path.join(Root.root, 'extensions', 'builtin.self-test', 'bin', 'SelfTest.ts')
 }
