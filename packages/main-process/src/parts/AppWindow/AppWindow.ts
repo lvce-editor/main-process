@@ -10,8 +10,8 @@ import * as Logger from '../Logger/Logger.ts'
 import * as Performance from '../Performance/Performance.ts'
 import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMarkerType.ts'
 import { VError } from '../VError/VError.ts'
-import * as WindowLogger from '../WindowLogger/WindowLogger.ts'
 import { WindowLoadError } from '../WindowLoadError/WindowLoadError.ts'
+import * as WindowLogger from '../WindowLogger/WindowLogger.ts'
 // TODO impossible to test these methods
 // and ensure that there is no memory leak
 
