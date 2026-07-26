@@ -10,6 +10,7 @@ import * as Logger from '../Logger/Logger.ts'
 import * as Performance from '../Performance/Performance.ts'
 import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMarkerType.ts'
 import { VError } from '../VError/VError.ts'
+import * as WindowLogger from '../WindowLogger/WindowLogger.ts'
 import { WindowLoadError } from '../WindowLoadError/WindowLoadError.ts'
 // TODO impossible to test these methods
 // and ensure that there is no memory leak
@@ -32,9 +33,6 @@ const addDevDiagnostics = (window) => {
   if (!process.env.DEV) {
     return
   }
-  window.webContents.on('console-message', (_event, level, message, line, sourceId) => {
-    Logger.info(`[app window console] level=${level} source=${sourceId}:${line} message=${message}`)
-  })
   window.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedUrl, isMainFrame) => {
     Logger.error(`[app window did-fail-load] code=${errorCode} mainFrame=${isMainFrame} url=${validatedUrl} error=${errorDescription}`)
   })
@@ -58,6 +56,7 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
     },
   })
   Performance.mark(PerformanceMarkerType.DidCreateCodeWindow)
+  WindowLogger.addListener(window.webContents)
   addDevDiagnostics(window)
 
   const handleReadyToShow = () => {

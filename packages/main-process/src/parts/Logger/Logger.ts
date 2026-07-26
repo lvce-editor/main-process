@@ -1,6 +1,4 @@
-import { Console } from 'node:console'
-import { createWriteStream } from 'node:fs'
-import { tmpdir } from 'node:os'
+import { createFileLogger } from '../CreateFileLogger/CreateFileLogger.ts'
 
 // TODO disable logging via environment variable, don't enable logging during tests
 
@@ -13,10 +11,7 @@ const state: State = {
 }
 
 const createConsole = (): Console => {
-  const logFile = `${tmpdir()}/log-main-process.txt`
-  const writeStream = createWriteStream(logFile)
-  const logger = new Console(writeStream)
-  return logger
+  return createFileLogger('log-main-process.txt')
 }
 
 const getOrCreateLogger = (): Console => {
