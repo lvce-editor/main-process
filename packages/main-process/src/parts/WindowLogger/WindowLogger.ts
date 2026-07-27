@@ -20,7 +20,7 @@ export const formatMessage = ({ level, lineNumber, message, sourceId }: WebConte
 }
 
 export const addListener = (webContents: WebContents, logger: Pick<Console, 'log'> = getOrCreateLogger()): void => {
-  webContents.on('console-message', (_event, details) => {
-    logger.log(formatMessage(details))
+  webContents.on('console-message', (event) => {
+    logger.log(formatMessage(event))
   })
 }
