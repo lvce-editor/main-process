@@ -1,6 +1,6 @@
-import * as ElectronDispositionType from '../ElectronDispositionType/ElectronDispositionType.ts'
 import * as ElectronWindowOpenActionType from '../ElectronWindowOpenActionType/ElectronWindowOpenActionType.ts'
-import * as Logger from '../Logger/Logger.ts'
+import { openExternal } from '../OpenExternal/OpenExternal.ts'
+import * as ShouldOpenExternal from '../ShouldOpenExternal/ShouldOpenExternal.ts'
 
 export const key = 'window-open'
 
@@ -12,32 +12,10 @@ export const detach = (webContents, listener) => {
   webContents.setWindowOpenHandler(null)
 }
 
-export const handler = ({ disposition, features, frameName, postBody, referrer, url }) => {
-  if (url === 'about:blank') {
-    return {
-      messages: [],
-      result: {
-        action: ElectronWindowOpenActionType.Allow,
-      },
-    }
+export const handler = ({ url }: { disposition: string; url: string }) => {
+  if (ShouldOpenExternal.shouldOpenExternal(url)) {
+    void openExternal(url)
   }
-  if (disposition === ElectronDispositionType.BackgroundTab) {
-    return {
-      messages: [['handleWindowOpen', url]],
-      result: {
-        action: ElectronWindowOpenActionType.Deny,
-      },
-    }
-  }
-  if (disposition === ElectronDispositionType.NewWindow) {
-    return {
-      messages: [],
-      result: {
-        action: ElectronWindowOpenActionType.Allow,
-      },
-    }
-  }
-  Logger.info(`[main-process] blocked popup for ${url}`)
   return {
     messages: [],
     result: {
