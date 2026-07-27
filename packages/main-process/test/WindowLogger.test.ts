@@ -28,9 +28,9 @@ test('formatMessage - no source', () => {
 })
 
 test('addListener', () => {
-  const listeners: Record<string, (event: any) => void> = Object.create(null)
+  const listeners: Record<string, (event: any, details: any) => void> = Object.create(null)
   const webContents = {
-    on: jest.fn((event: string, listener: (event: any) => void) => {
+    on: jest.fn((event: string, listener: (event: any, details: any) => void) => {
       listeners[event] = listener
     }),
   }
@@ -39,13 +39,16 @@ test('addListener', () => {
   }
 
   addListener(webContents as any, logger)
-  listeners['console-message']({
-    frame: undefined,
-    level: 'warning',
-    lineNumber: 7,
-    message: 'Deprecated API',
-    sourceId: 'file:///app/api.js',
-  })
+  listeners['console-message'](
+    {},
+    {
+      frame: undefined,
+      level: 'warning',
+      lineNumber: 7,
+      message: 'Deprecated API',
+      sourceId: 'file:///app/api.js',
+    },
+  )
 
   expect(webContents.on).toHaveBeenCalledWith('console-message', expect.any(Function))
   expect(logger.log).toHaveBeenCalledWith(
