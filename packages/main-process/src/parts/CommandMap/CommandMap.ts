@@ -22,6 +22,7 @@ import * as ElectronSession from '../ElectronSession/ElectronSession.ts'
 import * as ElectronShell from '../ElectronShell/ElectronShell.ts'
 import * as ElectronWebContents from '../ElectronWebContents/ElectronWebContents.ts'
 import * as ElectronWebContentsView from '../ElectronWebContentsView/ElectronWebContentsView.ts'
+import * as ElectronWebContentsViewAuthenticationState from '../ElectronWebContentsViewAuthenticationState/ElectronWebContentsViewAuthenticationState.ts'
 import * as ElectronWebContentsViewFunctions from '../ElectronWebContentsViewFunctions/ElectronWebContentsViewFunctions.ts'
 import * as ElectronWindow from '../ElectronWindow/ElectronWindow.ts'
 import * as ElectronWindowGpuInfo from '../ElectronWindowGpuInfo/ElectronWindowGpuInfo.ts'
@@ -79,7 +80,9 @@ export const commandMap = {
   'ElectronWebContents.callFunction': ElectronWebContents.callFunction,
   'ElectronWebContents.dispose': ElectronWebContents.dispose,
   'ElectronWebContents.getStats': ElectronWebContents.getStats,
+  'ElectronWebContentsView.acceptLogin': ElectronWebContentsViewAuthenticationState.accept,
   'ElectronWebContentsView.attachEventListeners': ElectronWebContentsView.attachEventListeners,
+  'ElectronWebContentsView.cancelLogin': ElectronWebContentsViewAuthenticationState.cancel,
   'ElectronWebContentsView.createWebContentsView': ElectronWebContentsView.createWebContentsView,
   'ElectronWebContentsView.disposeWebContentsView': ElectronWebContentsView.disposeWebContentsView,
   'ElectronWebContentsViewFunctions.addToWindow': ElectronWebContentsViewFunctions.addToWindow,

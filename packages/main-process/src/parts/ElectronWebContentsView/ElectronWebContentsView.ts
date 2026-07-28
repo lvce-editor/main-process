@@ -3,6 +3,7 @@ import { BrowserWindow, WebContentsView } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
 import * as ElectronBrowserViewEventListeners from '../ElectronBrowserViewEventListeners/ElectronBrowserViewEventListeners.ts'
 import * as ElectronSessionForBrowserView from '../ElectronSessionForBrowserView/ElectronSessionForBrowserView.ts'
+import * as ElectronWebContentsViewAuthenticationState from '../ElectronWebContentsViewAuthenticationState/ElectronWebContentsViewAuthenticationState.ts'
 import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
 import * as EmbedsProcess from '../EmbedsProcess/EmbedsProcess.ts'
 
@@ -31,7 +32,7 @@ export const attachEventListeners = (webContentsId) => {
   for (const value of values) {
     const wrappedListener = (...args) => {
       // @ts-ignore
-      const { messages, result } = value.handler(...args)
+      const { messages, result } = value.handler(...args, webContentsId)
       for (const message of messages) {
         const [key, ...rest] = message
         EmbedsProcess.send(`ElectronWebContents.${key}`, webContentsId, ...rest)
@@ -46,6 +47,7 @@ export const attachEventListeners = (webContentsId) => {
 
 export const disposeWebContentsView = (browserViewId) => {
   console.log('[main process] dispose browser view', browserViewId)
+  ElectronWebContentsViewAuthenticationState.cancelForWebContents(browserViewId)
   const instance = ElectronWebContentsViewState.get(browserViewId)
   if (!instance) {
     return
