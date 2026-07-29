@@ -10,9 +10,14 @@ test('formatMessage', () => {
     sourceId: 'file:///app/renderer.js',
   })
 
-  expect(message).toMatch(
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z \[error\] \[Window\] Something went wrong \(file:\/\/\/app\/renderer\.js:42\)$/,
-  )
+  expect(JSON.parse(message)).toEqual({
+    category: 'Window',
+    level: 'error',
+    line: 42,
+    message: 'Something went wrong',
+    source: 'file:///app/renderer.js',
+    timestamp: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/),
+  })
 })
 
 test('formatMessage - no source', () => {
@@ -24,7 +29,27 @@ test('formatMessage - no source', () => {
     sourceId: '',
   })
 
-  expect(message).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z \[info\] \[Window\] Ready$/)
+  expect(JSON.parse(message)).toEqual({
+    category: 'Window',
+    level: 'info',
+    line: 0,
+    message: 'Ready',
+    source: '',
+    timestamp: expect.any(String),
+  })
+})
+
+test('formatMessage - preserves a multi-line message in one NDJSON record', () => {
+  const message = formatMessage({
+    frame: undefined as any,
+    level: 'warning',
+    lineNumber: 7,
+    message: 'First line\nSecond line',
+    sourceId: 'file:///app/api.js',
+  })
+
+  expect(message.split('\n')).toHaveLength(1)
+  expect(JSON.parse(message).message).toBe('First line\nSecond line')
 })
 
 test('addListener', () => {
@@ -48,7 +73,13 @@ test('addListener', () => {
   })
 
   expect(webContents.on).toHaveBeenCalledWith('console-message', expect.any(Function))
-  expect(logger.log).toHaveBeenCalledWith(
-    expect.stringMatching(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z \[warning\] \[Window\] Deprecated API \(file:\/\/\/app\/api\.js:7\)$/),
-  )
+  expect(logger.log).toHaveBeenCalledTimes(1)
+  expect(JSON.parse(String(logger.log.mock.calls[0][0]))).toEqual({
+    category: 'Window',
+    level: 'warning',
+    line: 7,
+    message: 'Deprecated API',
+    source: 'file:///app/api.js',
+    timestamp: expect.any(String),
+  })
 })
