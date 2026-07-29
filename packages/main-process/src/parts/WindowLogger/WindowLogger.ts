@@ -15,8 +15,14 @@ const getOrCreateLogger = (): Console => {
 }
 
 export const formatMessage = ({ level, lineNumber, message, sourceId }: WebContentsConsoleMessageEventParams): string => {
-  const source = sourceId ? ` (${sourceId}:${lineNumber})` : ''
-  return `${new Date().toISOString()} [${level}] [Window] ${message}${source}`
+  return JSON.stringify({
+    category: 'Window',
+    level,
+    line: lineNumber,
+    message,
+    source: sourceId,
+    timestamp: new Date().toISOString(),
+  })
 }
 
 export const addListener = (webContents: WebContents, logger: Pick<Console, 'log'> = getOrCreateLogger()): void => {
