@@ -8,7 +8,8 @@ export const enable = (parsedCliArgs) => {
   if (parsedCliArgs.sandbox) {
     Sandbox.enableSandbox()
   } else {
-    // see https://github.com/microsoft/vscode/issues/151187#issuecomment-1221475319
+    // The GPU sandbox must also be disabled when Chromium's sandbox was explicitly disabled.
+    // See https://github.com/microsoft/vscode/issues/151187#issuecomment-1221475319
     if (Platform.isLinux) {
       // @ts-ignore
       ElectronApp.appendCommandLineSwitch('--disable-gpu-sandbox')

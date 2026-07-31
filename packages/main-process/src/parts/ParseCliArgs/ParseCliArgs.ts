@@ -15,7 +15,7 @@ export const parseCliArgs = (argv) => {
       CliCommandType.SandBox,
     ],
     default: {
-      sandbox: false,
+      sandbox: true,
     },
     string: [CliCommandType.Prompt],
   }
