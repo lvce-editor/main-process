@@ -44,7 +44,7 @@ const createTemporaryDirectory = (): string => {
 
 const createCookie = (fixture: CookieFixture = {}): any => {
   return {
-    expiry: fixture.expiry ?? Date.now() + 3_600_000,
+    expiry: fixture.expiry ?? Math.floor(Date.now() / 1000) + 3600,
     host: fixture.host || 'example.com',
     isHttpOnly: fixture.isHttpOnly || 0,
     isSecure: fixture.isSecure || 0,
@@ -122,7 +122,7 @@ test('importFromDirectory imports regular cookies and skips expired and isolated
         name: 'host-only',
       }),
       createCookie({
-        expiry: Date.now() - 3_600_000,
+        expiry: Math.floor(Date.now() / 1000) - 3600,
         name: 'expired',
       }),
       createCookie({
