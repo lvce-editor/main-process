@@ -22,14 +22,19 @@ const getExpirationDate = (expiresUtc: string): number => {
   return Number(chromeMicroseconds - chromeEpochOffsetMicroseconds) / Number(microsecondsPerSecond)
 }
 
-const getValue = (row: ChromeCookieRow, databaseVersion: number): string => {
+const getValue = (row: ChromeCookieRow, databaseVersion: number, chromeSafeStoragePassword?: string): string => {
   if (row.value) {
     return row.value
   }
-  return ChromeCookieDecrypt.decrypt(row.hostKey, row.encryptedValue, databaseVersion)
+  return ChromeCookieDecrypt.decrypt(row.hostKey, row.encryptedValue, databaseVersion, chromeSafeStoragePassword)
 }
 
-export const convert = (row: ChromeCookieRow, databaseVersion: number, now: number = Date.now() / 1000): Electron.CookiesSetDetails | undefined => {
+export const convert = (
+  row: ChromeCookieRow,
+  databaseVersion: number,
+  chromeSafeStoragePassword?: string,
+  now: number = Date.now() / 1000,
+): Electron.CookiesSetDetails | undefined => {
   if (!row.hostKey || row.topFrameSiteKey) {
     return undefined
   }
@@ -45,7 +50,7 @@ export const convert = (row: ChromeCookieRow, databaseVersion: number, now: numb
     sameSite: getSameSite(row.sameSite),
     secure,
     url: `${secure ? 'https' : 'http'}://${host}/`,
-    value: getValue(row, databaseVersion),
+    value: getValue(row, databaseVersion, chromeSafeStoragePassword),
   }
   if (row.hostKey.startsWith('.')) {
     details.domain = row.hostKey

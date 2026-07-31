@@ -7,6 +7,7 @@ import { join } from 'node:path'
 const temporaryDirectories: string[] = []
 const chromeEpochOffsetMicroseconds = 11_644_473_600_000_000n
 const getCookieCount = jest.fn<(path: string) => number>()
+const getChromeSafeStoragePassword = jest.fn<() => Promise<string>>()
 const readCookies = jest.fn<(path: string) => { readonly rows: readonly any[]; readonly version: number }>()
 
 jest.unstable_mockModule('electron', () => {
@@ -21,6 +22,12 @@ jest.unstable_mockModule('../src/parts/ChromeCookieDatabase/ChromeCookieDatabase
   return {
     getCookieCount,
     readCookies,
+  }
+})
+
+jest.unstable_mockModule('../src/parts/ChromeCookieKeyring/ChromeCookieKeyring.ts', () => {
+  return {
+    getChromeSafeStoragePassword,
   }
 })
 
@@ -47,12 +54,12 @@ const createTemporaryDirectory = (): string => {
   return directory
 }
 
-const encryptCookie = (hostKey: string, value: string): Buffer => {
-  const key = pbkdf2Sync('peanuts', 'saltysalt', 1, 16, 'sha1')
+const encryptCookie = (hostKey: string, value: string, format: 'v10' | 'v11' = 'v10', password: string = 'peanuts'): Buffer => {
+  const key = pbkdf2Sync(password, 'saltysalt', 1, 16, 'sha1')
   const iv = Buffer.alloc(16, 0x20)
-  const cipher = createCipheriv('aes-128-cbc', key, iv) // eslint-disable-line sonarjs/encryption-secure-mode -- reproduces Chrome's v10 cookie format
+  const cipher = createCipheriv('aes-128-cbc', key, iv) // eslint-disable-line sonarjs/encryption-secure-mode -- reproduces Chrome's Linux cookie format
   const plaintext = Buffer.concat([createHash('sha256').update(hostKey).digest(), Buffer.from(value)])
-  return Buffer.concat([Buffer.from('v10'), cipher.update(plaintext), cipher.final()])
+  return Buffer.concat([Buffer.from(format), cipher.update(plaintext), cipher.final()])
 }
 
 const getChromeTimestamp = (unixSeconds: number): string => {
@@ -152,6 +159,56 @@ test('decrypt validates the version 24 domain hash', () => {
   expect(() => ChromeCookieDecrypt.decrypt('.other.example.com', encryptedValue, 24)).toThrow('Chrome cookie domain integrity check failed')
 })
 
+test('decrypt supports Chrome v11 cookies using the Safe Storage password', () => {
+  const encryptedValue = encryptCookie('.example.com', 'secret', 'v11', 'safe-storage-password')
+
+  expect(ChromeCookieDecrypt.decrypt('.example.com', encryptedValue, 24, 'safe-storage-password')).toBe('secret')
+})
+
+test('importFromDirectory imports Chrome v11 cookies using the Safe Storage password', async () => {
+  const chromeDataDirectory = createChromeProfile(
+    {
+      Default: {
+        active_time: 1,
+        name: 'Default profile',
+      },
+    },
+    'Default',
+  )
+  getChromeSafeStoragePassword.mockResolvedValue('safe-storage-password')
+  readCookies.mockReturnValue({
+    rows: [
+      createCookie({
+        encryptedValue: encryptCookie('.example.com', 'authenticated', 'v11', 'safe-storage-password'),
+        hostKey: '.example.com',
+      }),
+    ],
+    version: 24,
+  })
+  const set = jest.fn<(...args: readonly any[]) => Promise<void>>().mockResolvedValue(undefined)
+  const flushStore = jest.fn<() => Promise<void>>().mockResolvedValue(undefined)
+
+  await expect(
+    ChromeCookieImport.importFromDirectory(chromeDataDirectory, {
+      cookies: {
+        flushStore,
+        set,
+      } as any,
+    }),
+  ).resolves.toEqual({
+    failed: 0,
+    imported: 1,
+    skipped: 0,
+  })
+  expect(getChromeSafeStoragePassword).toHaveBeenCalledTimes(1)
+  expect(set).toHaveBeenCalledWith(
+    expect.objectContaining({
+      name: 'session',
+      value: 'authenticated',
+    }),
+  )
+})
+
 test('importFromDirectory imports eligible cookies and skips unsupported cookies', async () => {
   const now = Date.now() / 1000
   const chromeDataDirectory = createChromeProfile(
@@ -190,7 +247,7 @@ test('importFromDirectory imports eligible cookies and skips unsupported cookies
         topFrameSiteKey: 'https://top.example',
       }),
       createCookie({
-        encryptedValue: Buffer.from('v11unsupported'),
+        encryptedValue: Buffer.from('v20unsupported'),
         name: 'unsupported',
       }),
     ],
@@ -279,7 +336,7 @@ test('importFromDirectory fails closed when every encrypted cookie is unsupporte
   readCookies.mockReturnValue({
     rows: [
       createCookie({
-        encryptedValue: Buffer.from('v11unsupported'),
+        encryptedValue: Buffer.from('v20unsupported'),
       }),
     ],
     version: 24,

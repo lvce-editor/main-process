@@ -1,7 +1,8 @@
 import type { Session } from 'electron'
 import * as ChromeCookieConversion from '../ChromeCookieConversion/ChromeCookieConversion.ts'
 import * as ChromeCookieDatabase from '../ChromeCookieDatabase/ChromeCookieDatabase.ts'
-import { UnsupportedChromeCookieEncryptionError } from '../ChromeCookieDecrypt/ChromeCookieDecrypt.ts'
+import { isV11, UnsupportedChromeCookieEncryptionError } from '../ChromeCookieDecrypt/ChromeCookieDecrypt.ts'
+import * as ChromeCookieKeyring from '../ChromeCookieKeyring/ChromeCookieKeyring.ts'
 import * as ChromeCookieProfile from '../ChromeCookieProfile/ChromeCookieProfile.ts'
 import * as ElectronSessionForBrowserView from '../ElectronSessionForBrowserView/ElectronSessionForBrowserView.ts'
 
@@ -43,12 +44,14 @@ export const getInfo = (): ChromeCookieImportInfo => {
 export const importFromDirectory = async (chromeDataDirectory: string, session: CookieSession): Promise<ChromeCookieImportResult> => {
   const profile = ChromeCookieProfile.getActiveProfile(chromeDataDirectory)
   const { rows, version } = ChromeCookieDatabase.readCookies(profile.cookieDatabasePath)
+  const requiresChromeSafeStoragePassword = rows.some((row) => !row.value && isV11(row.encryptedValue))
+  const chromeSafeStoragePassword = requiresChromeSafeStoragePassword ? await ChromeCookieKeyring.getChromeSafeStoragePassword() : undefined
   const cookies: Electron.CookiesSetDetails[] = []
   let skipped = 0
   let unsupportedEncryption = 0
   for (const row of rows) {
     try {
-      const cookie = ChromeCookieConversion.convert(row, version)
+      const cookie = ChromeCookieConversion.convert(row, version, chromeSafeStoragePassword)
       if (cookie) {
         cookies.push(cookie)
       } else {
