@@ -28,6 +28,7 @@ import * as ElectronWindow from '../ElectronWindow/ElectronWindow.ts'
 import * as ElectronWindowGpuInfo from '../ElectronWindowGpuInfo/ElectronWindowGpuInfo.ts'
 import * as ElectronWindowProcessExplorer from '../ElectronWindowProcessExplorer/ElectronWindowProcessExplorer.ts'
 import * as Exit from '../Exit/Exit.ts'
+import * as FirefoxCookieImport from '../FirefoxCookieImport/FirefoxCookieImport.ts'
 import * as GetWindowId from '../GetWindowId/GetWindowId.ts'
 import * as HandleElectronMessagePort from '../HandleElectronMessagePort/HandleElectronMessagePort.ts'
 import * as IpcParent from '../IpcParent/IpcParent.ts'
@@ -140,6 +141,8 @@ export const commandMap = {
   'ElectronWindowGpuInfo.open': ElectronWindowGpuInfo.open,
   'ElectronWindowProcessExplorer.open2': ElectronWindowProcessExplorer.open2,
   'Exit.exit': Exit.exit,
+  'FirefoxCookieImport.getInfo': FirefoxCookieImport.getInfo,
+  'FirefoxCookieImport.importCookies': FirefoxCookieImport.importCookies,
   'GetWindowId.getWindowId': GetWindowId.getWindowId,
   'HandleElectronMessagePort.handleElectronMessagePort': HandleElectronMessagePort.handleElectronMessagePort,
   'IpcParent.create': IpcParent.create,
