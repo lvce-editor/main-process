@@ -1,7 +1,5 @@
 import type { FirefoxCookieRow } from '../FirefoxCookieDatabase/FirefoxCookieDatabase.ts'
 
-const millisecondsExpirySchemaVersion = 16
-
 const getSameSite = (sameSite: number): Electron.CookiesSetDetails['sameSite'] => {
   switch (sameSite) {
     case 0:
@@ -15,15 +13,11 @@ const getSameSite = (sameSite: number): Electron.CookiesSetDetails['sameSite'] =
   }
 }
 
-const getExpirationDate = (expiry: number, databaseVersion: number): number => {
-  return databaseVersion >= millisecondsExpirySchemaVersion ? expiry / 1000 : expiry
-}
-
 const getUrlHost = (host: string): string => {
   return host.includes(':') && !host.startsWith('[') ? `[${host}]` : host
 }
 
-export const convert = (row: FirefoxCookieRow, databaseVersion: number, now: number = Date.now() / 1000): Electron.CookiesSetDetails | undefined => {
+export const convert = (row: FirefoxCookieRow, now: number = Date.now() / 1000): Electron.CookiesSetDetails | undefined => {
   if (!row.host || row.originAttributes) {
     return undefined
   }
@@ -31,7 +25,7 @@ export const convert = (row: FirefoxCookieRow, databaseVersion: number, now: num
   if (!host) {
     return undefined
   }
-  const expirationDate = getExpirationDate(row.expiry, databaseVersion)
+  const expirationDate = row.expiry
   if (!Number.isFinite(expirationDate) || expirationDate <= now) {
     return undefined
   }

@@ -34,11 +34,11 @@ export const getInfo = (): FirefoxCookieImportInfo => {
 
 export const importFromDirectory = async (firefoxDataDirectory: string, session: CookieSession): Promise<FirefoxCookieImportResult> => {
   const profile = FirefoxCookieProfile.getActiveProfile(firefoxDataDirectory)
-  const { rows, version } = FirefoxCookieDatabase.readCookies(profile.cookieDatabasePath)
+  const { rows } = FirefoxCookieDatabase.readCookies(profile.cookieDatabasePath)
   const cookies: Electron.CookiesSetDetails[] = []
   let skipped = 0
   for (const row of rows) {
-    const cookie = FirefoxCookieConversion.convert(row, version)
+    const cookie = FirefoxCookieConversion.convert(row)
     if (cookie) {
       cookies.push(cookie)
     } else {
