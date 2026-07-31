@@ -107,6 +107,7 @@ test('getInfoFromDirectory selects the install default profile', () => {
 
 test('importFromDirectory imports regular cookies and skips expired and isolated cookies', async () => {
   const firefoxDataDirectory = createFirefoxProfile()
+  const expiredExpiry = Math.floor(Date.now() / 1000) - 3600
   readCookies.mockReturnValue({
     rows: [
       createCookie({
@@ -122,7 +123,7 @@ test('importFromDirectory imports regular cookies and skips expired and isolated
         name: 'host-only',
       }),
       createCookie({
-        expiry: Math.floor(Date.now() / 1000) - 3600,
+        expiry: expiredExpiry,
         name: 'expired',
       }),
       createCookie({
