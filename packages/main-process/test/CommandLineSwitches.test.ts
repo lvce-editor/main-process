@@ -13,6 +13,12 @@ jest.unstable_mockModule('electron', () => {
   }
 })
 
+jest.unstable_mockModule('../src/parts/Platform/Platform.ts', () => {
+  return {
+    isLinux: true,
+  }
+})
+
 const CommandLineSwitches = await import('../src/parts/CommandLineSwitches/CommandLineSwitches.ts')
 const ParseCliArgs = await import('../src/parts/ParseCliArgs/ParseCliArgs.ts')
 
