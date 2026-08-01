@@ -2,6 +2,7 @@ import * as ElectronInputType from '../ElectronInputType/ElectronInputType.ts'
 import * as ElectronWebContentsEventType from '../ElectronWebContentsEventType/ElectronWebContentsEventType.ts'
 import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
 import * as GetKeyBindingIdentifier from '../GetKeyBindingIdentifier/GetKeyBindingIdentifier.ts'
+import * as HandleWebContentsViewZoomKeyBinding from '../HandleWebContentsViewZoomKeyBinding/HandleWebContentsViewZoomKeyBinding.ts'
 
 export const key = 'before-input'
 
@@ -13,8 +14,16 @@ export const detach = (webContents, listener): void => {
   webContents.off(ElectronWebContentsEventType.BeforeInputEvent, listener)
 }
 
-export const handler = (event, input): any => {
+export const handler = (event, input, webContentsId): any => {
   if (input.type !== ElectronInputType.KeyDown) {
+    return {
+      messages: [],
+      result: undefined,
+    }
+  }
+  const didZoom = HandleWebContentsViewZoomKeyBinding.handleWebContentsViewZoomKeyBinding(webContentsId, input)
+  if (didZoom) {
+    event.preventDefault()
     return {
       messages: [],
       result: undefined,
