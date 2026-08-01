@@ -6,7 +6,7 @@ test('parseCliArgs', () => {
     _: ['/test/'],
     'built-in-self-test': false,
     help: false,
-    sandbox: false,
+    sandbox: true,
     v: false,
     version: false,
     wait: false,
@@ -18,6 +18,13 @@ test('parseCliArgs - prompt', () => {
   expect(ParseCliArgs.parseCliArgs(['/usr/lib/lvce-oss/lvce-oss', '--prompt', 'Fix the tests'])).toMatchObject({
     _: [],
     prompt: 'Fix the tests',
+  })
+})
+
+test('parseCliArgs - no sandbox', () => {
+  expect(ParseCliArgs.parseCliArgs(['/usr/lib/lvce-oss/lvce-oss', '--no-sandbox', '/test/'])).toMatchObject({
+    _: ['/test/'],
+    sandbox: false,
   })
 })
 
