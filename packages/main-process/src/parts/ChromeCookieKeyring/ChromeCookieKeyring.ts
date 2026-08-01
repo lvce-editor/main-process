@@ -1,4 +1,4 @@
-import dbus, { Variant, type DBusInterface, type MessageBus } from 'dbus-native'
+import type { DBusInterface, MessageBus, Variant } from 'dbus-native'
 
 const secretServiceName = 'org.freedesktop.secrets'
 const secretServicePath = '/org/freedesktop/secrets'
@@ -54,9 +54,9 @@ const unlockItem = async (service: SecretService, item: string): Promise<void> =
   throw new Error('Chrome Safe Storage could not be unlocked')
 }
 
-const readPassword = async (bus: MessageBus): Promise<string> => {
+const readPassword = async (bus: MessageBus, sessionInput: Variant<string>): Promise<string> => {
   const service = await bus.getService(secretServiceName).getInterface<SecretService>(secretServicePath, secretServiceInterface)
-  const [, sessionPath] = await service.OpenSession('plain', new Variant('s', ''))
+  const [, sessionPath] = await service.OpenSession('plain', sessionInput)
   const item = await findChromeSafeStorageItem(bus, service)
   let secrets: Readonly<Record<string, readonly [string, Uint8Array, Uint8Array, string]>>
   try {
@@ -77,9 +77,10 @@ const getErrorMessage = (error: unknown): string => {
 }
 
 export const getChromeSafeStoragePassword = async (): Promise<string> => {
+  const { default: dbus, Variant } = await import('dbus-native')
   const bus = dbus.sessionBus({ timeout: 5000 })
   try {
-    return await readPassword(bus)
+    return await readPassword(bus, new Variant('s', ''))
   } catch (error) {
     throw new Error(`Failed to read Chrome Safe Storage password: ${getErrorMessage(error)}`)
   } finally {
