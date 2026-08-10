@@ -4,6 +4,7 @@ import * as Assert from '../Assert/Assert.ts'
 import * as ElectronBrowserViewEventListeners from '../ElectronBrowserViewEventListeners/ElectronBrowserViewEventListeners.ts'
 import * as ElectronSessionForBrowserView from '../ElectronSessionForBrowserView/ElectronSessionForBrowserView.ts'
 import * as ElectronWebContentsViewAuthenticationState from '../ElectronWebContentsViewAuthenticationState/ElectronWebContentsViewAuthenticationState.ts'
+import * as ElectronWebContentsViewNavigationFocus from '../ElectronWebContentsViewNavigationFocus/ElectronWebContentsViewNavigationFocus.ts'
 import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
 import * as EmbedsProcess from '../EmbedsProcess/EmbedsProcess.ts'
 
@@ -25,9 +26,11 @@ export const createWebContentsView = async () => {
 export const attachEventListeners = (webContentsId) => {
   Assert.number(webContentsId)
   const webContents = Electron.webContents.fromId(webContentsId)
-  if (!webContents) {
+  const state = ElectronWebContentsViewState.get(webContentsId)
+  if (!webContents || !state) {
     return
   }
+  ElectronWebContentsViewNavigationFocus.attach(webContents, state.browserWindow.webContents)
   const values = Object.values(ElectronBrowserViewEventListeners)
   for (const value of values) {
     const wrappedListener = (...args) => {
