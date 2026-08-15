@@ -2,6 +2,7 @@ import { ElectronWebContentsRpcClient } from '@lvce-editor/rpc'
 import { BrowserWindow } from 'electron'
 import * as CommandMapRef from '../CommandMapRef/CommandMapRef.ts'
 import * as ElectronApplicationMenu from '../ElectronApplicationMenu/ElectronApplicationMenu.ts'
+import * as ElectronWindowFullScreen from '../ElectronWindowFullScreen/ElectronWindowFullScreen.ts'
 import * as Session from '../ElectronSession/ElectronSession.ts'
 import * as ErrorHandling from '../ErrorHandling/ErrorHandling.ts'
 import * as IsPromptMode from '../IsPromptMode/IsPromptMode.ts'
@@ -75,18 +76,19 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
   // window.setMenu(menu)
   window.setMenuBarVisibility(true)
   window.setAutoHideMenuBar(false)
-  // TODO send event to shared process
+  const rpc = await ElectronWebContentsRpcClient.create({
+    commandMap: CommandMapRef.commandMapRef,
+    webContents: window.webContents,
+  })
+  const disposeFullScreenListener = ElectronWindowFullScreen.listen(window, rpc)
   const handleWindowClose = () => {
     try {
+      disposeFullScreenListener()
       window.off('close', handleWindowClose)
     } catch (error) {
       ErrorHandling.handleError(new VError(error, `Failed to run window close listener`))
     }
   }
   window.on('close', handleWindowClose)
-  await ElectronWebContentsRpcClient.create({
-    commandMap: CommandMapRef.commandMapRef,
-    webContents: window.webContents,
-  })
   await loadUrl(window, url)
 }
