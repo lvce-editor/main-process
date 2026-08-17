@@ -13,3 +13,15 @@ test('prepend adds config arguments before explicit command line arguments', () 
     Argv.argv.splice(0, Argv.argv.length, ...originalArgv)
   }
 })
+test('prepend preserves the Electron development application path', () => {
+  const originalArgv = [...Argv.argv]
+  try {
+    Argv.argv.splice(0, Argv.argv.length, '/test/node_modules/electron/dist/electron', '.', '--theme=explicit')
+
+    Argv.prepend(['--link=/test/extension'])
+
+    expect(Argv.argv).toEqual(['/test/node_modules/electron/dist/electron', '.', '--link=/test/extension', '--theme=explicit'])
+  } finally {
+    Argv.argv.splice(0, Argv.argv.length, ...originalArgv)
+  }
+})
