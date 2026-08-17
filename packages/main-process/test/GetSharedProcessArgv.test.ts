@@ -1,10 +1,17 @@
 import { expect, test } from '@jest/globals'
 import * as GetSharedProcessArgv from '../src/parts/GetSharedProcessArgv/GetSharedProcessArgv.ts'
 
-test('getSharedProcessArgv - production', () => {
-  expect(GetSharedProcessArgv.getSharedProcessArgv(true)).toEqual(['--enable-source-maps'])
+test('getSharedProcessArgv', () => {
+  expect(GetSharedProcessArgv.getSharedProcessArgv(['/usr/bin/lvce', '--link=/test/one', '--link=/test/two'])).toEqual([
+    '--link=/test/one',
+    '--link=/test/two',
+  ])
 })
 
-test('getSharedProcessArgv - development', () => {
-  expect(GetSharedProcessArgv.getSharedProcessArgv(false)).toEqual([])
+test('getSharedProcessExecArgv - production', () => {
+  expect(GetSharedProcessArgv.getSharedProcessExecArgv(true)).toEqual(['--enable-source-maps'])
+})
+
+test('getSharedProcessExecArgv - development', () => {
+  expect(GetSharedProcessArgv.getSharedProcessExecArgv(false)).toEqual([])
 })

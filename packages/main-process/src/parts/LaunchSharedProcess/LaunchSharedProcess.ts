@@ -28,13 +28,14 @@ const handleChildDisconnect = () => {
 export const launchSharedProcess = async ({ env = {}, method }) => {
   Performance.mark(PerformanceMarkerType.WillStartSharedProcess)
   const sharedProcessPath = Platform.getSharedProcessPath()
-  const execArgv = GetSharedProcessArgv.getSharedProcessArgv(Platform.isProduction)
+  const argv = GetSharedProcessArgv.getSharedProcessArgv(Process.getArgv())
+  const execArgv = GetSharedProcessArgv.getSharedProcessExecArgv(Platform.isProduction)
   const fullEnv = {
     ...process.env,
     ...env,
   }
   const sharedProcessRpc = await CreateElectronUtilityProcessRpc.createElectronUtilityProcessRpc({
-    argv: [],
+    argv,
     commandMap: CommandMapRef.commandMapRef,
     env: fullEnv,
     execArgv,

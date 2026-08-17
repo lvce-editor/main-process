@@ -14,6 +14,8 @@ export const applicationName = 'lvce-oss'
 
 const xdgCache = env.XDG_CACHE_HOME || (homeDirectory ? Path.join(homeDirectory, '.cache') : undefined)
 
+const xdgConfig = env.XDG_CONFIG_HOME || (homeDirectory ? Path.join(homeDirectory, '.config') : undefined)
+
 const xdgData = env.XDG_DATA_HOME || (homeDirectory ? Path.join(homeDirectory, '.local', 'share') : undefined)
 
 const dataDir = Path.join(xdgData || tmpdir(), applicationName)
@@ -31,6 +33,10 @@ export const getWebPath = () => {
 }
 
 export const chromeUserDataPath = xdgCache ? Path.join(xdgCache, applicationName, 'userdata') : ''
+
+export const getArgvConfigPath = () => {
+  return Path.join(xdgConfig || tmpdir(), applicationName, 'argv.json')
+}
 
 export const version = '0.0.0-dev'
 
