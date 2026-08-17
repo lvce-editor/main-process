@@ -13,7 +13,6 @@ test('prepend adds config arguments before explicit command line arguments', () 
     Argv.argv.splice(0, Argv.argv.length, ...originalArgv)
   }
 })
-
 test('prepend preserves the Electron development application path', () => {
   const originalArgv = [...Argv.argv]
   try {
