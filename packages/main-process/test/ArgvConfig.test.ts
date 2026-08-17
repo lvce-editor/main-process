@@ -7,7 +7,9 @@ import * as ArgvConfig from '../src/parts/ArgvConfig/ArgvConfig.ts'
 const temporaryDirectories: string[] = []
 
 afterEach(async () => {
-  await Promise.all(temporaryDirectories.splice(0).map((path) => rm(path, { force: true, recursive: true })))
+  const directories = [...temporaryDirectories]
+  temporaryDirectories.length = 0
+  await Promise.all(directories.map((path) => rm(path, { force: true, recursive: true })))
 })
 
 test('parseArgvConfig converts object values into command line arguments', () => {
