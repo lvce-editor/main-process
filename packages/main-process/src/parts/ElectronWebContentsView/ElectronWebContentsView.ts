@@ -1,6 +1,7 @@
 import * as Electron from 'electron'
 import { BrowserWindow, WebContentsView } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
+import * as DisposeWebContents from '../DisposeWebContents/DisposeWebContents.ts'
 import * as ElectronBrowserViewEventListeners from '../ElectronBrowserViewEventListeners/ElectronBrowserViewEventListeners.ts'
 import * as ElectronSessionForBrowserView from '../ElectronSessionForBrowserView/ElectronSessionForBrowserView.ts'
 import * as ElectronWebContentsViewAuthenticationState from '../ElectronWebContentsViewAuthenticationState/ElectronWebContentsViewAuthenticationState.ts'
@@ -60,4 +61,5 @@ export const disposeWebContentsView = (browserViewId) => {
   const { browserWindow, view } = instance
   ElectronWebContentsViewState.remove(browserViewId)
   browserWindow.contentView.removeChildView(view)
+  DisposeWebContents.disposeWebContents(view.webContents)
 }
