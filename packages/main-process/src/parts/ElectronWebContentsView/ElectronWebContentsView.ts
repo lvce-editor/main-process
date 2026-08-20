@@ -17,6 +17,8 @@ export const createWebContentsView = async () => {
   })
   // TODO get browser window id from renderer worker
   const browserWindow = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+  view.setBounds({ height: 720, width: 1280, x: 0, y: 0 })
+  browserWindow.contentView.addChildView(view, 0)
   const { webContents } = view
   const { id } = webContents
   ElectronWebContentsViewState.add(id, browserWindow, view)

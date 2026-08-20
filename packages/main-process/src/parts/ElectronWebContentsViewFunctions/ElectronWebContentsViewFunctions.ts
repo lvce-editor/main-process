@@ -111,10 +111,26 @@ export const insertCss = async (view: WebContentsView, code: string) => {
   return key
 }
 
-export const executeJavaScript = async (view: WebContentsView, code: string) => {
+export const executeJavaScript = async (view: WebContentsView, code: string, userGesture = false) => {
   const { webContents } = view
-  const key = await webContents.executeJavaScript(code)
+  const key = await webContents.executeJavaScript(code, userGesture)
   return key
+}
+
+export const click = async (view: WebContentsView, selector: string): Promise<boolean> => {
+  Assert.string(selector)
+  const { webContents } = view
+  const point = await webContents.executeJavaScript(
+    `(() => { const element = document.querySelector(${JSON.stringify(selector)}); if (!element) return undefined; const rect = element.getBoundingClientRect(); return { x: Math.round(rect.left + rect.width / 2), y: Math.round(rect.top + rect.height / 2) } })()`,
+  )
+  if (!point) {
+    return false
+  }
+  const input = { button: 'left' as const, clickCount: 1, x: point.x, y: point.y }
+  webContents.sendInputEvent({ ...input, type: 'mouseMove' })
+  webContents.sendInputEvent({ ...input, type: 'mouseDown' })
+  webContents.sendInputEvent({ ...input, type: 'mouseUp' })
+  return true
 }
 
 export const reload = (view: BrowserView) => {

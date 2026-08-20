@@ -94,6 +94,7 @@ export const commandMap = {
   'ElectronWebContentsViewFunctions.capturePage': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.capturePage,
   ),
+  'ElectronWebContentsViewFunctions.click': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.click),
   'ElectronWebContentsViewFunctions.copyImageAt': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.copyImageAt,
   ),
@@ -116,7 +117,7 @@ export const commandMap = {
     ElectronWebContentsViewFunctions.openDevtools,
   ),
   'ElectronWebContentsViewFunctions.reload': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
-    ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.reload),
+    ElectronWebContentsViewFunctions.reload,
   ),
   'ElectronWebContentsViewFunctions.resizeBrowserView': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.resizeBrowserView,
