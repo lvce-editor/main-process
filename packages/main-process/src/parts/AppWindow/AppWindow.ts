@@ -1,6 +1,7 @@
 import { ElectronWebContentsRpcClient } from '@lvce-editor/rpc'
 import { BrowserWindow } from 'electron'
 import * as CommandMapRef from '../CommandMapRef/CommandMapRef.ts'
+import { createWindowCloseHandler } from '../CreateWindowCloseHandler/CreateWindowCloseHandler.ts'
 import * as ElectronApplicationMenu from '../ElectronApplicationMenu/ElectronApplicationMenu.ts'
 import * as Session from '../ElectronSession/ElectronSession.ts'
 import * as ElectronWindowFullScreen from '../ElectronWindowFullScreen/ElectronWindowFullScreen.ts'
@@ -81,14 +82,12 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
     webContents: window.webContents,
   })
   const disposeFullScreenListener = ElectronWindowFullScreen.listen(window, rpc)
-  const handleWindowClose = () => {
-    try {
-      disposeFullScreenListener()
-      window.off('close', handleWindowClose)
-    } catch (error) {
-      ErrorHandling.handleError(new VError(error, `Failed to run window close listener`))
-    }
-  }
+  const handleWindowClose = createWindowCloseHandler(
+    window,
+    rpc,
+    (error) => ErrorHandling.handleError(new VError(error, `Failed to prepare window close`)),
+    disposeFullScreenListener,
+  )
   window.on('close', handleWindowClose)
   await loadUrl(window, url)
 }
