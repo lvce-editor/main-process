@@ -1,17 +1,11 @@
 import type { WebContents, WebContentsConsoleMessageEventParams } from 'electron'
+import type { FileLogger } from '../CreateFileLogger/CreateFileLogger.ts'
 import { createFileLogger } from '../CreateFileLogger/CreateFileLogger.ts'
 
-interface State {
-  console: Console | undefined
-}
+type Logger = Pick<FileLogger, 'log'> & Partial<Pick<FileLogger, 'dispose'>>
 
-const state: State = {
-  console: undefined,
-}
-
-const getOrCreateLogger = (): Console => {
-  state.console ||= createFileLogger('log-window.txt')
-  return state.console
+export const getLogFileName = (windowId: number, now: number = Date.now()): string => {
+  return `${windowId}/${now}.txt`
 }
 
 export const formatMessage = ({ level, lineNumber, message, sourceId }: WebContentsConsoleMessageEventParams): string => {
@@ -25,8 +19,15 @@ export const formatMessage = ({ level, lineNumber, message, sourceId }: WebConte
   })
 }
 
-export const addListener = (webContents: WebContents, logger: Pick<Console, 'log'> = getOrCreateLogger()): void => {
+export const addListener = (
+  windowId: number,
+  webContents: WebContents,
+  logger: Logger = createFileLogger(getLogFileName(windowId)),
+): void => {
   webContents.on('console-message', (event) => {
     logger.log(formatMessage(event))
+  })
+  webContents.on('destroyed', () => {
+    logger.dispose?.()
   })
 }
