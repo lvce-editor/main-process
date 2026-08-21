@@ -57,7 +57,7 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
     },
   })
   Performance.mark(PerformanceMarkerType.DidCreateCodeWindow)
-  WindowLogger.addListener(window.webContents)
+  WindowLogger.addListener(window.id, window.webContents)
   addDevDiagnostics(window)
 
   const handleReadyToShow = () => {

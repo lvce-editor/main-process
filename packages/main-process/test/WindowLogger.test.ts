@@ -1,5 +1,9 @@
 import { expect, jest, test } from '@jest/globals'
-import { addListener, formatMessage } from '../src/parts/WindowLogger/WindowLogger.ts'
+import { addListener, formatMessage, getLogFileName } from '../src/parts/WindowLogger/WindowLogger.ts'
+
+test('getLogFileName', () => {
+  expect(getLogFileName(42, 123_456_789)).toBe('42/123456789.txt')
+})
 
 test('formatMessage', () => {
   const message = formatMessage({
@@ -60,10 +64,11 @@ test('addListener', () => {
     }),
   }
   const logger = {
+    dispose: jest.fn(),
     log: jest.fn(),
   }
 
-  addListener(webContents as any, logger)
+  addListener(42, webContents as any, logger)
   listeners['console-message']({
     frame: undefined,
     level: 'warning',
@@ -73,6 +78,7 @@ test('addListener', () => {
   })
 
   expect(webContents.on).toHaveBeenCalledWith('console-message', expect.any(Function))
+  expect(webContents.on).toHaveBeenCalledWith('destroyed', expect.any(Function))
   expect(logger.log).toHaveBeenCalledTimes(1)
   expect(JSON.parse(String(logger.log.mock.calls[0][0]))).toEqual({
     category: 'Window',
@@ -82,4 +88,7 @@ test('addListener', () => {
     source: 'file:///app/api.js',
     timestamp: expect.any(String),
   })
+
+  listeners.destroyed(undefined)
+  expect(logger.dispose).toHaveBeenCalledTimes(1)
 })
