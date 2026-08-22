@@ -59,7 +59,6 @@ const version = await getVersion()
 const packageJson = await readJson(join(root, 'packages', 'main-process', 'package.json'))
 
 delete packageJson.scripts
-const dbusNative = packageJson.dependencies['dbus-native']
 const electron = packageJson.devDependencies['electron']
 delete packageJson.devDependencies
 delete packageJson.prettier
@@ -68,7 +67,6 @@ delete packageJson.xo
 delete packageJson.directories
 delete packageJson.nodemonConfig
 packageJson.dependencies = {
-  'dbus-native': dbusNative,
   electron,
 }
 packageJson.version = version
