@@ -11,6 +11,26 @@ interface RendererRpc {
   invoke(method: 'Window.prepareClose'): Promise<unknown>
 }
 
+const closePreparationTimeout = 1000
+
+const prepareClose = async (rpc: RendererRpc): Promise<void> => {
+  let timeout: NodeJS.Timeout | undefined
+  try {
+    await Promise.race([
+      rpc.invoke('Window.prepareClose'),
+      new Promise<never>((_resolve, reject) => {
+        timeout = setTimeout(() => {
+          reject(new Error(`Timed out preparing window close after ${closePreparationTimeout}ms`))
+        }, closePreparationTimeout)
+      }),
+    ])
+  } finally {
+    if (timeout) {
+      clearTimeout(timeout)
+    }
+  }
+}
+
 export const createWindowCloseHandler = (
   window: ClosableWindow,
   rpc: RendererRpc,
@@ -28,7 +48,7 @@ export const createWindowCloseHandler = (
 
     void (async (): Promise<void> => {
       try {
-        await rpc.invoke('Window.prepareClose')
+        await prepareClose(rpc)
       } catch (error) {
         onError(error)
       } finally {
