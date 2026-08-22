@@ -1,4 +1,4 @@
-import { beforeEach, expect, jest, test } from '@jest/globals'
+import { afterEach, beforeEach, expect, jest, test } from '@jest/globals'
 import { createWindowCloseHandler } from '../src/parts/CreateWindowCloseHandler/CreateWindowCloseHandler.ts'
 
 const close = jest.fn()
@@ -10,6 +10,10 @@ const dispose = jest.fn()
 
 beforeEach(() => {
   jest.resetAllMocks()
+})
+
+afterEach(() => {
+  jest.useRealTimers()
 })
 
 test('waits for renderer state persistence before closing the window', async () => {
@@ -32,6 +36,7 @@ test('waits for renderer state persistence before closing the window', async () 
   resolveSave()
   await Promise.resolve()
   await Promise.resolve()
+  await Promise.resolve()
 
   expect(off).toHaveBeenCalledWith('close', handleWindowClose)
   expect(close).toHaveBeenCalledTimes(1)
@@ -40,6 +45,7 @@ test('waits for renderer state persistence before closing the window', async () 
 })
 
 test('coalesces repeated close requests while state persistence is pending', () => {
+  jest.useFakeTimers()
   invoke.mockReturnValue(new Promise<void>(() => {}))
   const handleWindowClose = createWindowCloseHandler({ close, off }, { invoke }, onError)
 
@@ -51,6 +57,21 @@ test('coalesces repeated close requests while state persistence is pending', () 
   expect(close).not.toHaveBeenCalled()
 })
 
+test('closes the window when renderer state persistence does not finish', async () => {
+  jest.useFakeTimers()
+  invoke.mockReturnValue(new Promise<void>(() => {}))
+  const window = { close, off }
+  const handleWindowClose = createWindowCloseHandler(window, { invoke }, onError, dispose)
+
+  handleWindowClose({ preventDefault })
+  await jest.advanceTimersByTimeAsync(1000)
+
+  expect(onError).toHaveBeenCalledWith(new Error('Timed out preparing window close after 1000ms'))
+  expect(off).toHaveBeenCalledWith('close', handleWindowClose)
+  expect(close).toHaveBeenCalledTimes(1)
+  expect(dispose).toHaveBeenCalledTimes(1)
+})
+
 test('reports persistence errors and still closes the window', async () => {
   const error = new Error('save failed')
   invoke.mockRejectedValue(error)
@@ -58,6 +79,7 @@ test('reports persistence errors and still closes the window', async () => {
   const handleWindowClose = createWindowCloseHandler(window, { invoke }, onError)
 
   handleWindowClose({ preventDefault })
+  await Promise.resolve()
   await Promise.resolve()
   await Promise.resolve()
 
@@ -76,6 +98,7 @@ test('reports disposal errors and still closes the window', async () => {
   const handleWindowClose = createWindowCloseHandler(window, { invoke }, onError, dispose)
 
   handleWindowClose({ preventDefault })
+  await Promise.resolve()
   await Promise.resolve()
   await Promise.resolve()
 
