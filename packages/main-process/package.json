@@ -54,7 +54,6 @@
     "@lvce-editor/rpc": "^6.10.0",
     "@lvce-editor/rpc-registry": "^9.42.0",
     "@lvce-editor/verror": "^1.7.0",
-    "dbus-native": "^0.15.1",
     "electron-unhandled": "^5.0.0",
     "minimist": "^1.2.8"
   },

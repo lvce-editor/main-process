@@ -26,7 +26,7 @@ const options = {
     },
     inlineDynamicImports: true,
   },
-  external: ['dbus-native', 'electron', 'ws'],
+  external: ['electron', 'ws'],
   plugins: [
     babel({
       babelHelpers: 'bundled',
