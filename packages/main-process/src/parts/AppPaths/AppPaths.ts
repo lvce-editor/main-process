@@ -1,17 +1,19 @@
 import { app } from 'electron'
+import { mkdirSync } from 'node:fs'
 
-export const setUserDataPath = (value) => {
-  app.setPath('userData', value)
+interface AppPathOptions {
+  readonly crashDumpsPath: string
+  readonly logsPath: string
+  readonly sessionDataPath: string
+  readonly userDataPath: string
 }
 
-export const setSessionDataPath = (value) => {
-  app.setPath('sessionData', value)
-}
-
-export const setCrashDumpsPath = (value) => {
-  app.setPath('crashDumps', value)
-}
-
-export const setLogsPath = (value) => {
-  app.setPath('logs', value)
+export const configure = ({ crashDumpsPath, logsPath, sessionDataPath, userDataPath }: AppPathOptions): void => {
+  for (const path of [crashDumpsPath, logsPath, sessionDataPath, userDataPath]) {
+    mkdirSync(path, { recursive: true })
+  }
+  app.setPath('userData', userDataPath)
+  app.setPath('sessionData', sessionDataPath)
+  app.setPath('crashDumps', crashDumpsPath)
+  app.setPath('logs', logsPath)
 }

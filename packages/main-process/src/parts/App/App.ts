@@ -1,7 +1,6 @@
 import * as Electron from 'electron'
 import unhandled from 'electron-unhandled' // TODO this might slow down initial startup
 import { spawn } from 'node:child_process'
-import * as AppPaths from '../AppPaths/AppPaths.ts'
 import * as Cli from '../Cli/Cli.ts'
 import * as CommandLineSwitches from '../CommandLineSwitches/CommandLineSwitches.ts'
 import * as ElectronApp from '../ElectronApp/ElectronApp.ts'
@@ -27,7 +26,7 @@ import * as SingleInstanceLock from '../SingleInstanceLock/SingleInstanceLock.ts
 // currently launching shared process takes 170ms
 // which means first paint is delayed by a lot
 
-export const hydrate = async (isLinux: boolean, chromeUserDataPath: string, argv: readonly string[]) => {
+export const hydrate = async (argv: readonly string[]) => {
   ElectronApplicationMenu.setMenu(null) // performance
   unhandled({
     logger() {}, // already exists in mainProcessMain.js
@@ -50,13 +49,6 @@ export const hydrate = async (isLinux: boolean, chromeUserDataPath: string, argv
     await Cli.handleFastCliArgs(moduleId, parsedCliArgs)
     return
   }
-  if (isLinux && chromeUserDataPath) {
-    AppPaths.setUserDataPath(chromeUserDataPath)
-    AppPaths.setSessionDataPath(chromeUserDataPath)
-    AppPaths.setCrashDumpsPath(chromeUserDataPath)
-    AppPaths.setLogsPath(chromeUserDataPath)
-  }
-
   if (!isPromptMode) {
     const hasLock = SingleInstanceLock.requestSingleInstanceLock(argv)
     if (!hasLock) {

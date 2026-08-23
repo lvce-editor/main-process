@@ -16,6 +16,8 @@ const xdgCache = env.XDG_CACHE_HOME || (homeDirectory ? Path.join(homeDirectory,
 
 const xdgConfig = env.XDG_CONFIG_HOME || (homeDirectory ? Path.join(homeDirectory, '.config') : undefined)
 
+const configDir = Path.join(xdgConfig || tmpdir(), applicationName)
+
 const xdgData = env.XDG_DATA_HOME || (homeDirectory ? Path.join(homeDirectory, '.local', 'share') : undefined)
 
 const dataDir = Path.join(xdgData || tmpdir(), applicationName)
@@ -23,6 +25,10 @@ const dataDir = Path.join(xdgData || tmpdir(), applicationName)
 const xdgState = env.XDG_STATE_HOME || (homeDirectory ? Path.join(homeDirectory, '.local', 'state') : undefined)
 
 export const logsDir = Path.join(xdgState || tmpdir(), applicationName, 'logs')
+
+export const electronUserDataPath = Path.join(configDir, 'electron')
+
+export const crashDumpsPath = Path.join(electronUserDataPath, 'Crashpad')
 
 export const getBuiltinSelfTestPath = () => {
   return process.env.BUILTIN_SELF_TEST_PATH || Path.join(Root.root, 'extensions', 'builtin.self-test', 'bin', 'SelfTest.ts')
@@ -32,10 +38,10 @@ export const getWebPath = () => {
   return process.env.WEB_PATH || Path.join(Root.root, 'packages', 'web', 'src', 'web.ts')
 }
 
-export const chromeUserDataPath = xdgCache ? Path.join(xdgCache, applicationName, 'userdata') : ''
+export const electronSessionDataPath = Path.join(xdgCache || tmpdir(), applicationName, 'userdata')
 
 export const getArgvConfigPath = () => {
-  return Path.join(xdgConfig || tmpdir(), applicationName, 'argv.json')
+  return Path.join(configDir, 'argv.json')
 }
 
 export const version = '0.0.0-dev'
