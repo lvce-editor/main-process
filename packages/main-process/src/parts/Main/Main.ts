@@ -1,6 +1,7 @@
 // @ts-ignore
 performance.mark('code/start')
 import * as App from '../App/App.ts'
+import * as AppPaths from '../AppPaths/AppPaths.ts'
 import * as Argv from '../Argv/Argv.ts'
 import * as ArgvConfig from '../ArgvConfig/ArgvConfig.ts'
 import * as CommandMap from '../CommandMap/CommandMap.ts'
@@ -11,6 +12,14 @@ import * as Process from '../Process/Process.ts'
 import * as SetStackTraceLimit from '../SetStackTraceLimit/SetStackTraceLimit.ts'
 
 export const main = async () => {
+  if (Platform.isLinux) {
+    AppPaths.configure({
+      crashDumpsPath: Platform.crashDumpsPath,
+      logsPath: Platform.logsDir,
+      sessionDataPath: Platform.electronSessionDataPath,
+      userDataPath: Platform.electronUserDataPath,
+    })
+  }
   const configArguments = await ArgvConfig.load(Platform.getArgvConfigPath())
   Argv.prepend(configArguments)
   Object.assign(CommandMapRef.commandMapRef, CommandMap.commandMap)
@@ -18,5 +27,5 @@ export const main = async () => {
   Process.on('uncaughtExceptionMonitor', ErrorHandling.handleUncaughtExceptionMonitor)
   // workaround for https://github.com/electron/electron/issues/36526
   Process.on('unhandledRejection', ErrorHandling.handleUnhandledRejection)
-  await App.hydrate(Platform.isLinux, Platform.chromeUserDataPath, Argv.argv)
+  await App.hydrate(Argv.argv)
 }

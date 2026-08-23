@@ -1,4 +1,5 @@
 import { expect, test } from '@jest/globals'
+import { dirname, join } from 'node:path'
 import * as Platform from '../src/parts/Platform/Platform.ts'
 
 test('isProduction', () => {
@@ -15,6 +16,12 @@ test('getBuiltinSelfTestPath', () => {
 
 test('applicationName', () => {
   expect(typeof Platform.applicationName).toBe('string')
+})
+
+test('electron paths use the application config directory', () => {
+  const configDir = dirname(Platform.getArgvConfigPath())
+  expect(Platform.electronUserDataPath).toBe(join(configDir, 'electron'))
+  expect(Platform.crashDumpsPath).toBe(join(Platform.electronUserDataPath, 'Crashpad'))
 })
 
 test('getVersion', () => {
