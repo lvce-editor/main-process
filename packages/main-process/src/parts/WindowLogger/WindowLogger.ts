@@ -5,7 +5,8 @@ import { createFileLogger } from '../CreateFileLogger/CreateFileLogger.ts'
 type Logger = Pick<FileLogger, 'log'> & Partial<Pick<FileLogger, 'dispose'>>
 
 export const getLogFileName = (windowId: number, now: number = Date.now()): string => {
-  return `${windowId}/${now}.txt`
+  const timestamp = new Date(now).toISOString().replaceAll(':', '-')
+  return `${windowId}/${timestamp}.txt`
 }
 
 export const formatMessage = ({ level, lineNumber, message, sourceId }: WebContentsConsoleMessageEventParams): string => {

@@ -2,7 +2,7 @@ import { expect, jest, test } from '@jest/globals'
 import { addListener, formatMessage, getLogFileName } from '../src/parts/WindowLogger/WindowLogger.ts'
 
 test('getLogFileName', () => {
-  expect(getLogFileName(42, 123_456_789)).toBe('42/123456789.txt')
+  expect(getLogFileName(42, Date.parse('2026-05-05T14:23:01.456Z'))).toBe('42/2026-05-05T14-23-01.456Z.txt')
 })
 
 test('formatMessage', () => {
