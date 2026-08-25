@@ -10,7 +10,15 @@ test('parseCliArgs', () => {
     v: false,
     version: false,
     wait: false,
+    'wait-10-seconds': false,
     web: false,
+  })
+})
+
+test('parseCliArgs - wait 10 seconds', () => {
+  expect(ParseCliArgs.parseCliArgs(['/usr/lib/lvce-oss/lvce-oss', '--wait-10-seconds'])).toMatchObject({
+    _: [],
+    'wait-10-seconds': true,
   })
 })
 

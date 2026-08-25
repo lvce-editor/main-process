@@ -20,6 +20,7 @@ import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMark
 import * as Process from '../Process/Process.ts'
 import * as Protocol from '../Protocol/Protocol.ts'
 import * as SingleInstanceLock from '../SingleInstanceLock/SingleInstanceLock.ts'
+import * as TimedExit from '../TimedExit/TimedExit.ts'
 
 // TODO maybe handle critical (first render) request via ipcMain
 // and spawn shared process when page is idle/loaded
@@ -57,8 +58,10 @@ export const hydrate = async (argv: readonly string[]) => {
     }
   }
 
+  const hasTimedExit = TimedExit.schedule(parsedCliArgs)
+
   // TODO tree shake out the .env.DEV check: reading from env variables is expensive
-  if (process.stdout.isTTY && !parsedCliArgs.wait && !isPromptMode && !process.env.DEV) {
+  if (process.stdout.isTTY && !parsedCliArgs.wait && !hasTimedExit && !isPromptMode && !process.env.DEV) {
     spawn(Process.execPath, argv.slice(1), {
       detached: true,
       stdio: 'ignore',

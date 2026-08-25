@@ -1,6 +1,7 @@
 export const Version = 'version'
 export const Help = 'help'
 export const Wait = 'wait'
+export const Wait10Seconds = 'wait-10-seconds'
 export const BuiltinSelfTest = 'built-in-self-test'
 export const Web = 'web'
 export const SandBox = 'sandbox'

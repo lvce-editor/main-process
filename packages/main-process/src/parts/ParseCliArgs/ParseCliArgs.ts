@@ -10,6 +10,7 @@ export const parseCliArgs = (argv) => {
       CliCommandType.Version,
       CliCommandType.Help,
       CliCommandType.Wait,
+      CliCommandType.Wait10Seconds,
       CliCommandType.BuiltinSelfTest,
       CliCommandType.Web,
       CliCommandType.SandBox,
