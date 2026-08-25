@@ -15,3 +15,11 @@ npx electron --wait src/profile.js
 ```
 
 This will create a `profile.cpuprofile` file, which can be loaded inside the chrome devtools performance panel.
+
+## Benchmarking application startup
+
+Use `--wait-10-seconds` to keep the application attached to the terminal and quit it after 10 seconds:
+
+```sh
+time lvce --wait-10-seconds
+```
