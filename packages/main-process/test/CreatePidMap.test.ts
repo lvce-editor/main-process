@@ -16,12 +16,19 @@ jest.unstable_mockModule('electron', () => {
   }
 })
 
+const getWebContentsViews = jest.fn((): readonly any[] => [])
+
+jest.unstable_mockModule('../src/parts/ElectronWebContentsViewState/ElectronWebContentsViewState.ts', () => ({
+  getAll: getWebContentsViews,
+}))
+
 const CreatePidMap = await import('../src/parts/CreatePidMap/CreatePidMap.ts')
 const UtilityProcessState = await import('../src/parts/UtilityProcessState/UtilityProcessState.ts')
 const electron = await import('electron')
 
 beforeEach(() => {
   UtilityProcessState.state.all = Object.create(null)
+  getWebContentsViews.mockReturnValue([])
 })
 
 test('createPidMap - detect chrome devtools', () => {
@@ -29,9 +36,6 @@ test('createPidMap - detect chrome devtools', () => {
   electron.BrowserWindow.getAllWindows.mockImplementation(() => {
     return [
       {
-        getBrowserViews() {
-          return []
-        },
         webContents: {
           devToolsWebContents: {
             getOSProcessId() {
@@ -53,9 +57,6 @@ test('createPidMap - detect renderer', () => {
   electron.BrowserWindow.getAllWindows.mockImplementation(() => {
     return [
       {
-        getBrowserViews() {
-          return []
-        },
         webContents: {
           getOSProcessId() {
             return 200_152
@@ -75,6 +76,52 @@ test('createPidMap - unknown renderer', () => {
     return []
   })
   expect(CreatePidMap.createPidMap()).toEqual({})
+})
+
+test('createPidMap - web contents view with hostname', () => {
+  // @ts-expect-error
+  electron.BrowserWindow.getAllWindows.mockReturnValue([])
+  getWebContentsViews.mockReturnValue([
+    {
+      view: {
+        webContents: {
+          getOSProcessId() {
+            return 200_152
+          },
+          getURL() {
+            return 'https://soundcloud.com/discover'
+          },
+        },
+      },
+    },
+  ])
+
+  expect(CreatePidMap.createPidMap()).toEqual({
+    200_152: 'renderer (webcontentsview, soundcloud.com)',
+  })
+})
+
+test('createPidMap - web contents view without hostname', () => {
+  // @ts-expect-error
+  electron.BrowserWindow.getAllWindows.mockReturnValue([])
+  getWebContentsViews.mockReturnValue([
+    {
+      view: {
+        webContents: {
+          getOSProcessId() {
+            return 200_152
+          },
+          getURL() {
+            return 'file:///tmp/error.html'
+          },
+        },
+      },
+    },
+  ])
+
+  expect(CreatePidMap.createPidMap()).toEqual({
+    200_152: 'renderer (webcontentsview)',
+  })
 })
 
 test('createPidMap - utility process', () => {
