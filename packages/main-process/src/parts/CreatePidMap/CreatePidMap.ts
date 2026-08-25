@@ -1,8 +1,20 @@
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, type WebContentsView } from 'electron'
+import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
 import * as UtilityProcessState from '../UtilityProcessState/UtilityProcessState.ts'
+
+const getWebContentsViewName = (url: string): string => {
+  if (URL.canParse(url)) {
+    const { hostname } = new URL(url)
+    if (hostname) {
+      return `renderer (webcontentsview, ${hostname})`
+    }
+  }
+  return 'renderer (webcontentsview)'
+}
 
 export const createPidMap = () => {
   const browserWindows = BrowserWindow.getAllWindows()
+  const webContentsViews = ElectronWebContentsViewState.getAll()
   const utilityProcesses = UtilityProcessState.getAll()
   const pidWindowMap = Object.create(null)
   for (const browserWindow of browserWindows) {
@@ -14,13 +26,11 @@ export const createPidMap = () => {
       const pid = devToolsWebContents.getOSProcessId()
       pidWindowMap[pid] = 'chrome-devtools'
     }
-    const views = browserWindow.getBrowserViews() // TODO use webcontents views
-    for (const view of views) {
-      const viewWebContents = view.webContents
-      const pid = viewWebContents.getOSProcessId()
-      const displayName = `browser-view-${viewWebContents.id}`
-      pidWindowMap[pid] = displayName
-    }
+  }
+  for (const value of webContentsViews) {
+    const { webContents } = (value as { readonly view: WebContentsView }).view
+    const pid = webContents.getOSProcessId()
+    pidWindowMap[pid] = getWebContentsViewName(webContents.getURL())
   }
   for (const [pid, value] of utilityProcesses) {
     // @ts-ignore
