@@ -29,7 +29,7 @@ test('schedule - disabled', () => {
 test('schedule - exits after 10 seconds', () => {
   expect(TimedExit.schedule({ 'wait-10-seconds': true })).toBe(true)
 
-  jest.advanceTimersByTime(9_999)
+  jest.advanceTimersByTime(9999)
   expect(exit).not.toHaveBeenCalled()
 
   jest.advanceTimersByTime(1)
