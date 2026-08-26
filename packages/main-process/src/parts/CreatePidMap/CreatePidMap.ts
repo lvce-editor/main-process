@@ -6,10 +6,10 @@ const getWebContentsViewName = (url: string): string => {
   if (URL.canParse(url)) {
     const { hostname } = new URL(url)
     if (hostname) {
-      return `renderer (webcontentsview, ${hostname})`
+      return `webcontentsview, ${hostname}`
     }
   }
-  return 'renderer (webcontentsview)'
+  return 'webcontentsview'
 }
 
 export const createPidMap = () => {
