@@ -97,7 +97,7 @@ test('createPidMap - web contents view with hostname', () => {
   ])
 
   expect(CreatePidMap.createPidMap()).toEqual({
-    200_152: 'renderer (webcontentsview, soundcloud.com)',
+    200_152: 'webcontentsview, soundcloud.com',
   })
 })
 
@@ -120,7 +120,7 @@ test('createPidMap - web contents view without hostname', () => {
   ])
 
   expect(CreatePidMap.createPidMap()).toEqual({
-    200_152: 'renderer (webcontentsview)',
+    200_152: 'webcontentsview',
   })
 })
 
