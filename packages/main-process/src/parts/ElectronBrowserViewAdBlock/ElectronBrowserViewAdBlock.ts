@@ -22,6 +22,30 @@ const cancelIfStartsWith = (url, canceledUrls) => {
   return {}
 }
 
+const canceledAdUrls = [
+  'https://c.amazon-adsystem.com/',
+  'https://cadmus.script.ac/',
+  'https://config.aps.amazon-adsystem.com/',
+  'https://dn0qt3r0xannq.cloudfront.net/',
+  'https://edge.aditude.io/',
+  'https://ep1.adtrafficquality.google/',
+  'https://event-ingestor.judy.pnap.aditude.cloud/',
+  'https://pagead2.googlesyndication.com/',
+  'https://raven-static.aditude.io/',
+  'https://securepubads.g.doubleclick.net/',
+]
+
+const safeframeUrlRegex = /^https:\/\/[^/]+\.safeframe\.googlesyndication\.com\//
+
+const getBeforeRequestResponseAd = (url) => {
+  if (safeframeUrlRegex.test(url)) {
+    return {
+      cancel: true,
+    }
+  }
+  return cancelIfStartsWith(url, canceledAdUrls)
+}
+
 const getBeforeRequestResponseXhrPost = (url) => {
   const canceledUrls = ['https://www.youtube.com/api/stats/qoe', 'https://www.youtube.com/youtubei/v1/log_event', 'https://play.google.com/log']
   return cancelIfStartsWith(url, canceledUrls)
@@ -77,6 +101,10 @@ const getBeforeRequestResponseScript = (method, url) => {
 
 const getBeforeRequestResponse = (details) => {
   const { method, resourceType, url } = details
+  const adResponse = getBeforeRequestResponseAd(url)
+  if (adResponse.cancel) {
+    return adResponse
+  }
   switch (resourceType) {
     case ElectronResourceType.MainFrame:
       return getBeforeRequestResponseMainFrame(method, url)
