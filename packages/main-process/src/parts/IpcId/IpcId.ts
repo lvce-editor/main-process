@@ -1,4 +1,6 @@
-export const EmbedsProcess = 2
+import { RpcId } from '@lvce-editor/constants'
+
+export const EmbedsProcess = RpcId.EmbedsProcess
 export const EmbedsWorker = 77
 export const ExtensionHostHelperProcess = 3
 export const MainProcess = -5
