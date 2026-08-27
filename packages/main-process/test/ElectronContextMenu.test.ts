@@ -11,20 +11,18 @@ jest.unstable_mockModule('electron', () => {
 const electron = await import('electron')
 const ElectronClipBoard = await import('../src/parts/ElectronClipBoard/ElectronClipBoard.ts')
 
-test('writeText', () => {
+test('writeText', async () => {
   // @ts-expect-error
-  electron.clipboard.writeText.mockImplementation(() => {})
-  ElectronClipBoard.writeText('abc')
+  electron.clipboard.writeText.mockImplementation(async () => {})
+  await ElectronClipBoard.writeText('abc')
   expect(electron.clipboard.writeText).toHaveBeenCalledTimes(1)
   expect(electron.clipboard.writeText).toHaveBeenCalledWith('abc')
 })
 
-test('writeText - error', () => {
+test('writeText - error', async () => {
   // @ts-expect-error
-  electron.clipboard.writeText.mockImplementation(() => {
+  electron.clipboard.writeText.mockImplementation(async () => {
     throw new TypeError('x is not a function')
   })
-  expect(() => {
-    ElectronClipBoard.writeText('abc')
-  }).toThrow(new TypeError('x is not a function'))
+  await expect(ElectronClipBoard.writeText('abc')).rejects.toThrow(new TypeError('x is not a function'))
 })

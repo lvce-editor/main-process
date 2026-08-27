@@ -1,5 +1,5 @@
 import { clipboard } from 'electron'
 
-export const writeText = (text) => {
-  clipboard.writeText(text)
+export const writeText = async (text) => {
+  await clipboard.writeText(text)
 }
