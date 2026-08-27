@@ -1,4 +1,5 @@
 import { beforeEach, expect, jest, test } from '@jest/globals'
+import { dirname, join } from 'node:path'
 
 const mkdir = jest.fn<(path: string, options: unknown) => Promise<void>>(async () => undefined)
 const readFile = jest.fn<() => Promise<string>>()
@@ -23,7 +24,8 @@ jest.unstable_mockModule('../src/parts/Platform/Platform.ts', () => ({
 
 const SecretStorage = await import('../src/parts/SecretStorage/SecretStorage.ts')
 
-const storagePath = '/test/config/lvce-oss/secrets.json'
+const storagePath = join('/test/config/lvce-oss', 'secrets.json')
+const storageDir = dirname(storagePath)
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -63,7 +65,7 @@ test('store encrypts and persists the secret', async () => {
   await SecretStorage.store('sample.extension', 'token', 'plain-text')
 
   expect(encrypt).toHaveBeenCalledWith('plain-text')
-  expect(mkdir).toHaveBeenCalledWith('/test/config/lvce-oss', { recursive: true })
+  expect(mkdir).toHaveBeenCalledWith(storageDir, { recursive: true })
   expect(writeFile).toHaveBeenCalledWith(
     storagePath,
     `${JSON.stringify({ 'sample.extension': { existing: 'existing-ciphertext', token: 'encrypted:plain-text' } }, undefined, 2)}\n`,
