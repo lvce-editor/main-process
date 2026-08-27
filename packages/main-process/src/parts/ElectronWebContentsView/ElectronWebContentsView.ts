@@ -9,6 +9,29 @@ import * as ElectronWebContentsViewNavigationFocus from '../ElectronWebContentsV
 import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
 import * as EmbedsProcess from '../EmbedsProcess/EmbedsProcess.ts'
 
+const webContentsWithEventListeners = new WeakSet<Electron.WebContents>()
+
+const attachEventListenersToWebContents = (webContentsId, webContents, browserWindow) => {
+  if (webContentsWithEventListeners.has(webContents)) {
+    return
+  }
+  ElectronWebContentsViewNavigationFocus.attach(webContents, browserWindow.webContents)
+  const values = Object.values(ElectronBrowserViewEventListeners)
+  for (const value of values) {
+    const wrappedListener = (...args) => {
+      // @ts-ignore
+      const { messages, result } = value.handler(...args, webContentsId)
+      for (const message of messages) {
+        const [key, ...rest] = message
+        EmbedsProcess.send(`ElectronWebContents.${key}`, webContentsId, ...rest)
+      }
+      return result
+    }
+    value.attach(webContents, wrappedListener)
+  }
+  webContentsWithEventListeners.add(webContents)
+}
+
 // TODO use electron 30 webcontentsview api
 export const createWebContentsView = async () => {
   const view = new WebContentsView({
@@ -23,6 +46,7 @@ export const createWebContentsView = async () => {
   const { webContents } = view
   const { id } = webContents
   ElectronWebContentsViewState.add(id, browserWindow, view)
+  attachEventListenersToWebContents(id, webContents, browserWindow)
   return id
 }
 
@@ -33,22 +57,7 @@ export const attachEventListeners = (webContentsId) => {
   if (!webContents || !state) {
     return
   }
-  ElectronWebContentsViewNavigationFocus.attach(webContents, state.browserWindow.webContents)
-  const values = Object.values(ElectronBrowserViewEventListeners)
-  for (const value of values) {
-    const wrappedListener = (...args) => {
-      // @ts-ignore
-      const { messages, result } = value.handler(...args, webContentsId)
-      for (const message of messages) {
-        const [key, ...rest] = message
-        EmbedsProcess.send(`ElectronWebContents.${key}`, webContentsId, ...rest)
-      }
-      return result
-    }
-    // TODO detached listeners when webcontents are disposed
-    // to avoid potential memory leaks
-    value.attach(webContents, wrappedListener)
-  }
+  attachEventListenersToWebContents(webContentsId, webContents, state.browserWindow)
 }
 
 export const disposeWebContentsView = (browserViewId) => {
