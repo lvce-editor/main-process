@@ -34,6 +34,7 @@ import * as IpcParent from '../IpcParent/IpcParent.ts'
 import * as OpenExternal from '../OpenExternal/OpenExternal.ts'
 import * as Process from '../Process/Process.ts'
 import * as ProcessId from '../ProcessId/ProcessId.ts'
+import * as SecretStorage from '../SecretStorage/SecretStorage.ts'
 import * as TemporaryMessagePort from '../TemporaryMessagePort/TemporaryMessagePort.ts'
 import * as Trash from '../Trash/Trash.ts'
 
@@ -113,9 +114,7 @@ export const commandMap = {
   'ElectronWebContentsViewFunctions.openDevtools': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.openDevtools,
   ),
-  'ElectronWebContentsViewFunctions.reload': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
-    ElectronWebContentsViewFunctions.reload,
-  ),
+  'ElectronWebContentsViewFunctions.reload': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.reload),
   'ElectronWebContentsViewFunctions.resizeBrowserView': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.resizeBrowserView,
   ),
@@ -154,6 +153,10 @@ export const commandMap = {
   'Process.writeStderr': Process.writeStderr,
   'Process.writeStdout': Process.writeStdout,
   'ProcessId.getMainProcessId': ProcessId.getMainProcessId,
+  'SecretStorage.delete': SecretStorage.deleteSecret,
+  'SecretStorage.get': SecretStorage.get,
+  'SecretStorage.list': SecretStorage.list,
+  'SecretStorage.store': SecretStorage.store,
   'TemporaryMessagePort.createPortTuple': TemporaryMessagePort.createPortTuple,
   'TemporaryMessagePort.dispose': TemporaryMessagePort.dispose,
   'TemporaryMessagePort.sendTo': TemporaryMessagePort.sendTo,

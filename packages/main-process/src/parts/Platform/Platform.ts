@@ -16,7 +16,7 @@ const xdgCache = env.XDG_CACHE_HOME || (homeDirectory ? Path.join(homeDirectory,
 
 const xdgConfig = env.XDG_CONFIG_HOME || (homeDirectory ? Path.join(homeDirectory, '.config') : undefined)
 
-const configDir = Path.join(xdgConfig || tmpdir(), applicationName)
+export const configDir = Path.join(xdgConfig || tmpdir(), applicationName)
 
 const xdgData = env.XDG_DATA_HOME || (homeDirectory ? Path.join(homeDirectory, '.local', 'share') : undefined)
 
