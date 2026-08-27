@@ -6,6 +6,7 @@ import * as ElectronBrowserViewEventListeners from '../ElectronBrowserViewEventL
 import * as ElectronSessionForBrowserView from '../ElectronSessionForBrowserView/ElectronSessionForBrowserView.ts'
 import * as ElectronWebContentsViewAuthenticationState from '../ElectronWebContentsViewAuthenticationState/ElectronWebContentsViewAuthenticationState.ts'
 import * as ElectronWebContentsViewNavigationFocus from '../ElectronWebContentsViewNavigationFocus/ElectronWebContentsViewNavigationFocus.ts'
+import * as ElectronWebContentsViewPerformance from '../ElectronWebContentsViewPerformance/ElectronWebContentsViewPerformance.ts'
 import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
 import * as EmbedsProcess from '../EmbedsProcess/EmbedsProcess.ts'
 
@@ -16,6 +17,7 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
     return
   }
   ElectronWebContentsViewNavigationFocus.attach(webContents, browserWindow.webContents)
+  ElectronWebContentsViewPerformance.attach(webContents)
   const values = Object.values(ElectronBrowserViewEventListeners)
   for (const value of values) {
     const wrappedListener = (...args) => {
