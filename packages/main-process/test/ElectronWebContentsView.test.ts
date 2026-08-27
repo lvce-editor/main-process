@@ -3,6 +3,7 @@ import { beforeEach, expect, jest, test } from '@jest/globals'
 const addChildView = jest.fn()
 const listenerAttach = jest.fn()
 const navigationFocusAttach = jest.fn()
+const performanceAttach = jest.fn()
 const send = jest.fn()
 const setBounds = jest.fn()
 const webContents = {
@@ -51,6 +52,10 @@ jest.unstable_mockModule('../src/parts/ElectronWebContentsViewNavigationFocus/El
   attach: navigationFocusAttach,
 }))
 
+jest.unstable_mockModule('../src/parts/ElectronWebContentsViewPerformance/ElectronWebContentsViewPerformance.ts', () => ({
+  attach: performanceAttach,
+}))
+
 jest.unstable_mockModule('../src/parts/EmbedsProcess/EmbedsProcess.ts', () => ({
   send,
 }))
@@ -70,6 +75,7 @@ test('createWebContentsView attaches event listeners before returning', async ()
 
   expect(addChildView).toHaveBeenCalledWith(view, 0)
   expect(navigationFocusAttach).toHaveBeenCalledWith(webContents, browserWindow.webContents)
+  expect(performanceAttach).toHaveBeenCalledWith(webContents)
   expect(listenerAttach).toHaveBeenCalledWith(webContents, expect.any(Function))
 
   const listener = listenerAttach.mock.calls[0][1] as (event: unknown, favicons: readonly string[]) => void
