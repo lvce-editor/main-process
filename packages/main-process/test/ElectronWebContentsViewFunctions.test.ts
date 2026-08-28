@@ -7,6 +7,16 @@ jest.unstable_mockModule('electron', () => ({
 const ElectronWebContentsViewFunctions = await import(
   '../src/parts/ElectronWebContentsViewFunctions/ElectronWebContentsViewFunctions.ts'
 )
+const ElectronWebContentsViewState = await import('../src/parts/ElectronWebContentsViewState/ElectronWebContentsViewState.ts')
+
+test('stores fallthrough keybindings instead of the wrapped web contents view', () => {
+  const view = {} as Electron.BrowserView
+  const keyBindings = [2050, 3074]
+
+  ElectronWebContentsViewFunctions.setFallThroughKeyBindings(view, keyBindings)
+
+  expect(ElectronWebContentsViewState.getFallthroughKeyBindings()).toEqual(keyBindings)
+})
 
 test('capturePage returns a data url', async () => {
   const toDataURL = jest.fn(() => 'data:image/png;base64,c25hcHNob3Q=')
