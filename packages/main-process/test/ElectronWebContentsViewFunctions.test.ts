@@ -74,3 +74,38 @@ test('click returns false when the selector does not match', async () => {
   await expect(ElectronWebContentsViewFunctions.click(view, '.missing')).resolves.toBe(false)
   expect(sendInputEvent).not.toHaveBeenCalled()
 })
+
+test('setAudioMuted updates the web contents audio state', () => {
+  const setAudioMuted = jest.fn<(muted: boolean) => void>()
+  const view = {
+    webContents: {
+      setAudioMuted,
+    },
+  } as unknown as Electron.BrowserView
+
+  ElectronWebContentsViewFunctions.setAudioMuted(view, true)
+
+  expect(setAudioMuted).toHaveBeenCalledWith(true)
+})
+
+test('getStats includes the web contents audio state', () => {
+  const view = {
+    webContents: {
+      getTitle: jest.fn(() => 'Example'),
+      getURL: jest.fn(() => 'https://example.com'),
+      isAudioMuted: jest.fn(() => true),
+      navigationHistory: {
+        canGoBack: jest.fn(() => false),
+        canGoForward: jest.fn(() => true),
+      },
+    },
+  } as unknown as Electron.BrowserView
+
+  expect(ElectronWebContentsViewFunctions.getStats(view)).toEqual({
+    canGoBack: false,
+    canGoForward: true,
+    isAudioMuted: true,
+    title: 'Example',
+    url: 'https://example.com',
+  })
+})

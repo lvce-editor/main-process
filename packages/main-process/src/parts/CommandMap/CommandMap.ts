@@ -118,6 +118,9 @@ export const commandMap = {
   'ElectronWebContentsViewFunctions.resizeBrowserView': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.resizeBrowserView,
   ),
+  'ElectronWebContentsViewFunctions.setAudioMuted': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.setAudioMuted,
+  ),
   'ElectronWebContentsViewFunctions.setBackgroundColor': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.setBackgroundColor,
   ),
