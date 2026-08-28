@@ -209,6 +209,11 @@ export const setBackgroundColor = (view, backgroundColor) => {
   view.setBackgroundColor(backgroundColor)
 }
 
+export const setAudioMuted = (view: BrowserView, muted: boolean) => {
+  Assert.boolean(muted)
+  view.webContents.setAudioMuted(muted)
+}
+
 /**
  *
  * @param {Electron.BrowserView} view
@@ -235,11 +240,13 @@ export const getStats = (view: BrowserView) => {
   const { webContents } = view
   const canGoBack = webContents.navigationHistory.canGoBack()
   const canGoForward = webContents.navigationHistory.canGoForward()
+  const isAudioMuted = webContents.isAudioMuted()
   const url = webContents.getURL()
   const title = webContents.getTitle()
   return {
     canGoBack,
     canGoForward,
+    isAudioMuted,
     title,
     url,
   }
