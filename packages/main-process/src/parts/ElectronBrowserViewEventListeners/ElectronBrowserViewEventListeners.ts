@@ -1,4 +1,5 @@
 export * as beforeInput from '../ElectronBrowserViewEventListenerBeforeInput/ElectronBrowserViewEventListenerBeforeInput.ts'
+export * as audioStateChanged from '../ElectronBrowserViewEventListenerAudioStateChanged/ElectronBrowserViewEventListenerAudioStateChanged.ts'
 export * as contextMenu from '../ElectronBrowserViewEventListenerContextMenu/ElectronBrowserViewEventListenerContextMenu.ts'
 export * as destroyed from '../ElectronBrowserViewEventListenerDestroyed/ElectronBrowserViewEventListenerDestroyed.ts'
 export * as didNavigate from '../ElectronBrowserViewEventListenerDidNavigate/ElectronBrowserViewEventListenerDidNavigate.ts'
