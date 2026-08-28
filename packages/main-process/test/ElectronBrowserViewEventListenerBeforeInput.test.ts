@@ -96,3 +96,17 @@ test('does not zoom for key-up events', () => {
   expect(webContents.getZoomLevel).not.toHaveBeenCalled()
   expect(webContents.setZoomLevel).not.toHaveBeenCalled()
 })
+
+test('forwards a registered Ctrl+Tab keybinding', () => {
+  const preventDefault = jest.fn()
+  ElectronWebContentsViewState.setFallthroughKeyBindings([2050])
+
+  const result = ElectronBrowserViewEventListenerBeforeInput.handler(
+    { preventDefault },
+    createInput({ key: 'Tab', shift: false }),
+    webContentsId,
+  )
+
+  expect(result).toEqual({ messages: [['handleKeyBinding', 2050]], result: undefined })
+  expect(preventDefault).toHaveBeenCalledTimes(1)
+})

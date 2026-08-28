@@ -222,7 +222,7 @@ export const copyImageAt = (view, x, y) => {
   webContents.copyImageAt(x, y)
 }
 
-export const setFallThroughKeyBindings = (fallthroughKeyBindings) => {
+export const setFallThroughKeyBindings = (_view: BrowserView, fallthroughKeyBindings) => {
   ElectronWebContentsViewState.setFallthroughKeyBindings(fallthroughKeyBindings)
 }
 
