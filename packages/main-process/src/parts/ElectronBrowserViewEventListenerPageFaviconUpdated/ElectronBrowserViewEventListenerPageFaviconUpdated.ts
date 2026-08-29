@@ -1,3 +1,4 @@
+import * as ElectronBrowserViewFaviconState from '../ElectronBrowserViewFaviconState/ElectronBrowserViewFaviconState.ts'
 import * as ElectronWebContentsEventType from '../ElectronWebContentsEventType/ElectronWebContentsEventType.ts'
 
 const maxFaviconBytes = 1024 * 1024
@@ -73,12 +74,24 @@ const resolveFavicon = async (event, favicons: readonly string[]): Promise<reado
   if (sessionFavicon) {
     return [sessionFavicon]
   }
+  const networkFavicons = await resolveNetworkFavicon(favicons)
+  return networkFavicons.length > 0 ? networkFavicons : favicons
+}
+
+export const resolveNetworkFavicon = async (favicons: readonly string[]): Promise<readonly string[]> => {
+  const dataUrl = favicons.find((favicon) => favicon.startsWith('data:'))
+  if (dataUrl) {
+    return [dataUrl]
+  }
   const networkFavicon = await resolveWithTimeout((url, options) => fetch(url, options), favicons)
-  return networkFavicon ? [networkFavicon] : favicons
+  return networkFavicon ? [networkFavicon] : []
 }
 
 export const handler = async (event, favicons: readonly string[]): Promise<any> => {
   const pageUrl = event.sender.getURL()
+  if (favicons.length > 0) {
+    ElectronBrowserViewFaviconState.set(event.sender, pageUrl)
+  }
   const resolvedFavicons = await resolveFavicon(event, favicons)
   return {
     messages: event.sender.getURL() === pageUrl ? [['handlePageFaviconUpdated', resolvedFavicons]] : [],
