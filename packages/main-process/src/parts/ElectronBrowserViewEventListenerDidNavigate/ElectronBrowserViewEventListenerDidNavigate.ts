@@ -23,8 +23,11 @@ const loadDefaultFavicon = async (event, url: string): Promise<readonly string[]
   } catch {
     return []
   }
+  if (ElectronBrowserViewFaviconState.has(event.sender, url)) {
+    return []
+  }
   const favicons = await ElectronBrowserViewEventListenerPageFaviconUpdated.resolveNetworkFavicon([faviconUrl])
-  if (favicons.length === 0 || event.sender.getURL() !== url || ElectronBrowserViewFaviconState.has(event.sender, url)) {
+  if (favicons.length === 0 || event.sender.getURL() !== url) {
     return []
   }
   return favicons
