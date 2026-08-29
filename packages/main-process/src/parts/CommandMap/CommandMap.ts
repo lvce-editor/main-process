@@ -22,12 +22,12 @@ import * as ElectronShell from '../ElectronShell/ElectronShell.ts'
 import * as ElectronWebContents from '../ElectronWebContents/ElectronWebContents.ts'
 import * as ElectronWebContentsView from '../ElectronWebContentsView/ElectronWebContentsView.ts'
 import * as ElectronWebContentsViewAuthenticationState from '../ElectronWebContentsViewAuthenticationState/ElectronWebContentsViewAuthenticationState.ts'
+import * as ElectronWebContentsViewCookies from '../ElectronWebContentsViewCookies/ElectronWebContentsViewCookies.ts'
 import * as ElectronWebContentsViewFunctions from '../ElectronWebContentsViewFunctions/ElectronWebContentsViewFunctions.ts'
 import * as ElectronWindow from '../ElectronWindow/ElectronWindow.ts'
 import * as ElectronWindowGpuInfo from '../ElectronWindowGpuInfo/ElectronWindowGpuInfo.ts'
 import * as ElectronWindowProcessExplorer from '../ElectronWindowProcessExplorer/ElectronWindowProcessExplorer.ts'
 import * as Exit from '../Exit/Exit.ts'
-import * as FirefoxCookieImport from '../FirefoxCookieImport/FirefoxCookieImport.ts'
 import * as GetWindowId from '../GetWindowId/GetWindowId.ts'
 import * as HandleElectronMessagePort from '../HandleElectronMessagePort/HandleElectronMessagePort.ts'
 import * as IpcParent from '../IpcParent/IpcParent.ts'
@@ -80,10 +80,12 @@ export const commandMap = {
   'ElectronWebContents.dispose': ElectronWebContents.dispose,
   'ElectronWebContents.getStats': ElectronWebContents.getStats,
   'ElectronWebContentsView.acceptLogin': ElectronWebContentsViewAuthenticationState.accept,
+  'ElectronWebContentsView.addCookies': ElectronWebContentsViewCookies.addCookies,
   'ElectronWebContentsView.attachEventListeners': ElectronWebContentsView.attachEventListeners,
   'ElectronWebContentsView.cancelLogin': ElectronWebContentsViewAuthenticationState.cancel,
   'ElectronWebContentsView.createWebContentsView': ElectronWebContentsView.createWebContentsView,
   'ElectronWebContentsView.disposeWebContentsView': ElectronWebContentsView.disposeWebContentsView,
+  'ElectronWebContentsView.removeCookies': ElectronWebContentsViewCookies.removeCookies,
   'ElectronWebContentsViewFunctions.addToWindow': ElectronWebContentsViewFunctions.addToWindow,
   'ElectronWebContentsViewFunctions.backward': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.backward),
   'ElectronWebContentsViewFunctions.cancelNavigation': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
@@ -141,8 +143,6 @@ export const commandMap = {
   'ElectronWindowGpuInfo.open': ElectronWindowGpuInfo.open,
   'ElectronWindowProcessExplorer.open2': ElectronWindowProcessExplorer.open2,
   'Exit.exit': Exit.exit,
-  'FirefoxCookieImport.getInfo': FirefoxCookieImport.getInfo,
-  'FirefoxCookieImport.importCookies': FirefoxCookieImport.importCookies,
   'GetWindowId.getWindowId': GetWindowId.getWindowId,
   'HandleElectronMessagePort.handleElectronMessagePort': HandleElectronMessagePort.handleElectronMessagePort,
   'IpcParent.create': IpcParent.create,
