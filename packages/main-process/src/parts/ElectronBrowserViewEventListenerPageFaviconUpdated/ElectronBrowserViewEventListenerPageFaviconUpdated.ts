@@ -1,6 +1,7 @@
 import * as ElectronWebContentsEventType from '../ElectronWebContentsEventType/ElectronWebContentsEventType.ts'
 
 const maxFaviconBytes = 1024 * 1024
+const faviconFetchTimeout = 2000
 
 export const key = ElectronWebContentsEventType.PageFaviconUpdated
 
@@ -12,12 +13,9 @@ export const detach = (webContents, listener): void => {
   webContents.off(ElectronWebContentsEventType.PageFaviconUpdated, listener)
 }
 
-const getFaviconDataUrl = async (event, favicon: string): Promise<string> => {
-  if (favicon.startsWith('data:')) {
-    return favicon
-  }
+const getFaviconDataUrl = async (fetcher, favicon: string, signal: AbortSignal): Promise<string> => {
   try {
-    const response = await event.sender.session.fetch(favicon)
+    const response = await fetcher(favicon, { signal })
     if (!response.ok) {
       return ''
     }
@@ -40,14 +38,43 @@ const getFaviconDataUrl = async (event, favicon: string): Promise<string> => {
   }
 }
 
-const resolveFavicon = async (event, favicons: readonly string[]): Promise<readonly string[]> => {
+const resolveWithFetcher = async (fetcher, favicons: readonly string[], signal: AbortSignal): Promise<string> => {
   for (const favicon of favicons) {
-    const dataUrl = await getFaviconDataUrl(event, favicon)
+    const dataUrl = await getFaviconDataUrl(fetcher, favicon, signal)
     if (dataUrl) {
-      return [dataUrl]
+      return dataUrl
     }
   }
-  return favicons
+  return ''
+}
+
+const resolveWithTimeout = async (fetcher, favicons: readonly string[]): Promise<string> => {
+  const controller = new AbortController()
+  let timeout: NodeJS.Timeout | undefined
+  const timeoutPromise = new Promise<string>((resolve) => {
+    timeout = setTimeout(() => {
+      controller.abort()
+      resolve('')
+    }, faviconFetchTimeout)
+  })
+  try {
+    return await Promise.race([resolveWithFetcher(fetcher, favicons, controller.signal), timeoutPromise])
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
+const resolveFavicon = async (event, favicons: readonly string[]): Promise<readonly string[]> => {
+  const dataUrl = favicons.find((favicon) => favicon.startsWith('data:'))
+  if (dataUrl) {
+    return [dataUrl]
+  }
+  const sessionFavicon = await resolveWithTimeout((url, options) => event.sender.session.fetch(url, options), favicons)
+  if (sessionFavicon) {
+    return [sessionFavicon]
+  }
+  const networkFavicon = await resolveWithTimeout((url, options) => fetch(url, options), favicons)
+  return networkFavicon ? [networkFavicon] : favicons
 }
 
 export const handler = async (event, favicons: readonly string[]): Promise<any> => {
