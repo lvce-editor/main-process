@@ -1,7 +1,6 @@
 import * as ElectronBrowserViewEventListenerPageFaviconUpdated from '../ElectronBrowserViewEventListenerPageFaviconUpdated/ElectronBrowserViewEventListenerPageFaviconUpdated.ts'
 import * as ElectronBrowserViewFaviconState from '../ElectronBrowserViewFaviconState/ElectronBrowserViewFaviconState.ts'
 import * as ElectronWebContentsEventType from '../ElectronWebContentsEventType/ElectronWebContentsEventType.ts'
-import * as EmbedsProcess from '../EmbedsProcess/EmbedsProcess.ts'
 
 export const key = 'did-navigate'
 
@@ -13,28 +12,29 @@ export const detach = (webContents, listener) => {
   webContents.off(ElectronWebContentsEventType.DidNavigate, listener)
 }
 
-const loadDefaultFavicon = async (event, url: string, webContentsId: number): Promise<void> => {
+const loadDefaultFavicon = async (event, url: string): Promise<readonly string[]> => {
   let faviconUrl
   try {
     const parsedUrl = new URL(url)
     if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
-      return
+      return []
     }
     faviconUrl = new URL('/favicon.ico', parsedUrl).href
   } catch {
-    return
+    return []
   }
   const favicons = await ElectronBrowserViewEventListenerPageFaviconUpdated.resolveNetworkFavicon([faviconUrl])
   if (favicons.length === 0 || event.sender.getURL() !== url || ElectronBrowserViewFaviconState.has(event.sender, url)) {
-    return
+    return []
   }
-  EmbedsProcess.send('ElectronWebContents.handlePageFaviconUpdated', webContentsId, favicons)
+  return favicons
 }
 
-export const handler = (event, url, _httpResponseCode, _httpStatusText, webContentsId) => {
-  void loadDefaultFavicon(event, url, webContentsId)
+export const handler = async (event, url, _httpResponseCode, _httpStatusText, _webContentsId) => {
+  const favicons = await loadDefaultFavicon(event, url)
+  const messages = favicons.length > 0 ? [['handleDidNavigate', url], ['handlePageFaviconUpdated', favicons]] : [['handleDidNavigate', url]]
   return {
-    messages: [['handleDidNavigate', url]],
+    messages,
     result: undefined,
   }
 }
