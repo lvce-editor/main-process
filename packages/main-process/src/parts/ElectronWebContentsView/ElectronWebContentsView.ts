@@ -20,14 +20,27 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
   ElectronWebContentsViewPerformance.attach(webContents)
   const values = Object.values(ElectronBrowserViewEventListeners)
   for (const value of values) {
-    const wrappedListener = (...args) => {
-      // @ts-ignore
-      const { messages, result } = value.handler(...args, webContentsId)
+    const handleResult = ({ messages, result }) => {
       for (const message of messages) {
         const [key, ...rest] = message
         EmbedsProcess.send(`ElectronWebContents.${key}`, webContentsId, ...rest)
       }
       return result
+    }
+    const handleAsyncResult = async (handlerResult) => {
+      try {
+        return handleResult(await handlerResult)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    const wrappedListener = (...args) => {
+      // @ts-ignore
+      const handlerResult = value.handler(...args, webContentsId)
+      if (handlerResult instanceof Promise) {
+        return handleAsyncResult(handlerResult)
+      }
+      return handleResult(handlerResult)
     }
     value.attach(webContents, wrappedListener)
   }

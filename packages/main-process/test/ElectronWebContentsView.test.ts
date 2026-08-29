@@ -35,7 +35,7 @@ jest.unstable_mockModule('electron', () => ({
 jest.unstable_mockModule('../src/parts/ElectronBrowserViewEventListeners/ElectronBrowserViewEventListeners.ts', () => ({
   pageFaviconUpdated: {
     attach: listenerAttach,
-    handler(event, favicons) {
+    async handler(event, favicons) {
       return {
         messages: [['handlePageFaviconUpdated', favicons]],
         result: undefined,
@@ -78,8 +78,8 @@ test('createWebContentsView attaches event listeners before returning', async ()
   expect(performanceAttach).toHaveBeenCalledWith(webContents)
   expect(listenerAttach).toHaveBeenCalledWith(webContents, expect.any(Function))
 
-  const listener = listenerAttach.mock.calls[0][1] as (event: unknown, favicons: readonly string[]) => void
-  listener({}, ['https://example.com/favicon.png'])
+  const listener = listenerAttach.mock.calls[0][1] as (event: unknown, favicons: readonly string[]) => Promise<void>
+  await listener({}, ['https://example.com/favicon.png'])
 
   expect(send).toHaveBeenCalledWith('ElectronWebContents.handlePageFaviconUpdated', 1, ['https://example.com/favicon.png'])
 
