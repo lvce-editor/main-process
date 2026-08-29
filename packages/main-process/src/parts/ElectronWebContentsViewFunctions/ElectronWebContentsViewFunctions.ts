@@ -95,9 +95,9 @@ export const getDomTree = async (view: WebContentsView) => {
   return getSlimCode(result)
 }
 
-export const capturePage = async (view: WebContentsView): Promise<string> => {
+export const capturePage = async (view: WebContentsView): Promise<Uint8Array> => {
   const image = await view.webContents.capturePage()
-  return image.toDataURL()
+  return image.toPNG()
 }
 
 export const getConsolLogs = async (view: WebContentsView) => {

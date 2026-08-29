@@ -18,18 +18,19 @@ test('stores fallthrough keybindings instead of the wrapped web contents view', 
   expect(ElectronWebContentsViewState.getFallthroughKeyBindings()).toEqual(keyBindings)
 })
 
-test('capturePage returns a data url', async () => {
-  const toDataURL = jest.fn(() => 'data:image/png;base64,c25hcHNob3Q=')
-  const capturePage = jest.fn(async () => ({ toDataURL }))
+test('capturePage returns png bytes', async () => {
+  const png = new Uint8Array([137, 80, 78, 71])
+  const toPNG = jest.fn(() => png)
+  const capturePage = jest.fn(async () => ({ toPNG }))
   const view = {
     webContents: {
       capturePage,
     },
   } as unknown as Electron.WebContentsView
 
-  await expect(ElectronWebContentsViewFunctions.capturePage(view)).resolves.toBe('data:image/png;base64,c25hcHNob3Q=')
+  await expect(ElectronWebContentsViewFunctions.capturePage(view)).resolves.toBe(png)
   expect(capturePage).toHaveBeenCalledTimes(1)
-  expect(toDataURL).toHaveBeenCalledTimes(1)
+  expect(toPNG).toHaveBeenCalledTimes(1)
 })
 
 test('forwards the user gesture flag when executing JavaScript', async () => {
