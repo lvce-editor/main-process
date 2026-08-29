@@ -45,3 +45,28 @@ test('does not replace a favicon reported by electron', async () => {
     result: undefined,
   })
 })
+
+test('keeps the fallback when electron reports a favicon while it loads', async () => {
+  const url = 'https://www.reddit.com/r/javascript/comments/123/post'
+  const event = { sender: { getURL: () => url } }
+  let resolveFavicon: (favicons: readonly string[]) => void = () => {}
+  resolveNetworkFavicon.mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        resolveFavicon = resolve
+      }),
+  )
+
+  const result = ElectronBrowserViewEventListenerDidNavigate.handler(event, url, 200, 'OK', 12)
+  has.mockReturnValue(true)
+  resolveFavicon(['data:image/x-icon;base64,AAEC'])
+
+  await expect(result).resolves.toEqual({
+    messages: [
+      ['handleDidNavigate', url],
+      ['handlePageFaviconUpdated', ['data:image/x-icon;base64,AAEC']],
+    ],
+    result: undefined,
+  })
+  expect(has).toHaveBeenCalledTimes(1)
+})
