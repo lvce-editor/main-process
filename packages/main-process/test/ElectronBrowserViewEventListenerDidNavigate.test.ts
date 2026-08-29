@@ -2,7 +2,6 @@ import { beforeEach, expect, jest, test } from '@jest/globals'
 
 const has = jest.fn<(webContents: object, url: string) => boolean>()
 const resolveNetworkFavicon = jest.fn<(favicons: readonly string[]) => Promise<readonly string[]>>()
-const send = jest.fn()
 
 jest.unstable_mockModule(
   '../src/parts/ElectronBrowserViewEventListenerPageFaviconUpdated/ElectronBrowserViewEventListenerPageFaviconUpdated.ts',
@@ -10,8 +9,6 @@ jest.unstable_mockModule(
 )
 
 jest.unstable_mockModule('../src/parts/ElectronBrowserViewFaviconState/ElectronBrowserViewFaviconState.ts', () => ({ has }))
-
-jest.unstable_mockModule('../src/parts/EmbedsProcess/EmbedsProcess.ts', () => ({ send }))
 
 const ElectronBrowserViewEventListenerDidNavigate = await import(
   '../src/parts/ElectronBrowserViewEventListenerDidNavigate/ElectronBrowserViewEventListenerDidNavigate.ts'
@@ -23,19 +20,19 @@ beforeEach(() => {
   resolveNetworkFavicon.mockResolvedValue(['data:image/x-icon;base64,AAEC'])
 })
 
-test('forwards navigation immediately and loads the default origin favicon', async () => {
+test('loads the default origin favicon with the navigation', async () => {
   const url = 'https://www.reddit.com/r/javascript/comments/123/post'
   const event = { sender: { getURL: () => url } }
 
-  expect(ElectronBrowserViewEventListenerDidNavigate.handler(event, url, 200, 'OK', 12)).toEqual({
-    messages: [['handleDidNavigate', url]],
+  await expect(ElectronBrowserViewEventListenerDidNavigate.handler(event, url, 200, 'OK', 12)).resolves.toEqual({
+    messages: [
+      ['handleDidNavigate', url],
+      ['handlePageFaviconUpdated', ['data:image/x-icon;base64,AAEC']],
+    ],
     result: undefined,
   })
-  await Promise.resolve()
-  await Promise.resolve()
 
   expect(resolveNetworkFavicon).toHaveBeenCalledWith(['https://www.reddit.com/favicon.ico'])
-  expect(send).toHaveBeenCalledWith('ElectronWebContents.handlePageFaviconUpdated', 12, ['data:image/x-icon;base64,AAEC'])
 })
 
 test('does not replace a favicon reported by electron', async () => {
@@ -43,9 +40,8 @@ test('does not replace a favicon reported by electron', async () => {
   const event = { sender: { getURL: () => url } }
   has.mockReturnValue(true)
 
-  ElectronBrowserViewEventListenerDidNavigate.handler(event, url, 200, 'OK', 12)
-  await Promise.resolve()
-  await Promise.resolve()
-
-  expect(send).not.toHaveBeenCalled()
+  await expect(ElectronBrowserViewEventListenerDidNavigate.handler(event, url, 200, 'OK', 12)).resolves.toEqual({
+    messages: [['handleDidNavigate', url]],
+    result: undefined,
+  })
 })
