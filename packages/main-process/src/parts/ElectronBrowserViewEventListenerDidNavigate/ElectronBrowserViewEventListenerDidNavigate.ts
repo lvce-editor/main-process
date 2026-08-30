@@ -12,7 +12,7 @@ export const detach = (webContents, listener) => {
   webContents.off(ElectronWebContentsEventType.DidNavigate, listener)
 }
 
-const loadDefaultFavicon = async (event, url: string): Promise<readonly string[]> => {
+const loadDefaultFavicon = async (webContents, url: string): Promise<readonly string[]> => {
   let faviconUrl
   try {
     const parsedUrl = new URL(url)
@@ -23,18 +23,18 @@ const loadDefaultFavicon = async (event, url: string): Promise<readonly string[]
   } catch {
     return []
   }
-  if (ElectronBrowserViewFaviconState.has(event.sender, url)) {
+  if (ElectronBrowserViewFaviconState.has(webContents, url)) {
     return []
   }
   const favicons = await ElectronBrowserViewEventListenerPageFaviconUpdated.resolveNetworkFavicon([faviconUrl])
-  if (favicons.length === 0 || event.sender.getURL() !== url) {
+  if (favicons.length === 0 || webContents.getURL() !== url) {
     return []
   }
   return favicons
 }
 
-export const handler = async (event, url, _httpResponseCode, _httpStatusText, _webContentsId) => {
-  const favicons = await loadDefaultFavicon(event, url)
+export const handler = async (_event, url, _httpResponseCode, _httpStatusText, _webContentsId, webContents) => {
+  const favicons = await loadDefaultFavicon(webContents, url)
   const messages = favicons.length > 0 ? [['handleDidNavigate', url], ['handlePageFaviconUpdated', favicons]] : [['handleDidNavigate', url]]
   return {
     messages,

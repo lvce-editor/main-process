@@ -65,12 +65,12 @@ const resolveWithTimeout = async (fetcher, favicons: readonly string[]): Promise
   }
 }
 
-const resolveFavicon = async (event, favicons: readonly string[]): Promise<readonly string[]> => {
+const resolveFavicon = async (webContents, favicons: readonly string[]): Promise<readonly string[]> => {
   const dataUrl = favicons.find((favicon) => favicon.startsWith('data:'))
   if (dataUrl) {
     return [dataUrl]
   }
-  const sessionFavicon = await resolveWithTimeout((url, options) => event.sender.session.fetch(url, options), favicons)
+  const sessionFavicon = await resolveWithTimeout((url, options) => webContents.session.fetch(url, options), favicons)
   if (sessionFavicon) {
     return [sessionFavicon]
   }
@@ -87,14 +87,14 @@ export const resolveNetworkFavicon = async (favicons: readonly string[]): Promis
   return networkFavicon ? [networkFavicon] : []
 }
 
-export const handler = async (event, favicons: readonly string[]): Promise<any> => {
-  const pageUrl = event.sender.getURL()
+export const handler = async (_event, favicons: readonly string[], _webContentsId, webContents): Promise<any> => {
+  const pageUrl = webContents.getURL()
   if (favicons.length > 0) {
-    ElectronBrowserViewFaviconState.set(event.sender, pageUrl)
+    ElectronBrowserViewFaviconState.set(webContents, pageUrl)
   }
-  const resolvedFavicons = await resolveFavicon(event, favicons)
+  const resolvedFavicons = await resolveFavicon(webContents, favicons)
   return {
-    messages: event.sender.getURL() === pageUrl ? [['handlePageFaviconUpdated', resolvedFavicons]] : [],
+    messages: webContents.getURL() === pageUrl ? [['handlePageFaviconUpdated', resolvedFavicons]] : [],
     result: undefined,
   }
 }

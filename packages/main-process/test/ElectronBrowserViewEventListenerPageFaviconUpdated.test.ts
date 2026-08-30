@@ -12,9 +12,10 @@ test('forwards favicon bytes as a data url', async () => {
     },
     ok: true,
   }))
-  const event = { sender: { getURL: () => 'https://example.com', session: { fetch } } }
+  const event = {}
+  const webContents = { getURL: () => 'https://example.com', session: { fetch } }
 
-  await expect(ElectronBrowserViewEventListenerPageFaviconUpdated.handler(event, favicons)).resolves.toEqual({
+  await expect(ElectronBrowserViewEventListenerPageFaviconUpdated.handler(event, favicons, 12, webContents)).resolves.toEqual({
     messages: [['handlePageFaviconUpdated', ['data:image/png;base64,AAEC']]],
     result: undefined,
   })
@@ -31,9 +32,10 @@ test('tries the next favicon candidate when the first request fails', async () =
       headers: { get: () => null },
       ok: true,
     })
-  const event = { sender: { getURL: () => 'https://example.com', session: { fetch } } }
+  const event = {}
+  const webContents = { getURL: () => 'https://example.com', session: { fetch } }
 
-  await expect(ElectronBrowserViewEventListenerPageFaviconUpdated.handler(event, favicons)).resolves.toEqual({
+  await expect(ElectronBrowserViewEventListenerPageFaviconUpdated.handler(event, favicons, 12, webContents)).resolves.toEqual({
     messages: [['handlePageFaviconUpdated', ['data:image/x-icon;base64,AwQF']]],
     result: undefined,
   })
@@ -44,13 +46,14 @@ test('preserves favicon candidates when they cannot be fetched', async () => {
   const fetch = jest.fn<(url: string) => Promise<any>>(async () => {
     throw new Error('Failed to fetch')
   })
-  const event = { sender: { getURL: () => 'https://example.com', session: { fetch } } }
+  const event = {}
+  const webContents = { getURL: () => 'https://example.com', session: { fetch } }
   const networkFetch = jest.spyOn(globalThis, 'fetch').mockImplementation(async () => {
     throw new Error('Failed to fetch')
   })
 
   try {
-    await expect(ElectronBrowserViewEventListenerPageFaviconUpdated.handler(event, favicons)).resolves.toEqual({
+    await expect(ElectronBrowserViewEventListenerPageFaviconUpdated.handler(event, favicons, 12, webContents)).resolves.toEqual({
       messages: [['handlePageFaviconUpdated', favicons]],
       result: undefined,
     })
@@ -63,7 +66,8 @@ test('falls back to the network when the session fetch does not settle', async (
   jest.useFakeTimers()
   const favicons = ['https://www.reddit.com/favicon.ico']
   const fetch = jest.fn<() => Promise<any>>(() => new Promise(() => {}))
-  const event = { sender: { getURL: () => 'https://www.reddit.com', session: { fetch } } }
+  const event = {}
+  const webContents = { getURL: () => 'https://www.reddit.com', session: { fetch } }
   const networkFetch = jest.spyOn(globalThis, 'fetch').mockImplementation(
     async () =>
       ({
@@ -74,7 +78,7 @@ test('falls back to the network when the session fetch does not settle', async (
   )
 
   try {
-    const result = ElectronBrowserViewEventListenerPageFaviconUpdated.handler(event, favicons)
+    const result = ElectronBrowserViewEventListenerPageFaviconUpdated.handler(event, favicons, 12, webContents)
     await jest.advanceTimersByTimeAsync(2000)
     await expect(result).resolves.toEqual({
       messages: [['handlePageFaviconUpdated', ['data:image/vnd.microsoft.icon;base64,BgcI']]],
@@ -97,9 +101,10 @@ test('does not forward a favicon after the page navigates', async () => {
       ok: true,
     }
   })
-  const event = { sender: { getURL: () => pageUrl, session: { fetch } } }
+  const event = {}
+  const webContents = { getURL: () => pageUrl, session: { fetch } }
 
-  await expect(ElectronBrowserViewEventListenerPageFaviconUpdated.handler(event, ['https://example.com/favicon.png'])).resolves.toEqual({
+  await expect(ElectronBrowserViewEventListenerPageFaviconUpdated.handler(event, ['https://example.com/favicon.png'], 12, webContents)).resolves.toEqual({
     messages: [],
     result: undefined,
   })
