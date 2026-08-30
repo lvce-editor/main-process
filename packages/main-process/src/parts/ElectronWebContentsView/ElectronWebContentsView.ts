@@ -36,7 +36,7 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
     }
     const wrappedListener = (...args) => {
       // @ts-ignore
-      const handlerResult = value.handler(...args, webContentsId)
+      const handlerResult = value.handler(...args, webContentsId, webContents)
       if (handlerResult instanceof Promise) {
         return handleAsyncResult(handlerResult)
       }

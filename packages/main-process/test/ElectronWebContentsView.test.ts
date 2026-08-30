@@ -2,6 +2,12 @@ import { beforeEach, expect, jest, test } from '@jest/globals'
 
 const addChildView = jest.fn()
 const listenerAttach = jest.fn()
+const listenerHandler = jest.fn(async (_event, favicons, _webContentsId, _webContents) => {
+  return {
+    messages: [['handlePageFaviconUpdated', favicons]],
+    result: undefined,
+  }
+})
 const navigationFocusAttach = jest.fn()
 const performanceAttach = jest.fn()
 const send = jest.fn()
@@ -35,12 +41,7 @@ jest.unstable_mockModule('electron', () => ({
 jest.unstable_mockModule('../src/parts/ElectronBrowserViewEventListeners/ElectronBrowserViewEventListeners.ts', () => ({
   pageFaviconUpdated: {
     attach: listenerAttach,
-    async handler(event, favicons) {
-      return {
-        messages: [['handlePageFaviconUpdated', favicons]],
-        result: undefined,
-      }
-    },
+    handler: listenerHandler,
   },
 }))
 
@@ -81,6 +82,7 @@ test('createWebContentsView attaches event listeners before returning', async ()
   const listener = listenerAttach.mock.calls[0][1] as (event: unknown, favicons: readonly string[]) => Promise<void>
   await listener({}, ['https://example.com/favicon.png'])
 
+  expect(listenerHandler).toHaveBeenCalledWith({}, ['https://example.com/favicon.png'], 1, webContents)
   expect(send).toHaveBeenCalledWith('ElectronWebContents.handlePageFaviconUpdated', 1, ['https://example.com/favicon.png'])
 
   ElectronWebContentsView.attachEventListeners(1)

@@ -22,9 +22,10 @@ beforeEach(() => {
 
 test('loads the default origin favicon with the navigation', async () => {
   const url = 'https://www.reddit.com/r/javascript/comments/123/post'
-  const event = { sender: { getURL: () => url } }
+  const event = {}
+  const webContents = { getURL: () => url }
 
-  await expect(ElectronBrowserViewEventListenerDidNavigate.handler(event, url, 200, 'OK', 12)).resolves.toEqual({
+  await expect(ElectronBrowserViewEventListenerDidNavigate.handler(event, url, 200, 'OK', 12, webContents)).resolves.toEqual({
     messages: [
       ['handleDidNavigate', url],
       ['handlePageFaviconUpdated', ['data:image/x-icon;base64,AAEC']],
@@ -37,10 +38,11 @@ test('loads the default origin favicon with the navigation', async () => {
 
 test('does not replace a favicon reported by electron', async () => {
   const url = 'https://example.com/docs'
-  const event = { sender: { getURL: () => url } }
+  const event = {}
+  const webContents = { getURL: () => url }
   has.mockReturnValue(true)
 
-  await expect(ElectronBrowserViewEventListenerDidNavigate.handler(event, url, 200, 'OK', 12)).resolves.toEqual({
+  await expect(ElectronBrowserViewEventListenerDidNavigate.handler(event, url, 200, 'OK', 12, webContents)).resolves.toEqual({
     messages: [['handleDidNavigate', url]],
     result: undefined,
   })
@@ -48,7 +50,8 @@ test('does not replace a favicon reported by electron', async () => {
 
 test('keeps the fallback when electron reports a favicon while it loads', async () => {
   const url = 'https://www.reddit.com/r/javascript/comments/123/post'
-  const event = { sender: { getURL: () => url } }
+  const event = {}
+  const webContents = { getURL: () => url }
   let resolveFavicon: (favicons: readonly string[]) => void = () => {}
   resolveNetworkFavicon.mockImplementation(
     () =>
@@ -57,7 +60,7 @@ test('keeps the fallback when electron reports a favicon while it loads', async 
       }),
   )
 
-  const result = ElectronBrowserViewEventListenerDidNavigate.handler(event, url, 200, 'OK', 12)
+  const result = ElectronBrowserViewEventListenerDidNavigate.handler(event, url, 200, 'OK', 12, webContents)
   has.mockReturnValue(true)
   resolveFavicon(['data:image/x-icon;base64,AAEC'])
 
