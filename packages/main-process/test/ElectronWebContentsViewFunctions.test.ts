@@ -1,6 +1,11 @@
-import { expect, jest, test } from '@jest/globals'
+import { beforeEach, expect, jest, test } from '@jest/globals'
+
+const getAppMetrics = jest.fn<() => Electron.ProcessMetric[]>()
 
 jest.unstable_mockModule('electron', () => ({
+  app: {
+    getAppMetrics,
+  },
   BrowserWindow: {},
 }))
 
@@ -8,6 +13,10 @@ const ElectronWebContentsViewFunctions = await import(
   '../src/parts/ElectronWebContentsViewFunctions/ElectronWebContentsViewFunctions.ts'
 )
 const ElectronWebContentsViewState = await import('../src/parts/ElectronWebContentsViewState/ElectronWebContentsViewState.ts')
+
+beforeEach(() => {
+  getAppMetrics.mockReset()
+})
 
 test('stores fallthrough keybindings instead of the wrapped web contents view', () => {
   const view = {} as Electron.BrowserView
@@ -106,6 +115,37 @@ test('getStats includes the web contents audio state', () => {
     canGoBack: false,
     canGoForward: true,
     isAudioMuted: true,
+    title: 'Example',
+    url: 'https://example.com',
+  })
+})
+
+test('getStats includes the renderer working set in bytes when requested', () => {
+  getAppMetrics.mockReturnValue([
+    {
+      memory: { peakWorkingSetSize: 84, workingSetSize: 42 },
+      pid: 123,
+      type: 'Tab',
+    } as Electron.ProcessMetric,
+  ])
+  const view = {
+    webContents: {
+      getOSProcessId: jest.fn(() => 123),
+      getTitle: jest.fn(() => 'Example'),
+      getURL: jest.fn(() => 'https://example.com'),
+      isAudioMuted: jest.fn(() => false),
+      navigationHistory: {
+        canGoBack: jest.fn(() => false),
+        canGoForward: jest.fn(() => false),
+      },
+    },
+  } as unknown as Electron.BrowserView
+
+  expect(ElectronWebContentsViewFunctions.getStats(view, true)).toEqual({
+    canGoBack: false,
+    canGoForward: false,
+    isAudioMuted: false,
+    memory: 42 * 1024,
     title: 'Example',
     url: 'https://example.com',
   })
