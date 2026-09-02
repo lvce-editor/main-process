@@ -1,5 +1,5 @@
 import type { BrowserView, WebContents, WebContentsView } from 'electron'
-import { BrowserWindow } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
 import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
 import { VError } from '../VError/VError.ts'
@@ -236,18 +236,27 @@ export const setFallThroughKeyBindings = (_view: BrowserView, fallthroughKeyBind
 /**
  * @param {Electron.BrowserView} view
  */
-export const getStats = (view: BrowserView) => {
+export const getStats = (view: BrowserView, includeMemory = false) => {
   const { webContents } = view
   const canGoBack = webContents.navigationHistory.canGoBack()
   const canGoForward = webContents.navigationHistory.canGoForward()
   const isAudioMuted = webContents.isAudioMuted()
   const url = webContents.getURL()
   const title = webContents.getTitle()
-  return {
+  const stats = {
     canGoBack,
     canGoForward,
     isAudioMuted,
     title,
     url,
+  }
+  if (!includeMemory) {
+    return stats
+  }
+  const processId = webContents.getOSProcessId()
+  const processMetric = app.getAppMetrics().find((metric) => metric.pid === processId)
+  return {
+    ...stats,
+    memory: (processMetric?.memory.workingSetSize || 0) * 1024,
   }
 }
