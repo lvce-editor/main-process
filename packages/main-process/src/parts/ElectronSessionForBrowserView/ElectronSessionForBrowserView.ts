@@ -14,6 +14,7 @@ const isAllowedPermission = (permission: string): boolean => {
   switch (permission) {
     case ElectronPermissionType.ClipBoardRead:
     case ElectronPermissionType.ClipBoardSanitizedWrite:
+    case ElectronPermissionType.FileSystem:
     case ElectronPermissionType.FullScreen:
     case ElectronPermissionType.GeoLocation:
     case ElectronPermissionType.WindowPlacement:
@@ -21,6 +22,14 @@ const isAllowedPermission = (permission: string): boolean => {
     default:
       return false
   }
+}
+
+const handleFileSystemAccessRestricted = (
+  _event: Electron.Event,
+  _details: Electron.FileSystemAccessRestrictedDetails,
+  callback: (action: 'allow' | 'deny' | 'tryAgain') => void,
+): void => {
+  callback('allow')
 }
 
 const handlePermissionRequest = (webContents, permission, callback, details): void => {
@@ -38,6 +47,7 @@ const createSession = () => {
   })
   session.setPermissionRequestHandler(handlePermissionRequest)
   session.setPermissionCheckHandler(handlePermissionCheck)
+  session.on('file-system-access-restricted', handleFileSystemAccessRestricted)
   session.webRequest.onBeforeRequest(ElectronBrowserViewAdBlock.filter, ElectronBrowserViewAdBlock.handleBeforeRequest)
   // session.webRequest.addSessionChromeExtensions(session)
   return session
