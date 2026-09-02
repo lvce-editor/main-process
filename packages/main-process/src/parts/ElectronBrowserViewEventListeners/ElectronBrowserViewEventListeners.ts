@@ -3,6 +3,7 @@ export * as audioStateChanged from '../ElectronBrowserViewEventListenerAudioStat
 export * as contextMenu from '../ElectronBrowserViewEventListenerContextMenu/ElectronBrowserViewEventListenerContextMenu.ts'
 export * as destroyed from '../ElectronBrowserViewEventListenerDestroyed/ElectronBrowserViewEventListenerDestroyed.ts'
 export * as didNavigate from '../ElectronBrowserViewEventListenerDidNavigate/ElectronBrowserViewEventListenerDidNavigate.ts'
+export * as didNavigateInPage from '../ElectronBrowserViewEventListenerDidNavigateInPage/ElectronBrowserViewEventListenerDidNavigateInPage.ts'
 export * as login from '../ElectronBrowserViewEventListenerLogin/ElectronBrowserViewEventListenerLogin.ts'
 export * as pageFaviconUpdated from '../ElectronBrowserViewEventListenerPageFaviconUpdated/ElectronBrowserViewEventListenerPageFaviconUpdated.ts'
 export * as pageTitleUpdated from '../ElectronBrowserViewEventListenerPageTitleUpdated/ElectronBrowserViewEventListenerPageTitleUpdated.ts'
