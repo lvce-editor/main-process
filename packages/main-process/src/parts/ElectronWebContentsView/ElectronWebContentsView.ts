@@ -36,7 +36,13 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
     }
     const wrappedListener = (...args) => {
       // @ts-ignore
-      const handlerResult = value.handler(...args, webContentsId, webContents)
+      const createWindow = (options: Electron.BrowserWindowConstructorOptions, url: string, disposition: string): Electron.WebContents => {
+        const view = createWebContentsViewForWindow(browserWindow, options.webPreferences)
+        EmbedsProcess.send('ElectronWebContents.handleWindowOpen', webContentsId, view.webContents.id, url, disposition)
+        return view.webContents
+      }
+      // @ts-ignore Electron event handlers have different argument tuples
+      const handlerResult = value.handler(...args, webContentsId, webContents, createWindow)
       if (handlerResult instanceof Promise) {
         return handleAsyncResult(handlerResult)
       }
@@ -47,22 +53,30 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
   webContentsWithEventListeners.add(webContents)
 }
 
-// TODO use electron 30 webcontentsview api
-export const createWebContentsView = async () => {
+const createWebContentsViewForWindow = (
+  browserWindow: Electron.BrowserWindow,
+  webPreferences: Electron.WebPreferences = {},
+): Electron.WebContentsView => {
   const view = new WebContentsView({
     webPreferences: {
+      ...webPreferences,
       session: ElectronSessionForBrowserView.getSession(),
     },
   })
-  // TODO get browser window id from renderer worker
-  const browserWindow = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
   view.setBounds({ height: 720, width: 1280, x: 0, y: 0 })
   browserWindow.contentView.addChildView(view, 0)
   const { webContents } = view
-  const { id } = webContents
-  ElectronWebContentsViewState.add(id, browserWindow, view)
-  attachEventListenersToWebContents(id, webContents, browserWindow)
-  return id
+  ElectronWebContentsViewState.add(webContents.id, browserWindow, view)
+  attachEventListenersToWebContents(webContents.id, webContents, browserWindow)
+  return view
+}
+
+// TODO use electron 30 webcontentsview api
+export const createWebContentsView = async () => {
+  // TODO get browser window id from renderer worker
+  const browserWindow = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+  const view = createWebContentsViewForWindow(browserWindow)
+  return view.webContents.id
 }
 
 export const attachEventListeners = (webContentsId) => {
