@@ -16,6 +16,10 @@ export const appendCommandLineSwitch = (commandLineSwitch, value) => {
   app.commandLine.appendSwitch(commandLineSwitch, value)
 }
 
+export const relaunch = (options) => {
+  app.relaunch(options)
+}
+
 export const exit = (code) => {
   app.exit(code)
 }
