@@ -6,7 +6,9 @@ const electronApp = {
 }
 
 const safeStorage = {
+  getSelectedStorageBackend: jest.fn(),
   isEncryptionAvailable: jest.fn(),
+  setUsePlainTextEncryption: jest.fn(),
 }
 
 jest.unstable_mockModule('electron', () => ({
@@ -22,6 +24,7 @@ const EnsurePersistentSecretStorage = await import('../src/parts/EnsurePersisten
 
 beforeEach(() => {
   jest.clearAllMocks()
+  safeStorage.getSelectedStorageBackend.mockReturnValue('gnome_libsecret')
   safeStorage.isEncryptionAvailable.mockReturnValue(true)
 })
 
@@ -44,9 +47,20 @@ test('relaunches Linux with the persistent basic password store when encryption 
   expect(electronApp.exit).toHaveBeenCalledWith(0)
 })
 
-test('does not relaunch repeatedly when the persistent basic password store is unavailable', () => {
+test('enables the selected persistent basic password store', () => {
   safeStorage.isEncryptionAvailable.mockReturnValue(false)
+  safeStorage.getSelectedStorageBackend.mockReturnValue('basic_text')
   const argv = ['/usr/lib/lvce/lvce', '--password-store=basic', '/test/']
+
+  expect(EnsurePersistentSecretStorage.ensurePersistentSecretStorage(argv)).toBe(true)
+  expect(safeStorage.setUsePlainTextEncryption).toHaveBeenCalledWith(true)
+  expect(electronApp.relaunch).not.toHaveBeenCalled()
+  expect(electronApp.exit).not.toHaveBeenCalled()
+})
+
+test('does not relaunch repeatedly when an explicitly selected password store is unavailable', () => {
+  safeStorage.isEncryptionAvailable.mockReturnValue(false)
+  const argv = ['/usr/lib/lvce/lvce', '--password-store=gnome-libsecret', '/test/']
 
   expect(() => EnsurePersistentSecretStorage.ensurePersistentSecretStorage(argv)).toThrow(new Error('Persistent secret storage is unavailable'))
   expect(electronApp.relaunch).not.toHaveBeenCalled()

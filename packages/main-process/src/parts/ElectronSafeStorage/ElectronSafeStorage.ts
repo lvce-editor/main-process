@@ -1,8 +1,16 @@
 import { safeStorage } from 'electron'
 import * as EncodingType from '../EncodingType/EncodingType.ts'
 
+export const getSelectedStorageBackend = () => {
+  return safeStorage.getSelectedStorageBackend()
+}
+
 export const isEncryptionAvailable = () => {
   return safeStorage.isEncryptionAvailable()
+}
+
+export const setUsePlainTextEncryption = (usePlainText: boolean): void => {
+  safeStorage.setUsePlainTextEncryption(usePlainText)
 }
 
 export const encrypt = (plainText) => {

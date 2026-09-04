@@ -11,6 +11,10 @@ export const ensurePersistentSecretStorage = (argv: readonly string[]): boolean 
   if (!Platform.isLinux || ElectronSafeStorage.isEncryptionAvailable()) {
     return true
   }
+  if (ElectronSafeStorage.getSelectedStorageBackend() === 'basic_text') {
+    ElectronSafeStorage.setUsePlainTextEncryption(true)
+    return true
+  }
   if (hasPasswordStoreArgument(argv)) {
     throw new Error('Persistent secret storage is unavailable')
   }
