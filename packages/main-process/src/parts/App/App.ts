@@ -7,6 +7,7 @@ import * as ElectronApp from '../ElectronApp/ElectronApp.ts'
 import * as ElectronAppEventType from '../ElectronAppEventType/ElectronAppEventType.ts'
 import * as ElectronApplicationMenu from '../ElectronApplicationMenu/ElectronApplicationMenu.ts'
 import * as ElectronAppListeners from '../ElectronAppListeners/ElectronAppListeners.ts'
+import * as EnsurePersistentSecretStorage from '../EnsurePersistentSecretStorage/EnsurePersistentSecretStorage.ts'
 import * as Exit from '../Exit/Exit.ts'
 import * as ExitCode from '../ExitCode/ExitCode.ts'
 import * as HandleElectronReady from '../HandleElectronReady/HandleElectronReady.ts'
@@ -81,6 +82,9 @@ export const hydrate = async (argv: readonly string[]) => {
   ElectronApp.on(ElectronAppEventType.WebContentsCreated, HandleWebContentsCreated.handleWebContentsCreated)
   ElectronApp.on(ElectronAppEventType.SecondInstance, HandleSecondInstance.handleSecondInstance)
   await ElectronApp.whenReady()
+  if (!EnsurePersistentSecretStorage.ensurePersistentSecretStorage(argv)) {
+    return
+  }
   Performance.mark(PerformanceMarkerType.AppReady)
 
   await HandleElectronReady.handleReady(parsedCliArgs, Process.cwd())

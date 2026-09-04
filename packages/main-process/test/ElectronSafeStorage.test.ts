@@ -11,10 +11,6 @@ jest.unstable_mockModule('electron', () => {
   }
 })
 
-jest.unstable_mockModule('../src/parts/Platform/Platform.ts', () => ({
-  isLinux: true,
-}))
-
 const electron = await import('electron')
 const ElectronSafeStorage = await import('../src/parts/ElectronSafeStorage/ElectronSafeStorage.ts')
 
@@ -59,24 +55,15 @@ test('encryptString', () => {
   expect(electron.safeStorage.encryptString).toHaveBeenCalledWith('test')
 })
 
-test('encryptString enables the Linux fallback when OS encryption is unavailable', () => {
+test('encryptString does not enable the non-persistent in-memory fallback', () => {
   // @ts-expect-error
   electron.safeStorage.isEncryptionAvailable.mockReturnValue(false)
   // @ts-expect-error
-  electron.safeStorage.encryptString.mockReturnValue(Buffer.from('encrypted'))
+  electron.safeStorage.encryptString.mockImplementation(() => {
+    throw new Error('Encryption is not available')
+  })
 
-  expect(ElectronSafeStorage.encrypt('test')).toBe(Buffer.from('encrypted').toString('base64'))
-  expect(electron.safeStorage.setUsePlainTextEncryption).toHaveBeenCalledWith(true)
+  expect(() => ElectronSafeStorage.encrypt('test')).toThrow(new Error('Encryption is not available'))
+  expect(electron.safeStorage.setUsePlainTextEncryption).not.toHaveBeenCalled()
   expect(electron.safeStorage.encryptString).toHaveBeenCalledWith('test')
-})
-
-test('decryptString enables the Linux fallback when OS encryption is unavailable', () => {
-  // @ts-expect-error
-  electron.safeStorage.isEncryptionAvailable.mockReturnValue(false)
-  // @ts-expect-error
-  electron.safeStorage.decryptString.mockReturnValue('decrypted')
-
-  expect(ElectronSafeStorage.decrypt(Buffer.from('encrypted').toString('base64'))).toBe('decrypted')
-  expect(electron.safeStorage.setUsePlainTextEncryption).toHaveBeenCalledWith(true)
-  expect(electron.safeStorage.decryptString).toHaveBeenCalledWith(Buffer.from('encrypted'))
 })
