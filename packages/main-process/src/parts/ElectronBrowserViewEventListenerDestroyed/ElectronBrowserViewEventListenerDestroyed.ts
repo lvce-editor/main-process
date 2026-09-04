@@ -19,7 +19,9 @@ export const handler = (_event, webContentsId) => {
   if (instance) {
     const { browserWindow, view } = instance
     ElectronWebContentsViewState.remove(webContentsId)
-    browserWindow.contentView.removeChildView(view)
+    if (!browserWindow.isDestroyed()) {
+      browserWindow.contentView.removeChildView(view)
+    }
   }
   return {
     messages,
