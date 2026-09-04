@@ -1,6 +1,7 @@
 import * as Electron from 'electron'
 import { closeSync, mkdirSync, openSync, rmSync, writeSync } from 'node:fs'
 import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
 import * as Assert from '../Assert/Assert.ts'
 
 interface TargetInfo {
@@ -23,7 +24,11 @@ interface FrameTreeResult {
 }
 
 const getFileName = (workerName: string): string => {
-  const safeWorkerName = workerName.replaceAll(/[^a-zA-Z0-9._-]+/g, '-').replace(/^-/, '').replace(/-$/, '') || 'worker'
+  const safeWorkerName =
+    workerName
+      .replaceAll(/[^a-zA-Z0-9._-]+/g, '-')
+      .replace(/^-/, '')
+      .replace(/-$/, '') || 'worker'
   return `${safeWorkerName}-${Date.now()}.heapsnapshot`
 }
 
@@ -84,7 +89,7 @@ export const takeWorkerHeapSnapshot = async (windowId: number, workerName: strin
       electronDebugger.off('message', handleMessage)
     }
     success = true
-    return filePath
+    return pathToFileURL(filePath).href
   } finally {
     try {
       if (fileDescriptor !== undefined) {

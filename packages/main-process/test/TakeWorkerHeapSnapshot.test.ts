@@ -3,6 +3,7 @@ import { EventEmitter } from 'node:events'
 import { mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 let attached = false
 let downloadsPath = ''
@@ -100,8 +101,8 @@ test('takes a heap snapshot for the named worker', async () => {
 
   const result = await takeWorkerHeapSnapshot(7, 'Extension API (Electron): sample.extension')
 
-  expect(result).toBe(join(downloadsPath, 'Extension-API-Electron-sample.extension-123456.heapsnapshot'))
-  expect(readFileSync(result, 'utf8')).toBe('{"snapshot":{}}')
+  expect(result).toBe(pathToFileURL(join(downloadsPath, 'Extension-API-Electron-sample.extension-123456.heapsnapshot')).href)
+  expect(readFileSync(fileURLToPath(result), 'utf8')).toBe('{"snapshot":{}}')
   expect(electronDebugger.sendCommand).toHaveBeenNthCalledWith(1, 'Page.getFrameTree')
   expect(electronDebugger.sendCommand).toHaveBeenNthCalledWith(2, 'Target.getTargets')
   expect(electronDebugger.sendCommand).toHaveBeenNthCalledWith(3, 'Target.attachToTarget', {
@@ -109,12 +110,7 @@ test('takes a heap snapshot for the named worker', async () => {
     targetId: 'worker-target',
   })
   expect(electronDebugger.sendCommand).toHaveBeenNthCalledWith(4, 'HeapProfiler.enable', undefined, 'worker-session')
-  expect(electronDebugger.sendCommand).toHaveBeenNthCalledWith(
-    5,
-    'HeapProfiler.takeHeapSnapshot',
-    { reportProgress: false },
-    'worker-session',
-  )
+  expect(electronDebugger.sendCommand).toHaveBeenNthCalledWith(5, 'HeapProfiler.takeHeapSnapshot', { reportProgress: false }, 'worker-session')
   expect(electronDebugger.sendCommand).toHaveBeenNthCalledWith(6, 'Target.detachFromTarget', { sessionId: 'worker-session' })
   expect(electronDebugger.attach).toHaveBeenCalledTimes(1)
   expect(electronDebugger.detach).toHaveBeenCalledTimes(1)
