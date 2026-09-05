@@ -100,10 +100,9 @@ test('createWebContentsView attaches event listeners before returning', async ()
 
   const popupContents = { id: 2 } as Electron.WebContents
   const popupView = { setBounds: jest.fn(), webContents: popupContents }
+  const popupOptions = { webContents: popupContents, webPreferences: { sandbox: true } }
   createView.mockReturnValueOnce(popupView)
-  expect(createWindow({ webContents: popupContents, webPreferences: { sandbox: true } }, 'https://accounts.google.com', 'new-window')).toBe(
-    popupContents,
-  )
+  expect(createWindow(popupOptions, 'https://accounts.google.com', 'new-window')).toBe(popupContents)
   expect(createView).toHaveBeenLastCalledWith({ webContents: popupContents, webPreferences: { sandbox: true, session: undefined } })
   expect(addChildView).toHaveBeenLastCalledWith(popupView, 0)
   expect(ElectronWebContentsViewState.get(2)).toEqual({ browserWindow, view: popupView })
