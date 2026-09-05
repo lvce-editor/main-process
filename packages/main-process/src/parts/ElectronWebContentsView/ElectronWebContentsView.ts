@@ -37,7 +37,7 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
     const wrappedListener = (...args) => {
       // @ts-ignore
       const createWindow = (options: Electron.BrowserWindowConstructorOptions, url: string, disposition: string): Electron.WebContents => {
-        const view = createWebContentsViewForWindow(browserWindow, options.webPreferences)
+        const view = createWebContentsViewForWindow(browserWindow, options)
         EmbedsProcess.send('ElectronWebContents.handleWindowOpen', webContentsId, view.webContents.id, url, disposition)
         return view.webContents
       }
@@ -55,11 +55,13 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
 
 const createWebContentsViewForWindow = (
   browserWindow: Electron.BrowserWindow,
-  webPreferences: Electron.WebPreferences = {},
+  options: Electron.WebContentsViewConstructorOptions = {},
 ): Electron.WebContentsView => {
   const view = new WebContentsView({
+    // Electron's popup contents carry the opener relationship and pending navigation.
+    ...(options.webContents && { webContents: options.webContents }),
     webPreferences: {
-      ...webPreferences,
+      ...options.webPreferences,
       session: ElectronSessionForBrowserView.getSession(),
     },
   })

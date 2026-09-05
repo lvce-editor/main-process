@@ -19,6 +19,7 @@ const view = {
   setBounds,
   webContents,
 }
+const createView = jest.fn((_options: Electron.WebContentsViewConstructorOptions) => view)
 const browserWindow = {
   contentView: {
     addChildView,
@@ -35,7 +36,7 @@ jest.unstable_mockModule('electron', () => ({
   webContents: {
     fromId,
   },
-  WebContentsView: jest.fn(() => view),
+  WebContentsView: createView,
 }))
 
 jest.unstable_mockModule('../src/parts/ElectronBrowserViewEventListeners/ElectronBrowserViewEventListeners.ts', () => ({
@@ -78,6 +79,7 @@ test('createWebContentsView attaches event listeners before returning', async ()
   expect(navigationFocusAttach).toHaveBeenCalledWith(webContents, browserWindow.webContents)
   expect(performanceAttach).toHaveBeenCalledWith(webContents)
   expect(listenerAttach).toHaveBeenCalledWith(webContents, expect.any(Function))
+  expect(createView.mock.calls[0][0]).not.toHaveProperty('webContents')
 
   const listener = listenerAttach.mock.calls[0][1] as (event: unknown, favicons: readonly string[]) => Promise<void>
   await listener({}, ['https://example.com/favicon.png'])
@@ -95,6 +97,16 @@ test('createWebContentsView attaches event listeners before returning', async ()
 
   ElectronWebContentsView.attachEventListeners(1)
   expect(listenerAttach).toHaveBeenCalledTimes(1)
+
+  const popupContents = { id: 2 } as Electron.WebContents
+  const popupView = { setBounds: jest.fn(), webContents: popupContents }
+  const popupOptions = { webContents: popupContents, webPreferences: { sandbox: true } }
+  createView.mockReturnValueOnce(popupView)
+  expect(createWindow(popupOptions, 'https://accounts.google.com', 'new-window')).toBe(popupContents)
+  expect(createView).toHaveBeenLastCalledWith({ webContents: popupContents, webPreferences: { sandbox: true, session: undefined } })
+  expect(addChildView).toHaveBeenLastCalledWith(popupView, 0)
+  expect(ElectronWebContentsViewState.get(2)).toEqual({ browserWindow, view: popupView })
+  expect(send).toHaveBeenLastCalledWith('ElectronWebContents.handleWindowOpen', 1, 2, 'https://accounts.google.com', 'new-window')
 })
 
 test('disposeWebContentsView removes and closes the view', () => {
