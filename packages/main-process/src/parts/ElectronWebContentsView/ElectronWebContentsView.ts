@@ -1,6 +1,7 @@
 import * as Electron from 'electron'
 import { BrowserWindow, WebContentsView } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
+import * as BrowserFullWidthGesture from '../BrowserFullWidthGesture/BrowserFullWidthGesture.ts'
 import * as DisposeWebContents from '../DisposeWebContents/DisposeWebContents.ts'
 import * as ElectronBrowserViewEventListeners from '../ElectronBrowserViewEventListeners/ElectronBrowserViewEventListeners.ts'
 import * as ElectronSessionForBrowserView from '../ElectronSessionForBrowserView/ElectronSessionForBrowserView.ts'
@@ -16,6 +17,7 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
   if (webContentsWithEventListeners.has(webContents)) {
     return
   }
+  BrowserFullWidthGesture.attach(browserWindow, webContents)
   ElectronWebContentsViewNavigationFocus.attach(webContents, browserWindow.webContents)
   ElectronWebContentsViewPerformance.attach(webContents)
   const values = Object.values(ElectronBrowserViewEventListeners)
