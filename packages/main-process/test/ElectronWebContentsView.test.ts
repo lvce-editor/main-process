@@ -14,6 +14,7 @@ const send = jest.fn()
 const setBounds = jest.fn()
 const webContents = {
   id: 1,
+  on: jest.fn(),
 }
 const view = {
   setBounds,
