@@ -10,6 +10,7 @@ import * as ElectronWebContentsViewNavigationFocus from '../ElectronWebContentsV
 import * as ElectronWebContentsViewPerformance from '../ElectronWebContentsViewPerformance/ElectronWebContentsViewPerformance.ts'
 import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
 import * as EmbedsProcess from '../EmbedsProcess/EmbedsProcess.ts'
+import * as WebContentsFocus from '../WebContentsFocus/WebContentsFocus.ts'
 
 const webContentsWithEventListeners = new WeakSet<Electron.WebContents>()
 
@@ -17,6 +18,7 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
   if (webContentsWithEventListeners.has(webContents)) {
     return
   }
+  WebContentsFocus.attach(webContents)
   BrowserFullWidthGesture.attach(browserWindow, webContents)
   ElectronWebContentsViewNavigationFocus.attach(webContents, browserWindow.webContents)
   ElectronWebContentsViewPerformance.attach(webContents)

@@ -9,9 +9,7 @@ jest.unstable_mockModule('electron', () => ({
   BrowserWindow: {},
 }))
 
-const ElectronWebContentsViewFunctions = await import(
-  '../src/parts/ElectronWebContentsViewFunctions/ElectronWebContentsViewFunctions.ts'
-)
+const ElectronWebContentsViewFunctions = await import('../src/parts/ElectronWebContentsViewFunctions/ElectronWebContentsViewFunctions.ts')
 const ElectronWebContentsViewState = await import('../src/parts/ElectronWebContentsViewState/ElectronWebContentsViewState.ts')
 
 beforeEach(() => {
@@ -104,6 +102,7 @@ test('getStats includes the web contents audio state', () => {
       getTitle: jest.fn(() => 'Example'),
       getURL: jest.fn(() => 'https://example.com'),
       isAudioMuted: jest.fn(() => true),
+      isFocused: jest.fn(() => false),
       navigationHistory: {
         canGoBack: jest.fn(() => false),
         canGoForward: jest.fn(() => true),
@@ -115,6 +114,8 @@ test('getStats includes the web contents audio state', () => {
     canGoBack: false,
     canGoForward: true,
     isAudioMuted: true,
+    isFocused: false,
+    lastFocusedAt: 0,
     title: 'Example',
     url: 'https://example.com',
   })
@@ -134,6 +135,7 @@ test('getStats includes the renderer working set in bytes when requested', () =>
       getTitle: jest.fn(() => 'Example'),
       getURL: jest.fn(() => 'https://example.com'),
       isAudioMuted: jest.fn(() => false),
+      isFocused: jest.fn(() => false),
       navigationHistory: {
         canGoBack: jest.fn(() => false),
         canGoForward: jest.fn(() => false),
@@ -145,6 +147,8 @@ test('getStats includes the renderer working set in bytes when requested', () =>
     canGoBack: false,
     canGoForward: false,
     isAudioMuted: false,
+    isFocused: false,
+    lastFocusedAt: 0,
     memory: 42 * 1024,
     title: 'Example',
     url: 'https://example.com',
