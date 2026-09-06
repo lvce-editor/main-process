@@ -20,9 +20,9 @@ test.each([
 ])('timing boundaries %i %i %i', (firstRelease, secondPress, secondRelease, expected) => {
   const gesture = DoubleControlGesture.create()
   gesture.accept(input('keyDown'), 0)
-  gesture.accept(input('keyUp'), firstRelease as number)
-  gesture.accept(input('keyDown'), secondPress as number)
-  expect(gesture.accept(input('keyUp'), secondRelease as number)).toBe(expected)
+  gesture.accept(input('keyUp'), firstRelease)
+  gesture.accept(input('keyDown'), secondPress)
+  expect(gesture.accept(input('keyUp'), secondRelease)).toBe(expected)
 })
 
 test.each([

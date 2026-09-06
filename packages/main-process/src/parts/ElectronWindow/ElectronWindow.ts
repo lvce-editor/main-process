@@ -1,5 +1,5 @@
-import * as BrowserFullWidthGesture from '../BrowserFullWidthGesture/BrowserFullWidthGesture.ts'
 import * as Electron from 'electron'
+import * as BrowserFullWidthGesture from '../BrowserFullWidthGesture/BrowserFullWidthGesture.ts'
 import * as GetWindowById from '../GetWindowById/GetWindowById.ts'
 import * as Logger from '../Logger/Logger.ts'
 

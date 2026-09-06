@@ -1,7 +1,7 @@
-import * as BrowserFullWidthGesture from '../BrowserFullWidthGesture/BrowserFullWidthGesture.ts'
 import * as Electron from 'electron'
 import { BrowserWindow, WebContentsView } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
+import * as BrowserFullWidthGesture from '../BrowserFullWidthGesture/BrowserFullWidthGesture.ts'
 import * as DisposeWebContents from '../DisposeWebContents/DisposeWebContents.ts'
 import * as ElectronBrowserViewEventListeners from '../ElectronBrowserViewEventListeners/ElectronBrowserViewEventListeners.ts'
 import * as ElectronSessionForBrowserView from '../ElectronSessionForBrowserView/ElectronSessionForBrowserView.ts'

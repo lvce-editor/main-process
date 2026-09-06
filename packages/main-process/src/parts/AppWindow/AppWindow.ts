@@ -1,6 +1,6 @@
-import * as BrowserFullWidthGesture from '../BrowserFullWidthGesture/BrowserFullWidthGesture.ts'
 import { ElectronWebContentsRpcClient } from '@lvce-editor/rpc'
 import { BrowserWindow } from 'electron'
+import * as BrowserFullWidthGesture from '../BrowserFullWidthGesture/BrowserFullWidthGesture.ts'
 import * as CommandMapRef from '../CommandMapRef/CommandMapRef.ts'
 import { createWindowCloseHandler } from '../CreateWindowCloseHandler/CreateWindowCloseHandler.ts'
 import * as ElectronApplicationMenu from '../ElectronApplicationMenu/ElectronApplicationMenu.ts'
