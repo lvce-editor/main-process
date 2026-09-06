@@ -3,6 +3,11 @@ import * as ElectronWebContentsEventType from '../ElectronWebContentsEventType/E
 
 export const attach = (webContents: WebContents, parentWebContents: WebContents): void => {
   let shouldRestoreParentFocus = false
+  const cancel = (): void => {
+    shouldRestoreParentFocus = false
+  }
+  parentWebContents.on('blur', cancel)
+  webContents.once('destroyed', () => parentWebContents.off('blur', cancel))
 
   webContents.on(ElectronWebContentsEventType.DidStartNavigation, (_event, _url, _isInPlace, isMainFrame) => {
     if (!isMainFrame) {
@@ -12,7 +17,7 @@ export const attach = (webContents: WebContents, parentWebContents: WebContents)
   })
 
   webContents.on(ElectronWebContentsEventType.DidNavigate, () => {
-    if (!shouldRestoreParentFocus) {
+    if (!shouldRestoreParentFocus || parentWebContents.isDestroyed()) {
       return
     }
     shouldRestoreParentFocus = false
