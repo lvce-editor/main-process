@@ -10,9 +10,9 @@ export const detach = (webContents, listener) => {
   webContents.off(ElectronWebContentsEventType.ContextMenu, listener)
 }
 
-export const handler = (event, params) => {
+export const handler = (event, params, browserViewId) => {
   return {
-    messages: [['handleContextMenu', params]],
+    messages: [['handleContextMenu', { ...params, browserViewId }]],
     result: undefined,
   }
 }
