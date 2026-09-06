@@ -1,6 +1,7 @@
 import { beforeEach, expect, jest, test } from '@jest/globals'
 import * as ElectronWebContentsViewNavigationFocus from '../src/parts/ElectronWebContentsViewNavigationFocus/ElectronWebContentsViewNavigationFocus.ts'
 
+let parentBlurListener: () => void
 let didNavigateListener: any
 let didStartNavigationListener: any
 
@@ -12,11 +13,17 @@ const webContents = {
       didNavigateListener = listener
     }
   }),
+  once: jest.fn(),
 }
 
 const parentWebContents = {
   focus: jest.fn(),
+  isDestroyed: jest.fn(() => false),
   isFocused: jest.fn(),
+  off: jest.fn(),
+  on: jest.fn((_event: string, listener: () => void) => {
+    parentBlurListener = listener
+  }),
 }
 
 beforeEach(() => {
@@ -65,4 +72,12 @@ test('does not reuse focus state from an earlier navigation', () => {
   didNavigateListener()
 
   expect(parentWebContents.focus).toHaveBeenCalledTimes(1)
+})
+
+test('late navigation cannot restore focus after the user leaves the parent contents', () => {
+  parentWebContents.isFocused.mockReturnValue(true)
+  didStartNavigationListener({}, 'http://localhost:5173', false, true)
+  parentBlurListener()
+  didNavigateListener()
+  expect(parentWebContents.focus).not.toHaveBeenCalled()
 })
