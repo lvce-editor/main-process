@@ -24,8 +24,7 @@ export const create = () => {
     heldControls.clear()
     overlappingControls = false
   }
-  const accept = (input: ControlInput, now: number): boolean => {
-    const isControl = ['ControlLeft', 'ControlRight'].includes(input.code)
+  const hasOverlappingControls = (input: ControlInput, isControl: boolean): boolean => {
     if (isControl && !input.isAutoRepeat) {
       if (input.type === 'keyDown') {
         if (heldControls.size > 0) overlappingControls = true
@@ -36,9 +35,14 @@ export const create = () => {
       if (overlappingControls) {
         resetTaps()
         if (heldControls.size === 0) overlappingControls = false
-        return false
+        return true
       }
     }
+    return false
+  }
+  const accept = (input: ControlInput, now: number): boolean => {
+    const isControl = ['ControlLeft', 'ControlRight'].includes(input.code)
+    if (hasOverlappingControls(input, isControl)) return false
     if (!isControl || input.alt || input.meta || input.shift || input.isComposing) {
       resetTaps()
       return false
