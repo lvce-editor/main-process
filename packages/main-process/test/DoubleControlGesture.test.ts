@@ -50,3 +50,20 @@ test('reset cancels an unfinished gesture and auto-repeat cannot add a tap', () 
   gesture.accept(input('keyDown'), 30)
   expect(gesture.accept(input('keyUp'), 40)).toBe(false)
 })
+
+test('holding either Ctrl while tapping the other cannot qualify', () => {
+  const gesture = DoubleControlGesture.create()
+  for (const [type, code, now] of [
+    ['keyDown', 'ControlLeft', 0],
+    ['keyDown', 'ControlRight', 10],
+    ['keyUp', 'ControlRight', 20],
+    ['keyDown', 'ControlRight', 30],
+    ['keyUp', 'ControlRight', 40],
+    ['keyUp', 'ControlLeft', 50],
+  ] as const)
+    expect(gesture.accept(input(type, code), now)).toBe(false)
+  gesture.accept(input('keyDown'), 100)
+  expect(gesture.accept(input('keyUp'), 150)).toBe(false)
+  gesture.accept(input('keyDown'), 200)
+  expect(gesture.accept(input('keyUp'), 250)).toBe(true)
+})
