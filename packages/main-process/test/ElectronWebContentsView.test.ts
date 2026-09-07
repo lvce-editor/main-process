@@ -14,7 +14,8 @@ const send = jest.fn()
 const setBounds = jest.fn()
 const webContents = {
   id: 1,
-}
+  on: jest.fn(),
+} as unknown as Electron.WebContents
 const view = {
   setBounds,
   webContents,
@@ -98,7 +99,7 @@ test('createWebContentsView attaches event listeners before returning', async ()
   ElectronWebContentsView.attachEventListeners(1)
   expect(listenerAttach).toHaveBeenCalledTimes(1)
 
-  const popupContents = { id: 2 } as Electron.WebContents
+  const popupContents = { id: 2, on: jest.fn() } as unknown as Electron.WebContents
   const popupView = { setBounds: jest.fn(), webContents: popupContents }
   const popupOptions = { webContents: popupContents, webPreferences: { sandbox: true } }
   createView.mockReturnValueOnce(popupView)

@@ -3,6 +3,7 @@ import { app, BrowserWindow } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
 import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
 import { VError } from '../VError/VError.ts'
+import * as WebContentsFocus from '../WebContentsFocus/WebContentsFocus.ts'
 import * as WebContentsViewErrorPath from '../WebContentsViewErrorPath/WebContentsViewErrorPath.ts'
 
 // TODO create output channel for browser view debug logs
@@ -247,6 +248,8 @@ export const getStats = (view: BrowserView, includeMemory = false) => {
     canGoBack,
     canGoForward,
     isAudioMuted,
+    isFocused: webContents.isFocused(),
+    lastFocusedAt: WebContentsFocus.getLastFocusedAt(webContents),
     title,
     url,
   }
