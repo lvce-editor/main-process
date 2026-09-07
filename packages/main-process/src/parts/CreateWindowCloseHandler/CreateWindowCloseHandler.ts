@@ -14,20 +14,14 @@ interface RendererRpc {
 const closePreparationTimeout = 1000
 
 const prepareClose = async (rpc: RendererRpc): Promise<void> => {
-  let timeout: NodeJS.Timeout | undefined
+  const { promise, reject } = Promise.withResolvers<never>()
+  const timeout = setTimeout(() => {
+    reject(new Error(`Timed out preparing window close after ${closePreparationTimeout}ms`))
+  }, closePreparationTimeout)
   try {
-    await Promise.race([
-      rpc.invoke('Window.prepareClose'),
-      new Promise<never>((_resolve, reject) => {
-        timeout = setTimeout(() => {
-          reject(new Error(`Timed out preparing window close after ${closePreparationTimeout}ms`))
-        }, closePreparationTimeout)
-      }),
-    ])
+    await Promise.race([rpc.invoke('Window.prepareClose'), promise])
   } finally {
-    if (timeout) {
-      clearTimeout(timeout)
-    }
+    clearTimeout(timeout)
   }
 }
 
