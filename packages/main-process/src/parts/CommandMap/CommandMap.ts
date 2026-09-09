@@ -1,5 +1,6 @@
 import * as AppWindow from '../AppWindow/AppWindow.ts'
 import * as Beep from '../Beep/Beep.ts'
+import * as BrowserFind from '../BrowserFind/BrowserFind.ts'
 import * as Crash from '../Crash/Crash.ts'
 import * as CreateMessagePort from '../CreateMessagePort/CreateMessagePort.ts'
 import * as CreatePidMap from '../CreatePidMap/CreatePidMap.ts'
@@ -42,6 +43,8 @@ import * as Trash from '../Trash/Trash.ts'
 export const commandMap = {
   'AppWindow.createAppWindow': AppWindow.createAppWindow,
   'Beep.beep': Beep.beep,
+  'BrowserFind.find': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(BrowserFind.find),
+  'BrowserFind.stop': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(BrowserFind.stop),
   'Crash.crashMainProcess': Crash.crashMainProcess,
   'CreateMessagePort.createMessagePort': CreateMessagePort.createMessagePort,
   'CreatePidMap.createPidMap': CreatePidMap.createPidMap,
