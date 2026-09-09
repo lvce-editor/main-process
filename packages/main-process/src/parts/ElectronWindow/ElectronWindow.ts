@@ -83,13 +83,13 @@ const toggleFullScreen = (browserWindow: Electron.BrowserWindow) => {
   browserWindow.setFullScreen(!browserWindow.isFullScreen())
 }
 
-export const executeWindowFunction = (browserWindowId, key) => {
+export const executeWindowFunction = (browserWindowId, key, modifier = 'ctrl=twice') => {
   const browserWindow = getBrowserWindow(browserWindowId)
   if (!browserWindow) {
     return
   }
   if (key === 'enableBrowserFullWidthGesture' || key === 'disableBrowserFullWidthGesture') {
-    BrowserFullWidthGesture.setEnabled(browserWindowId, key === 'enableBrowserFullWidthGesture')
+    BrowserFullWidthGesture.setEnabled(browserWindowId, key === 'enableBrowserFullWidthGesture', modifier)
     return
   }
   if (key === 'toggleDevtools') {
