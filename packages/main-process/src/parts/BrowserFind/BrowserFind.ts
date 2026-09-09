@@ -56,7 +56,7 @@ export const find = (view: WebContentsView, text: string, forward = true, matchC
       webContents.off('destroyed', cancel)
       webContents.off('render-process-gone', cancel)
       pending.delete(view)
-      reject(error)
+      reject(error instanceof Error ? error : new Error(String(error)))
     }
   })
 }

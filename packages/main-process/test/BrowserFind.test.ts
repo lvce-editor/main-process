@@ -5,9 +5,9 @@ import * as BrowserFind from '../src/parts/BrowserFind/BrowserFind.ts'
 const createView = () => {
   let requestId = 0
   const contents = Object.assign(new EventEmitter(), {
-    findInPage: jest.fn(() => ++requestId),
+    findInPage: jest.fn<(text: string, options: Electron.FindInPageOptions) => number>(() => ++requestId),
     isDestroyed: () => false,
-    stopFindInPage: jest.fn(),
+    stopFindInPage: jest.fn<(action: string) => void>(),
   })
   return { contents, view: { webContents: contents } as unknown as Electron.WebContentsView }
 }
