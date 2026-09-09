@@ -93,26 +93,26 @@ test.each(['release', 'shortcut', 'overlap', 'blur', 'focus', 'before-mouse-even
     contents.emit('before-input-event', {}, { code: 'ControlLeft', type: 'keyDown' })
     jest.advanceTimersByTime(200)
     switch (interruption) {
+      case 'disable':
+        BrowserFullWidthGesture.setEnabled(1, false, 'ctrl-hold')
+        break
+      case 'dispose':
+        dispose()
+        break
+      case 'overlap':
+        contents.emit('before-input-event', {}, { code: 'ControlRight', type: 'keyDown' })
+        break
+      case 'reconfigure':
+        BrowserFullWidthGesture.setEnabled(1, true)
+        break
       case 'release':
         contents.emit('before-input-event', {}, { code: 'ControlLeft', type: 'keyUp' })
         break
       case 'shortcut':
         contents.emit('before-input-event', {}, { code: 'KeyC', type: 'keyDown' })
         break
-      case 'overlap':
-        contents.emit('before-input-event', {}, { code: 'ControlRight', type: 'keyDown' })
-        break
       case 'window-blur':
         window.emit('blur')
-        break
-      case 'disable':
-        BrowserFullWidthGesture.setEnabled(1, false, 'ctrl-hold')
-        break
-      case 'reconfigure':
-        BrowserFullWidthGesture.setEnabled(1, true)
-        break
-      case 'dispose':
-        dispose()
         break
       default:
         contents.emit(interruption)
