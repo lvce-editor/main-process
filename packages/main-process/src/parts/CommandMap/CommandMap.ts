@@ -1,3 +1,4 @@
+import * as BrowserFind from '../BrowserFind/BrowserFind.ts'
 import * as AppWindow from '../AppWindow/AppWindow.ts'
 import * as Beep from '../Beep/Beep.ts'
 import * as Crash from '../Crash/Crash.ts'
@@ -40,6 +41,8 @@ import * as TemporaryMessagePort from '../TemporaryMessagePort/TemporaryMessageP
 import * as Trash from '../Trash/Trash.ts'
 
 export const commandMap = {
+  'BrowserFind.find': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(BrowserFind.find),
+  'BrowserFind.stop': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(BrowserFind.stop),
   'AppWindow.createAppWindow': AppWindow.createAppWindow,
   'Beep.beep': Beep.beep,
   'Crash.crashMainProcess': Crash.crashMainProcess,
