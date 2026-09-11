@@ -154,3 +154,22 @@ test('getStats includes the renderer working set in bytes when requested', () =>
     url: 'https://example.com',
   })
 })
+
+test('pressKey focuses the page and sends matching native key events', () => {
+  const focus = jest.fn()
+  const sendInputEvent = jest.fn()
+  const view = { webContents: { focus, isDestroyed: () => false, sendInputEvent } } as unknown as Electron.WebContentsView
+  ElectronWebContentsViewFunctions.pressKey(view, 'L', ['shift'])
+  expect(focus).toHaveBeenCalledTimes(1)
+  expect(sendInputEvent.mock.calls).toEqual([
+    [{ keyCode: 'L', modifiers: ['shift'], type: 'keyDown' }],
+    [{ keyCode: 'L', modifiers: ['shift'], type: 'keyUp' }],
+  ])
+})
+
+test('pressKey rejects a destroyed page without sending input', () => {
+  const sendInputEvent = jest.fn()
+  const view = { webContents: { isDestroyed: () => true, sendInputEvent } } as unknown as Electron.WebContentsView
+  expect(() => ElectronWebContentsViewFunctions.pressKey(view, 'Space')).toThrow('closed browser tab')
+  expect(sendInputEvent).not.toHaveBeenCalled()
+})

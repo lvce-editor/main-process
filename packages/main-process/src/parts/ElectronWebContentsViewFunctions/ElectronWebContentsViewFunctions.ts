@@ -1,4 +1,4 @@
-import type { BrowserView, WebContents, WebContentsView } from 'electron'
+import type { BrowserView, KeyboardInputEvent, WebContents, WebContentsView } from 'electron'
 import { app, BrowserWindow } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
 import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
@@ -132,6 +132,17 @@ export const click = async (view: WebContentsView, selector: string): Promise<bo
   webContents.sendInputEvent({ ...input, type: 'mouseDown' })
   webContents.sendInputEvent({ ...input, type: 'mouseUp' })
   return true
+}
+
+export const pressKey = (view: WebContentsView, keyCode: string, modifiers: KeyboardInputEvent['modifiers'] = []): void => {
+  Assert.string(keyCode)
+  const { webContents } = view
+  if (webContents.isDestroyed()) {
+    throw new Error('Cannot press a key in a closed browser tab')
+  }
+  webContents.focus()
+  webContents.sendInputEvent({ keyCode, modifiers, type: 'keyDown' })
+  webContents.sendInputEvent({ keyCode, modifiers, type: 'keyUp' })
 }
 
 export const reload = (view: BrowserView) => {
