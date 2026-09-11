@@ -1,4 +1,4 @@
-import type { BrowserView, WebContents, WebContentsView } from 'electron'
+import type { BrowserView, KeyboardInputEvent, WebContents, WebContentsView } from 'electron'
 import { app, BrowserWindow } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
 import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
@@ -134,7 +134,7 @@ export const click = async (view: WebContentsView, selector: string): Promise<bo
   return true
 }
 
-export const pressKey = (view: WebContentsView, keyCode: string, modifiers: string[] = []): void => {
+export const pressKey = (view: WebContentsView, keyCode: string, modifiers: KeyboardInputEvent['modifiers'] = []): void => {
   Assert.string(keyCode)
   const { webContents } = view
   if (webContents.isDestroyed()) {
