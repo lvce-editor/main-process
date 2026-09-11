@@ -134,6 +134,17 @@ export const click = async (view: WebContentsView, selector: string): Promise<bo
   return true
 }
 
+export const pressKey = (view: WebContentsView, keyCode: string, modifiers: string[] = []): void => {
+  Assert.string(keyCode)
+  const { webContents } = view
+  if (webContents.isDestroyed()) {
+    throw new Error('Cannot press a key in a closed browser tab')
+  }
+  webContents.focus()
+  webContents.sendInputEvent({ keyCode, modifiers, type: 'keyDown' })
+  webContents.sendInputEvent({ keyCode, modifiers, type: 'keyUp' })
+}
+
 export const reload = (view: BrowserView) => {
   const { webContents } = view
   webContents.reload()

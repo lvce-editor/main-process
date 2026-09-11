@@ -121,6 +121,7 @@ export const commandMap = {
   'ElectronWebContentsViewFunctions.openDevtools': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.openDevtools,
   ),
+  'ElectronWebContentsViewFunctions.pressKey': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.pressKey),
   'ElectronWebContentsViewFunctions.reload': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.reload),
   'ElectronWebContentsViewFunctions.resizeBrowserView': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.resizeBrowserView,
