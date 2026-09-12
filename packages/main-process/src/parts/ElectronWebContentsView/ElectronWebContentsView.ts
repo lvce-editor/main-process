@@ -81,10 +81,13 @@ const createWebContentsViewForWindow = (
   return view
 }
 
-// TODO use electron 30 webcontentsview api
-export const createWebContentsView = async () => {
-  // TODO get browser window id from renderer worker
-  const browserWindow = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+export const createWebContentsView = async (_restoreId = 0, windowId = 0) => {
+  Assert.number(windowId)
+  // Legacy callers omit the owner. A supplied owner must never be replaced by whichever window currently has focus.
+  const browserWindow = windowId ? BrowserWindow.fromId(windowId) : BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
+  if (!browserWindow || browserWindow.isDestroyed()) {
+    throw new Error('Cannot create a browser tab because its window is closed')
+  }
   const view = createWebContentsViewForWindow(browserWindow)
   return view.webContents.id
 }

@@ -21,6 +21,7 @@
     "test": "npm test --workspaces --if-present",
     "test:auth-popup": "node scripts/test-auth-popup.mjs",
     "test:browser-capture": "node scripts/test-browser-capture.mjs",
+    "test:browser-visibility": "node scripts/test-browser-visibility.mjs",
     "type-check": "tsc -b"
   },
   "prettier": {

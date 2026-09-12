@@ -214,13 +214,15 @@ export const cancelNavigation = (view: BrowserView) => {
 }
 
 export const show = (id) => {
-  // console.log('[main-process] show browser view', id)
   const state = ElectronWebContentsViewState.get(id)
   if (!state) {
     return
   }
   const { browserWindow, view } = state
-  browserWindow.contentView.addChildView(view)
+  if (!browserWindow.contentView.children.includes(view)) {
+    browserWindow.contentView.addChildView(view)
+  }
+  view.setVisible(true)
 }
 
 export const addToWindow = (browserWindowId, browserViewId) => {
@@ -238,8 +240,10 @@ export const hide = (id) => {
   if (!state) {
     return
   }
-  const { browserWindow, view } = state
-  browserWindow.contentView.removeChildView(view)
+  const { view } = state
+  // Detaching and reattaching can leave Electron's native page hidden even when
+  // the View is visible. Keep its parent and compositor surface across overlays.
+  view.setVisible(false)
 }
 
 /**

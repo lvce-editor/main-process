@@ -14,6 +14,48 @@ const ElectronWebContentsViewState = await import('../src/parts/ElectronWebConte
 
 beforeEach(() => {
   getAppMetrics.mockReset()
+  ElectronWebContentsViewState.remove(42)
+})
+
+test('hides and restores a browser page without detaching its native surface', () => {
+  const view = { setVisible: jest.fn() }
+  const contentView = { addChildView: jest.fn(), children: [view], removeChildView: jest.fn() }
+  ElectronWebContentsViewState.add(42, { contentView }, view)
+
+  ElectronWebContentsViewFunctions.hide(42)
+  ElectronWebContentsViewFunctions.show(42)
+  ElectronWebContentsViewFunctions.show(42)
+
+  expect(view.setVisible.mock.calls).toEqual([[false], [true], [true]])
+  expect(contentView.removeChildView).not.toHaveBeenCalled()
+  expect(contentView.addChildView).not.toHaveBeenCalled()
+})
+
+test('attaches a detached browser page to its registered owner before showing it', () => {
+  const events: string[] = []
+  const view = {
+    setVisible: jest.fn<(visible: boolean) => void>(() => {
+      events.push('visible')
+    }),
+  }
+  const contentView = {
+    addChildView: jest.fn<(view: unknown) => void>(() => {
+      events.push('attached')
+    }),
+    children: [],
+  }
+  ElectronWebContentsViewState.add(42, { contentView }, view)
+
+  ElectronWebContentsViewFunctions.show(42)
+
+  expect(contentView.addChildView).toHaveBeenCalledWith(view)
+  expect(view.setVisible).toHaveBeenCalledWith(true)
+  expect(events).toEqual(['attached', 'visible'])
+})
+
+test('ignores visibility commands for disposed browser pages', () => {
+  expect(() => ElectronWebContentsViewFunctions.hide(42)).not.toThrow()
+  expect(() => ElectronWebContentsViewFunctions.show(42)).not.toThrow()
 })
 
 test('stores fallthrough keybindings instead of the wrapped web contents view', () => {

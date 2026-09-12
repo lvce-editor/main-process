@@ -26,12 +26,15 @@ const browserWindow = {
   contentView: {
     addChildView,
   },
+  isDestroyed: () => false,
   webContents: {},
 }
 const fromId = jest.fn(() => webContents)
+const windowFromId = jest.fn<(id: number) => unknown>()
 
 jest.unstable_mockModule('electron', () => ({
   BrowserWindow: {
+    fromId: windowFromId,
     getAllWindows: jest.fn(() => [browserWindow]),
     getFocusedWindow: jest.fn(() => browserWindow),
   },
@@ -135,3 +138,27 @@ test('disposeWebContentsView removes and closes the view', () => {
   expect(close).toHaveBeenCalledTimes(1)
   expect(ElectronWebContentsViewState.get(1)).toBeUndefined()
 })
+
+test('creates the native view in the requesting window even when another window has focus', async () => {
+  const requestingWindow = {
+    contentView: { addChildView: jest.fn() },
+    isDestroyed: () => false,
+    webContents: {},
+  }
+  windowFromId.mockReturnValueOnce(requestingWindow)
+  await expect(ElectronWebContentsView.createWebContentsView(0, 7)).resolves.toBe(1)
+  expect(windowFromId).toHaveBeenCalledWith(7)
+  expect(requestingWindow.contentView.addChildView).toHaveBeenCalledWith(view, 0)
+  expect(addChildView).not.toHaveBeenCalled()
+  expect(ElectronWebContentsViewState.get(1)).toEqual({ browserWindow: requestingWindow, view })
+})
+
+test.each([null, { isDestroyed: () => true }])(
+  'does not fall back to another window when the requested window has closed: %j',
+  async (closedWindow) => {
+    windowFromId.mockReturnValueOnce(closedWindow)
+    await expect(ElectronWebContentsView.createWebContentsView(0, 7)).rejects.toThrow('window is closed')
+    expect(createView).not.toHaveBeenCalled()
+    expect(addChildView).not.toHaveBeenCalled()
+  },
+)
