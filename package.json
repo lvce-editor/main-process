@@ -20,8 +20,8 @@
     "lint": "eslint .",
     "test": "npm test --workspaces --if-present",
     "test:auth-popup": "node scripts/test-auth-popup.mjs",
-    "type-check": "tsc -b",
-    "test:browser-capture": "node scripts/test-browser-capture.mjs"
+    "test:browser-capture": "node scripts/test-browser-capture.mjs",
+    "type-check": "tsc -b"
   },
   "prettier": {
     "semi": false,

@@ -125,15 +125,21 @@ const captureWithRecovery = async (webContents: WebContents): Promise<Uint8Array
   }
 }
 
+const captureAndRelease = async (webContents: WebContents): Promise<Uint8Array> => {
+  try {
+    return await captureWithRecovery(webContents)
+  } finally {
+    pendingCaptures.delete(webContents)
+  }
+}
+
 export const capturePage = (view: WebContentsView): Promise<Uint8Array> => {
   const { webContents } = view
   const pending = pendingCaptures.get(webContents)
   if (pending) {
     return pending
   }
-  const capture = captureWithRecovery(webContents).finally(() => {
-    pendingCaptures.delete(webContents)
-  })
+  const capture = captureAndRelease(webContents)
   pendingCaptures.set(webContents, capture)
   return capture
 }
