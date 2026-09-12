@@ -28,7 +28,7 @@ test('stores fallthrough keybindings instead of the wrapped web contents view', 
 test('capturePage returns png bytes', async () => {
   const png = new Uint8Array([137, 80, 78, 71])
   const toPNG = jest.fn(() => png)
-  const capturePage = jest.fn(async () => ({ toPNG }))
+  const capturePage = jest.fn(async () => ({ isEmpty: () => false, toPNG }))
   const view = {
     webContents: {
       capturePage,
@@ -172,4 +172,96 @@ test('pressKey rejects a destroyed page without sending input', () => {
   const view = { webContents: { isDestroyed: () => true, sendInputEvent } } as unknown as Electron.WebContentsView
   expect(() => ElectronWebContentsViewFunctions.pressKey(view, 'Space')).toThrow('closed browser tab')
   expect(sendInputEvent).not.toHaveBeenCalled()
+})
+
+const createCaptureView = () => {
+  const png = new Uint8Array([137, 80, 78, 71])
+  const image = { isEmpty: () => false, toPNG: () => png }
+  const webContents = {
+    capturePage: jest.fn<() => Promise<typeof image>>().mockResolvedValue(image),
+    invalidate: jest.fn(),
+    isDestroyed: jest.fn(() => false),
+  }
+  return { image, png, view: { webContents } as unknown as Electron.WebContentsView, webContents }
+}
+
+test.each(['UnknownVizError', 'VizSentEmptyBitmap', 'Current display surface not available for capture'])(
+  'capturePage repaints and recovers from %s without reloading the page',
+  async (message) => {
+    const { png, view, webContents } = createCaptureView()
+    webContents.capturePage.mockRejectedValueOnce(new Error(message))
+
+    await expect(ElectronWebContentsViewFunctions.capturePage(view)).resolves.toEqual(png)
+    expect(webContents.invalidate).toHaveBeenCalledTimes(1)
+    expect(webContents.capturePage).toHaveBeenCalledTimes(2)
+  },
+)
+
+test('capturePage retries an empty native image instead of returning a blank overlay', async () => {
+  const { png, view, webContents } = createCaptureView()
+  webContents.capturePage.mockResolvedValueOnce({ isEmpty: () => true, toPNG: () => new Uint8Array() })
+
+  await expect(ElectronWebContentsViewFunctions.capturePage(view)).resolves.toEqual(png)
+  expect(webContents.invalidate).toHaveBeenCalledTimes(1)
+  expect(webContents.capturePage).toHaveBeenCalledTimes(2)
+})
+
+test('capturePage rejects a persistently empty surface instead of hiding the live page', async () => {
+  const { view, webContents } = createCaptureView()
+  webContents.capturePage.mockResolvedValue({ isEmpty: () => true, toPNG: () => new Uint8Array() })
+
+  await expect(ElectronWebContentsViewFunctions.capturePage(view)).rejects.toThrow('Empty page capture')
+  expect(webContents.capturePage).toHaveBeenCalledTimes(2)
+})
+
+test('capturePage bounds recovery when the compositor keeps failing', async () => {
+  const { view, webContents } = createCaptureView()
+  const error = new Error('UnknownVizError')
+  webContents.capturePage.mockRejectedValue(error)
+
+  await expect(ElectronWebContentsViewFunctions.capturePage(view)).rejects.toBe(error)
+  expect(webContents.capturePage).toHaveBeenCalledTimes(2)
+  expect(webContents.invalidate).toHaveBeenCalledTimes(1)
+})
+
+test('capturePage leaves unrelated errors unchanged', async () => {
+  const { view, webContents } = createCaptureView()
+  const error = new Error('Object has been destroyed')
+  webContents.capturePage.mockRejectedValue(error)
+
+  await expect(ElectronWebContentsViewFunctions.capturePage(view)).rejects.toBe(error)
+  expect(webContents.capturePage).toHaveBeenCalledTimes(1)
+  expect(webContents.invalidate).not.toHaveBeenCalled()
+})
+
+test('capturePage does not repaint a view destroyed during capture', async () => {
+  const { view, webContents } = createCaptureView()
+  webContents.capturePage.mockRejectedValue(new Error('UnknownVizError'))
+  webContents.isDestroyed.mockReturnValue(true)
+
+  await expect(ElectronWebContentsViewFunctions.capturePage(view)).rejects.toThrow('UnknownVizError')
+  expect(webContents.invalidate).not.toHaveBeenCalled()
+})
+
+test('capturePage shares concurrent captures but captures again after completion', async () => {
+  const { image, png, view, webContents } = createCaptureView()
+  const pending = Promise.withResolvers<typeof image>()
+  webContents.capturePage.mockReturnValueOnce(pending.promise)
+
+  const first = ElectronWebContentsViewFunctions.capturePage(view)
+  const second = ElectronWebContentsViewFunctions.capturePage(view)
+  expect(webContents.capturePage).toHaveBeenCalledTimes(1)
+  pending.resolve(image)
+  await expect(Promise.all([first, second])).resolves.toEqual([png, png])
+  await expect(ElectronWebContentsViewFunctions.capturePage(view)).resolves.toEqual(png)
+  expect(webContents.capturePage).toHaveBeenCalledTimes(2)
+})
+
+test('capturePage releases a failed pending capture so the next request can recover', async () => {
+  const { image, png, view, webContents } = createCaptureView()
+  webContents.capturePage.mockRejectedValue(new Error('UnknownVizError'))
+  await expect(ElectronWebContentsViewFunctions.capturePage(view)).rejects.toThrow('UnknownVizError')
+  webContents.capturePage.mockResolvedValue(image)
+  await expect(ElectronWebContentsViewFunctions.capturePage(view)).resolves.toEqual(png)
+  expect(webContents.capturePage).toHaveBeenCalledTimes(3)
 })
