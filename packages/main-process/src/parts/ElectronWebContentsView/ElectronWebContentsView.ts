@@ -43,6 +43,10 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
       const createWindow = (options: Electron.BrowserWindowConstructorOptions, url: string, disposition: string): Electron.WebContents => {
         const view = createWebContentsViewForWindow(browserWindow, options)
         EmbedsProcess.send('ElectronWebContents.handleWindowOpen', webContentsId, view.webContents.id, url, disposition)
+        // Link-created tabs have no supplied contents or pending navigation, unlike scripted popups.
+        if (!options.webContents) {
+          void view.webContents.loadURL(url).catch(console.error)
+        }
         return view.webContents
       }
       // @ts-ignore Electron event handlers have different argument tuples
