@@ -96,9 +96,52 @@ export const getDomTree = async (view: WebContentsView) => {
   return getSlimCode(result)
 }
 
-export const capturePage = async (view: WebContentsView): Promise<Uint8Array> => {
-  const image = await view.webContents.capturePage()
+const pendingCaptures = new WeakMap<WebContents, Promise<Uint8Array>>()
+const recoverableCaptureErrors = new Set([
+  'Empty page capture',
+  'UnknownVizError',
+  'VizSentEmptyBitmap',
+  'Current display surface not available for capture',
+])
+
+const captureNonEmptyPage = async (webContents: WebContents): Promise<Uint8Array> => {
+  const image = await webContents.capturePage()
+  if (image.isEmpty()) {
+    throw new Error('Empty page capture')
+  }
   return image.toPNG()
+}
+
+const captureWithRecovery = async (webContents: WebContents): Promise<Uint8Array> => {
+  try {
+    return await captureNonEmptyPage(webContents)
+  } catch (error) {
+    if (!(error instanceof Error) || !recoverableCaptureErrors.has(error.message) || webContents.isDestroyed()) {
+      throw error
+    }
+    // A missing compositor surface must not become a blank overlay. Request a repaint without reloading the page.
+    webContents.invalidate()
+    return captureNonEmptyPage(webContents)
+  }
+}
+
+const captureAndRelease = async (webContents: WebContents): Promise<Uint8Array> => {
+  try {
+    return await captureWithRecovery(webContents)
+  } finally {
+    pendingCaptures.delete(webContents)
+  }
+}
+
+export const capturePage = (view: WebContentsView): Promise<Uint8Array> => {
+  const { webContents } = view
+  const pending = pendingCaptures.get(webContents)
+  if (pending) {
+    return pending
+  }
+  const capture = captureAndRelease(webContents)
+  pendingCaptures.set(webContents, capture)
+  return capture
 }
 
 export const getConsolLogs = async (view: WebContentsView) => {
