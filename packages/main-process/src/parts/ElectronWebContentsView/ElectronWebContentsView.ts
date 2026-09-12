@@ -70,6 +70,9 @@ const createWebContentsViewForWindow = (
     ...(options.webContents && { webContents: options.webContents }),
     webPreferences: {
       ...options.webPreferences,
+      // Tab selection controls focus. A hidden background tab must not steal it
+      // when Electron commits its navigation while the view remains attached.
+      focusOnNavigation: false,
       session: ElectronSessionForBrowserView.getSession(),
     },
   })
