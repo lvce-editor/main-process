@@ -64,6 +64,25 @@ const main = async () => {
     assert.equal(ElectronWebContentsViewState.get(popupId), undefined)
     assert.equal(browserWindow.contentView.children.length, 1)
   }
+  browserWindow.show()
+  opener.focus()
+  await opener.executeJavaScript(`document.body.innerHTML = '<a href="/middle-click" style="display:block;width:200px;height:80px">Open tab</a>'`)
+  await opener.executeJavaScript('new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))')
+  const created = once(app, 'web-contents-created')
+  opener.sendInputEvent({ type: 'mouseMove', x: 30, y: 30 })
+  opener.sendInputEvent({ type: 'mouseDown', button: 'middle', x: 30, y: 30, clickCount: 1 })
+  opener.sendInputEvent({ type: 'mouseUp', button: 'middle', x: 30, y: 30, clickCount: 1 })
+  const [, child] = await created
+  await new Promise<void>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`Middle-click tab did not load: ${child.getURL()}`)), 5000)
+    child.on('did-finish-load', () => {
+      clearTimeout(timer)
+      resolve()
+    })
+  })
+  assert.equal(child.getURL(), `${origin}/middle-click`)
+  assert.equal(await child.executeJavaScript('document.title'), 'Authentication fixture')
+  console.log('PASS: middle-click tab loads the linked page without pressing Enter')
   console.log('PASS: popup tab preserves opener, cookies, postMessage, and window.close()')
   server.close()
   app.exit(0)
