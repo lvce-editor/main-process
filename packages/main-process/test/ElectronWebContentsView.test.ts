@@ -85,6 +85,7 @@ test('createWebContentsView attaches event listeners before returning', async ()
   expect(performanceAttach).toHaveBeenCalledWith(webContents)
   expect(listenerAttach).toHaveBeenCalledWith(webContents, expect.any(Function))
   expect(createView.mock.calls[0][0]).not.toHaveProperty('webContents')
+  expect(createView.mock.calls[0][0].webPreferences).toHaveProperty('focusOnNavigation', false)
 
   const listener = listenerAttach.mock.calls[0][1] as (event: unknown, favicons: readonly string[]) => Promise<void>
   await listener({}, ['https://example.com/favicon.png'])
@@ -111,7 +112,10 @@ test('createWebContentsView attaches event listeners before returning', async ()
   createView.mockReturnValueOnce(popupView)
   expect(createWindow(popupOptions, 'https://accounts.google.com', 'new-window')).toBe(popupContents)
   expect(popupContents.loadURL).not.toHaveBeenCalled()
-  expect(createView).toHaveBeenLastCalledWith({ webContents: popupContents, webPreferences: { sandbox: true, session: undefined } })
+  expect(createView).toHaveBeenLastCalledWith({
+    webContents: popupContents,
+    webPreferences: { focusOnNavigation: false, sandbox: true, session: undefined },
+  })
   expect(addChildView).toHaveBeenLastCalledWith(popupView, 0)
   expect(ElectronWebContentsViewState.get(2)).toEqual({ browserWindow, view: popupView })
   expect(send).toHaveBeenLastCalledWith('ElectronWebContents.handleWindowOpen', 1, 2, 'https://accounts.google.com', 'new-window')
