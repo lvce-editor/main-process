@@ -73,12 +73,13 @@ afterEach(() => {
 })
 
 test('takes a snapshot of a browser window renderer', async () => {
-  jest.spyOn(Date, 'now').mockReturnValue(123456)
+  jest.spyOn(Date, 'now').mockReturnValue(123_456)
 
   const result = await takeRendererHeapSnapshot(123)
 
   expect(result).toBe(pathToFileURL(join(downloadsPath, 'renderer-123-123456.heapsnapshot')).href)
-  expect(JSON.parse(readFileSync(fileURLToPath(result), 'utf8'))).toEqual({ snapshot: {} })
+  const snapshot = JSON.parse(readFileSync(fileURLToPath(result), 'utf8'))
+  expect(snapshot).toEqual({ snapshot: {} })
   expect(electronDebugger.sendCommand).toHaveBeenNthCalledWith(1, 'HeapProfiler.enable')
   expect(electronDebugger.sendCommand).toHaveBeenNthCalledWith(2, 'HeapProfiler.takeHeapSnapshot', { reportProgress: false })
   expect(electronDebugger.attach).toHaveBeenCalledTimes(1)
