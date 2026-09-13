@@ -8,4 +8,5 @@ export const Commands = {
   takeWindowCpuProfile: Developer.takeWindowCpuProfile,
   takeWorkerCpuProfile: Developer.takeWorkerCpuProfile,
   takeWorkerHeapSnapshot: Developer.takeWorkerHeapSnapshot,
+  takeRendererHeapSnapshot: Developer.takeRendererHeapSnapshot,
 }

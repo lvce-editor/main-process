@@ -62,6 +62,7 @@ export const commandMap = {
   'ElectronDeveloper.takeWindowCpuProfile': ElectronDeveloper.takeWindowCpuProfile,
   'ElectronDeveloper.takeWorkerCpuProfile': ElectronDeveloper.takeWorkerCpuProfile,
   'ElectronDeveloper.takeWorkerHeapSnapshot': ElectronDeveloper.takeWorkerHeapSnapshot,
+  'ElectronDeveloper.takeRendererHeapSnapshot': ElectronDeveloper.takeRendererHeapSnapshot,
   'ElectronDialog.showMessageBox': ElectronDialog.showMessageBox,
   'ElectronDialog.showOpenDialog': ElectronDialog.showOpenDialog,
   'ElectronDialog.showSaveDialog': ElectronDialog.showSaveDialog,

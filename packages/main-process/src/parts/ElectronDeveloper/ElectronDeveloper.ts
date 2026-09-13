@@ -1,6 +1,7 @@
 import * as Performance from '../Performance/Performance.ts'
 export { takeWindowCpuProfile, takeWorkerCpuProfile } from '../TakeCpuProfile/TakeCpuProfile.ts'
 export { takeWorkerHeapSnapshot } from '../TakeWorkerHeapSnapshot/TakeWorkerHeapSnapshot.ts'
+export { takeRendererHeapSnapshot } from '../TakeRendererHeapSnapshot/TakeRendererHeapSnapshot.ts'
 
 export const getPerformanceEntries = (): any => {
   const entries = Performance.getEntries()
