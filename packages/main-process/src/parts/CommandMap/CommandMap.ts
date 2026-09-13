@@ -59,6 +59,7 @@ export const commandMap = {
   'ElectronContextMenu.openContextMenu': ElectronContextMenu.openContextMenu,
   'ElectronDeveloper.crashMainProcess': ElectronDeveloper.crashMainProcess,
   'ElectronDeveloper.getPerformanceEntries': ElectronDeveloper.getPerformanceEntries,
+  'ElectronDeveloper.takeRendererHeapSnapshot': ElectronDeveloper.takeRendererHeapSnapshot,
   'ElectronDeveloper.takeWindowCpuProfile': ElectronDeveloper.takeWindowCpuProfile,
   'ElectronDeveloper.takeWorkerCpuProfile': ElectronDeveloper.takeWorkerCpuProfile,
   'ElectronDeveloper.takeWorkerHeapSnapshot': ElectronDeveloper.takeWorkerHeapSnapshot,
