@@ -4,7 +4,9 @@ jest.unstable_mockModule('../src/parts/ElectronWebContentsViewState/ElectronWebC
 const ViewState = await import('../src/parts/ElectronWebContentsViewState/ElectronWebContentsViewState.ts')
 const BrowserFreeze = await import('../src/parts/BrowserFreeze/BrowserFreeze.ts')
 
-beforeEach(() => jest.clearAllMocks())
+beforeEach(() => {
+  jest.clearAllMocks()
+})
 
 const setup = () => {
   const contents = {
