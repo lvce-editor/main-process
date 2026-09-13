@@ -1,7 +1,7 @@
 import { expect, jest, test } from '@jest/globals'
 import * as ElectronBrowserViewEventListenerPageFaviconUpdated from '../src/parts/ElectronBrowserViewEventListenerPageFaviconUpdated/ElectronBrowserViewEventListenerPageFaviconUpdated.ts'
 
-test('forwards favicon bytes as a data url', async () => {
+test('forwards favicon bytes without encoding them as a data url', async () => {
   const favicons = ['https://example.com/icon-32.png', 'https://example.com/icon-16.png']
   const fetch = jest.fn<(url: string, options?: any) => Promise<any>>(async () => ({
     arrayBuffer: async () => Uint8Array.from([0, 1, 2]).buffer,
@@ -16,7 +16,12 @@ test('forwards favicon bytes as a data url', async () => {
   const webContents = { getURL: () => 'https://example.com', session: { fetch } }
 
   await expect(ElectronBrowserViewEventListenerPageFaviconUpdated.handler(event, favicons, 12, webContents)).resolves.toEqual({
-    messages: [['handlePageFaviconUpdated', ['data:image/png;base64,AAEC']]],
+    messages: [
+      [
+        'handlePageFaviconUpdated',
+        [{ bytes: Uint8Array.from([0, 1, 2]), mimeType: 'image/png', url: 'https://example.com/icon-32.png' }],
+      ],
+    ],
     result: undefined,
   })
   expect(fetch).toHaveBeenCalledWith('https://example.com/icon-32.png', { signal: expect.any(AbortSignal) })
@@ -36,7 +41,12 @@ test('tries the next favicon candidate when the first request fails', async () =
   const webContents = { getURL: () => 'https://example.com', session: { fetch } }
 
   await expect(ElectronBrowserViewEventListenerPageFaviconUpdated.handler(event, favicons, 12, webContents)).resolves.toEqual({
-    messages: [['handlePageFaviconUpdated', ['data:image/x-icon;base64,AwQF']]],
+    messages: [
+      [
+        'handlePageFaviconUpdated',
+        [{ bytes: Uint8Array.from([3, 4, 5]), mimeType: 'image/x-icon', url: 'https://example.com/favicon.ico' }],
+      ],
+    ],
     result: undefined,
   })
 })
@@ -81,7 +91,12 @@ test('falls back to the network when the session fetch does not settle', async (
     const result = ElectronBrowserViewEventListenerPageFaviconUpdated.handler(event, favicons, 12, webContents)
     await jest.advanceTimersByTimeAsync(2000)
     await expect(result).resolves.toEqual({
-      messages: [['handlePageFaviconUpdated', ['data:image/vnd.microsoft.icon;base64,BgcI']]],
+      messages: [
+        [
+          'handlePageFaviconUpdated',
+          [{ bytes: Uint8Array.from([6, 7, 8]), mimeType: 'image/vnd.microsoft.icon', url: 'https://www.reddit.com/favicon.ico' }],
+        ],
+      ],
       result: undefined,
     })
     expect(networkFetch).toHaveBeenCalledWith('https://www.reddit.com/favicon.ico', { signal: expect.any(AbortSignal) })

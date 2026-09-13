@@ -1,3 +1,4 @@
+import type { FaviconData } from '../ElectronBrowserViewEventListenerPageFaviconUpdated/ElectronBrowserViewEventListenerPageFaviconUpdated.ts'
 import * as ElectronBrowserViewEventListenerPageFaviconUpdated from '../ElectronBrowserViewEventListenerPageFaviconUpdated/ElectronBrowserViewEventListenerPageFaviconUpdated.ts'
 import * as ElectronBrowserViewFaviconState from '../ElectronBrowserViewFaviconState/ElectronBrowserViewFaviconState.ts'
 import * as ElectronWebContentsEventType from '../ElectronWebContentsEventType/ElectronWebContentsEventType.ts'
@@ -12,7 +13,7 @@ export const detach = (webContents, listener) => {
   webContents.off(ElectronWebContentsEventType.DidNavigate, listener)
 }
 
-const loadDefaultFavicon = async (webContents, url: string): Promise<readonly string[]> => {
+const loadDefaultFavicon = async (webContents, url: string): Promise<readonly (string | FaviconData)[]> => {
   let faviconUrl
   try {
     const parsedUrl = new URL(url)
