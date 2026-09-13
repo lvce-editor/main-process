@@ -4,9 +4,9 @@ import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/E
 
 interface State {
   audible: boolean
-  hidden: boolean
   enabled: boolean
   frozen: boolean
+  hidden: boolean
   pending: Promise<void>
 }
 
@@ -23,7 +23,16 @@ const reconcile = (webContents: WebContents, state: State): Promise<void> => {
     state.frozen = frozen
   }
   // Read the latest policy when each operation executes, so a late hide cannot overwrite a show.
-  const pending = state.pending.then(update, update)
+  const previous = state.pending
+  const run = async (): Promise<void> => {
+    try {
+      await previous
+    } catch {
+      // A failed command must not prevent later activation from retrying.
+    }
+    await update()
+  }
+  const pending = run()
   state.pending = pending
   return pending
 }

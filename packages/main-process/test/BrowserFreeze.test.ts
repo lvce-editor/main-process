@@ -18,7 +18,7 @@ const setup = () => {
     isDevToolsOpened: () => false,
     on: jest.fn(),
   }
-  jest.mocked(ViewState.get).mockReturnValue({ view: { webContents: contents } } as never)
+  jest.mocked(ViewState.get).mockReturnValue({ view: { webContents: contents } })
   return contents
 }
 
@@ -55,6 +55,6 @@ test('closed tabs and not-yet-navigated tabs do not send lifecycle commands', as
   contents.getURL = () => ''
   await BrowserFreeze.setHidden(1, true, true)
   expect(contents.debugger.sendCommand).not.toHaveBeenCalled()
-  jest.mocked(ViewState.get).mockReturnValue(undefined as never)
+  jest.mocked(ViewState.get).mockReturnValue(undefined)
   await BrowserFreeze.setHidden(1, true, true)
 })
