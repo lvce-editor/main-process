@@ -16,7 +16,8 @@ const setup = () => {
     isCurrentlyAudible: () => false,
     isDestroyed: () => false,
     isDevToolsOpened: () => false,
-    on: jest.fn(),
+    isLoadingMainFrame: () => false,
+    on: jest.fn<(event: string, listener: () => void) => void>(),
   }
   jest.mocked(ViewState.get).mockReturnValue({ view: { webContents: contents } })
   return contents
@@ -57,4 +58,16 @@ test('closed tabs and not-yet-navigated tabs do not send lifecycle commands', as
   expect(contents.debugger.sendCommand).not.toHaveBeenCalled()
   jest.mocked(ViewState.get).mockReturnValue(undefined)
   await BrowserFreeze.setHidden(1, true, true)
+})
+
+test('reapplies freezing when a new document replaces a frozen page', async () => {
+  const contents = setup()
+  await BrowserFreeze.setHidden(1, true, true)
+  const navigationListener = contents.on.mock.calls.find(([name]) => name === 'did-navigate')?.[1] as () => void
+  navigationListener()
+  await BrowserFreeze.refresh(contents as never)
+  expect(contents.debugger.sendCommand.mock.calls).toEqual([
+    ['Page.setWebLifecycleState', { state: 'frozen' }],
+    ['Page.setWebLifecycleState', { state: 'frozen' }],
+  ])
 })

@@ -3,10 +3,12 @@ import * as Assert from '../Assert/Assert.ts'
 import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
 
 interface State {
+  appliedNavigation: number
   audible: boolean
   enabled: boolean
   frozen: boolean
   hidden: boolean
+  navigation: number
   pending: Promise<void>
 }
 
@@ -14,13 +16,15 @@ const states = new WeakMap<WebContents, State>()
 
 const reconcile = (webContents: WebContents, state: State): Promise<void> => {
   const update = async (): Promise<void> => {
-    if (webContents.isDestroyed() || !webContents.getURL()) return
+    if (webContents.isDestroyed() || !webContents.getURL() || webContents.isLoadingMainFrame()) return
     if (!state.frozen && !webContents.isAudioMuted()) state.audible = webContents.isCurrentlyAudible()
     const frozen = state.enabled && state.hidden && (!state.audible || webContents.isAudioMuted()) && !webContents.isDevToolsOpened()
-    if (state.frozen === frozen) return
+    const navigation = state.navigation
+    if (state.frozen === frozen && state.appliedNavigation === navigation) return
     if (!webContents.debugger.isAttached()) webContents.debugger.attach()
     await webContents.debugger.sendCommand('Page.setWebLifecycleState', { state: frozen ? 'frozen' : 'active' })
     state.frozen = frozen
+    state.appliedNavigation = navigation
   }
   // Read the latest policy when each operation executes, so a late hide cannot overwrite a show.
   const previous = state.pending
@@ -40,7 +44,15 @@ const reconcile = (webContents: WebContents, state: State): Promise<void> => {
 const getState = (webContents: WebContents): State => {
   const existing = states.get(webContents)
   if (existing) return existing
-  const state: State = { audible: webContents.isCurrentlyAudible(), enabled: false, frozen: false, hidden: false, pending: Promise.resolve() }
+  const state: State = {
+    appliedNavigation: 0,
+    audible: webContents.isCurrentlyAudible(),
+    enabled: false,
+    frozen: false,
+    hidden: false,
+    navigation: 0,
+    pending: Promise.resolve(),
+  }
   states.set(webContents, state)
   const update = (): void => {
     void reconcile(webContents, state).catch(console.error)
@@ -48,7 +60,10 @@ const getState = (webContents: WebContents): State => {
   webContents.on('audio-state-changed', update)
   webContents.on('devtools-opened', update)
   webContents.on('devtools-closed', update)
-  webContents.on('did-navigate', update)
+  webContents.on('did-navigate', () => {
+    state.navigation++
+  })
+  webContents.on('did-finish-load', update)
   webContents.debugger.on('detach', () => {
     state.frozen = false
   })
