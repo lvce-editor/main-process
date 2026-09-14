@@ -1,6 +1,7 @@
 import type { BrowserView, KeyboardInputEvent, WebContents, WebContentsView } from 'electron'
 import { app, BrowserWindow } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
+import * as BrowserFreeze from '../BrowserFreeze/BrowserFreeze.ts'
 import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
 import { VError } from '../VError/VError.ts'
 import * as WebContentsFocus from '../WebContentsFocus/WebContentsFocus.ts'
@@ -222,7 +223,9 @@ export const show = (id) => {
   if (!browserWindow.contentView.children.includes(view)) {
     browserWindow.contentView.addChildView(view)
   }
+  const pending = BrowserFreeze.resume(view.webContents)
   view.setVisible(true)
+  return pending
 }
 
 export const addToWindow = (browserWindowId, browserViewId) => {
@@ -232,7 +235,9 @@ export const addToWindow = (browserWindowId, browserViewId) => {
   if (!browserWindow) {
     return
   }
+  const pending = BrowserFreeze.resume(view.webContents)
   browserWindow.contentView.addChildView(view)
+  return pending
 }
 
 export const hide = (id) => {
@@ -271,6 +276,7 @@ export const setBackgroundColor = (view, backgroundColor) => {
 export const setAudioMuted = (view: BrowserView, muted: boolean) => {
   Assert.boolean(muted)
   view.webContents.setAudioMuted(muted)
+  return BrowserFreeze.refresh(view.webContents)
 }
 
 /**
