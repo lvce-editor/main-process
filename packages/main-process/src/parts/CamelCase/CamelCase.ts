@@ -1,6 +1,9 @@
 import * as Character from '../Character/Character.ts'
 
 const firstLetterLowerCase = (string: string): string => {
+  if (/^[A-Z][A-Z0-9]*$/.test(string)) {
+    return string
+  }
   return string[0].toLowerCase() + string.slice(1)
 }
 
