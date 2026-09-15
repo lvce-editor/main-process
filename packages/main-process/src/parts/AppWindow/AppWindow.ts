@@ -12,6 +12,7 @@ import * as LifeCycle from '../LifeCycle/LifeCycle.ts'
 import * as Logger from '../Logger/Logger.ts'
 import * as Performance from '../Performance/Performance.ts'
 import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMarkerType.ts'
+import * as ShowWindowWhenLoaded from '../ShowWindowWhenLoaded/ShowWindowWhenLoaded.ts'
 import { VError } from '../VError/VError.ts'
 import { WindowLoadError } from '../WindowLoadError/WindowLoadError.ts'
 import * as WindowLogger from '../WindowLogger/WindowLogger.ts'
@@ -62,14 +63,8 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
   WindowLogger.addListener(window.id, window.webContents)
   addDevDiagnostics(window)
 
-  const handleReadyToShow = () => {
-    // due to electron bug, zoom level needs to be set here,
-    // cannot be set when creating the browser window
-    // window .webContents.setZoomLevel(zoomLevel)
-    window.show()
-  }
   if (!IsPromptMode.isPromptMode(parsedArgs)) {
-    window.once('ready-to-show', handleReadyToShow)
+    ShowWindowWhenLoaded.showWindowWhenLoaded(window)
   }
   // TODO query applicarion menu items from shared process
   const menu = ElectronApplicationMenu.createTitleBar(titleBarItems)
