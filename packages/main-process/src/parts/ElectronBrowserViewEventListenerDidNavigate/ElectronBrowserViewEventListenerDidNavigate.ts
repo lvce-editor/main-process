@@ -2,6 +2,7 @@ import type { FaviconData } from '../ElectronBrowserViewEventListenerPageFavicon
 import * as ElectronBrowserViewEventListenerPageFaviconUpdated from '../ElectronBrowserViewEventListenerPageFaviconUpdated/ElectronBrowserViewEventListenerPageFaviconUpdated.ts'
 import * as ElectronBrowserViewFaviconState from '../ElectronBrowserViewFaviconState/ElectronBrowserViewFaviconState.ts'
 import * as ElectronWebContentsEventType from '../ElectronWebContentsEventType/ElectronWebContentsEventType.ts'
+import * as EmbedsProcess from '../EmbedsProcess/EmbedsProcess.ts'
 
 export const key = 'did-navigate'
 
@@ -34,11 +35,16 @@ const loadDefaultFavicon = async (webContents, url: string): Promise<readonly (s
   return favicons
 }
 
-export const handler = async (_event, url, _httpResponseCode, _httpStatusText, _webContentsId, webContents) => {
-  const favicons = await loadDefaultFavicon(webContents, url)
-  const messages = favicons.length > 0 ? [['handleDidNavigate', url], ['handlePageFaviconUpdated', favicons]] : [['handleDidNavigate', url]]
+export const handler = (_event, url, _httpResponseCode, _httpStatusText, webContentsId, webContents) => {
+  void loadDefaultFavicon(webContents, url)
+    .then((favicons) => {
+      if (favicons.length > 0) {
+        EmbedsProcess.send('ElectronWebContents.handlePageFaviconUpdated', webContentsId, favicons)
+      }
+    })
+    .catch(console.error)
   return {
-    messages,
+    messages: [['handleDidNavigate', url]],
     result: undefined,
   }
 }
