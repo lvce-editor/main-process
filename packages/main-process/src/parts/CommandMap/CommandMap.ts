@@ -14,6 +14,7 @@ import * as ElectronContentTracing from '../ElectronContentTracing/ElectronConte
 import * as ElectronContextMenu from '../ElectronContextMenu/ElectronContextMenu.ts'
 import * as ElectronDeveloper from '../ElectronDeveloper/ElectronDeveloper.ts'
 import * as ElectronDialog from '../ElectronDialog/ElectronDialog.ts'
+import * as ElectronMacUpdater from '../ElectronMacUpdater/ElectronMacUpdater.ts'
 import * as ElectronNet from '../ElectronNet/ElectronNet.ts'
 import * as ElectronNetLog from '../ElectronNetLog/ElectronNetLog.ts'
 import * as ElectronPowerSaveBlocker from '../ElectronPowerSaveBlocker/ElectronPowerSaveBlocker.ts'
@@ -66,6 +67,8 @@ export const commandMap = {
   'ElectronDialog.showMessageBox': ElectronDialog.showMessageBox,
   'ElectronDialog.showOpenDialog': ElectronDialog.showOpenDialog,
   'ElectronDialog.showSaveDialog': ElectronDialog.showSaveDialog,
+  'ElectronMacUpdater.restart': ElectronMacUpdater.restart,
+  'ElectronMacUpdater.stage': ElectronMacUpdater.stage,
   'ElectronNet.getJson': ElectronNet.getJson,
   'ElectronNetLog.startLogging': ElectronNetLog.startLogging,
   'ElectronNetLog.stopLogging': ElectronNetLog.stopLogging,
