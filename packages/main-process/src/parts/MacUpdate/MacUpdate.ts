@@ -91,12 +91,18 @@ export const stageUpdate = async (diskImage: string, version: string, appPath: s
   }
 }
 
-export const applyUpdate = (update: StagedUpdate, rename: typeof renameSync = renameSync): void => {
+export const applyUpdate = (update: StagedUpdate, rename: typeof renameSync = renameSync, onApplied: () => void = () => {}): void => {
   rename(update.appPath, update.backupPath)
+  let replaced = false
   try {
     rename(update.stagedPath, update.appPath)
+    replaced = true
+    onApplied()
   } catch (error) {
     try {
+      if (replaced) {
+        rename(update.appPath, update.stagedPath)
+      }
       rename(update.backupPath, update.appPath)
     } catch (rollbackError) {
       throw new AggregateError([error, rollbackError], `Update failed; restore the previous app from ${update.backupPath}`)

@@ -11,7 +11,7 @@ const app = {
 }
 const showErrorBox = jest.fn()
 const stageUpdate = jest.fn<(...args: unknown[]) => Promise<unknown>>()
-const applyUpdate = jest.fn()
+const applyUpdate = jest.fn<(update: unknown, rename: unknown, onApplied: () => void) => void>()
 jest.unstable_mockModule('electron', () => ({ app, dialog: { showErrorBox } }))
 jest.unstable_mockModule('../src/parts/MacUpdate/MacUpdate.ts', () => ({ applyUpdate, stageUpdate }))
 const originalPlatform = process.platform
@@ -28,6 +28,7 @@ beforeEach(() => {
   events.removeAllListeners()
   Object.defineProperty(process, 'platform', { value: 'darwin' })
   stageUpdate.mockResolvedValue(update)
+  applyUpdate.mockImplementation((_update, _rename, onApplied: () => void) => onApplied())
 })
 
 afterEach(() => {
@@ -48,7 +49,7 @@ test('stages first and applies only after normal shutdown is accepted', async ()
   await flush()
   expect(events.listenerCount('will-quit')).toBe(1)
   events.emit('will-quit', { preventDefault: jest.fn() })
-  expect(applyUpdate).toHaveBeenCalledWith(update)
+  expect(applyUpdate).toHaveBeenCalledWith(update, undefined, expect.any(Function))
   expect(app.relaunch).toHaveBeenCalledWith({ execPath: app.getPath() })
 })
 

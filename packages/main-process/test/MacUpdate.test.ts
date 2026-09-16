@@ -98,3 +98,14 @@ test('refuses to update an app running from a mounted volume', async () => {
   await expect(stageUpdate(diskImage, '0.115.15', '/Volumes/Lvce/Lvce.app', 'arm64', run)).rejects.toThrow('Applications folder')
   expect(run).not.toHaveBeenCalled()
 })
+
+test('restores the old app if scheduling relaunch fails after replacement', async () => {
+  const staged = await stageUpdate(diskImage, '0.115.15', appPath, 'arm64', run)
+  expect(() =>
+    applyUpdate(staged, undefined, () => {
+      throw new Error('relaunch failed')
+    }),
+  ).toThrow('relaunch failed')
+  expect(await readFile(join(appPath, 'version'), 'utf8')).toBe('old')
+  expect(await readFile(join(staged.stagedPath, 'version'), 'utf8')).toBe('new')
+})

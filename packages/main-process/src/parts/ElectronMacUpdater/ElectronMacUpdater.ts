@@ -42,8 +42,7 @@ export const restart = (): void => {
   const update = staged
   const onWillQuit = (event: { preventDefault: () => void }): void => {
     try {
-      applyUpdate(update)
-      app.relaunch({ execPath: app.getPath('exe') })
+      applyUpdate(update, undefined, () => app.relaunch({ execPath: app.getPath('exe') }))
     } catch (error) {
       event.preventDefault()
       restartRequested = false
