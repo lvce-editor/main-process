@@ -1,15 +1,17 @@
 import { app, dialog } from 'electron'
-import { dirname } from 'node:path'
+import { dirname, join } from 'node:path'
 import type { StagedUpdate } from '../MacUpdate/MacUpdate.ts'
 import { applyUpdate, stageUpdate } from '../MacUpdate/MacUpdate.ts'
-import * as Platform from '../Platform/Platform.ts'
 
 let staged: StagedUpdate | undefined
 let pending: Promise<void> | undefined
 let restartRequested = false
 
 export const stage = async (diskImage: string, version: string): Promise<void> => {
-  if (process.platform !== 'darwin' || !Platform.isProduction) {
+  const contentsPath = dirname(dirname(app.getPath('exe')))
+  // Official bundles retain Electron's executable name, so app.isPackaged is false.
+  // Use runtime paths: build-time production constants can be folded before packaging.
+  if (process.platform !== 'darwin' || app.getAppPath() !== join(contentsPath, 'Resources', 'app')) {
     throw new Error('macOS updates require an installed application build')
   }
   if (staged?.version === version) {
@@ -18,7 +20,6 @@ export const stage = async (diskImage: string, version: string): Promise<void> =
   if (pending || staged) {
     throw new Error('An update is already staged or being prepared; restart before installing another update')
   }
-  const contentsPath = dirname(dirname(app.getPath('exe')))
   const appPath = dirname(contentsPath)
   pending = (async () => {
     staged = await stageUpdate(diskImage, version, appPath, process.arch)

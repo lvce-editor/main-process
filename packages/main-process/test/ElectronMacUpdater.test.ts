@@ -4,6 +4,7 @@ import { EventEmitter } from 'node:events'
 const events = new EventEmitter()
 const app = {
   getPath: () => '/Applications/lvce.app/Contents/MacOS/Electron',
+  getAppPath: jest.fn(),
   isPackaged: false,
   once: events.once.bind(events),
   quit: jest.fn(),
@@ -12,10 +13,8 @@ const app = {
 const showErrorBox = jest.fn()
 const stageUpdate = jest.fn<(...args: unknown[]) => Promise<unknown>>()
 const applyUpdate = jest.fn<(update: unknown, rename: unknown, onApplied: () => void) => void>()
-let isProduction = true
 jest.unstable_mockModule('electron', () => ({ app, dialog: { showErrorBox } }))
 jest.unstable_mockModule('../src/parts/MacUpdate/MacUpdate.ts', () => ({ applyUpdate, stageUpdate }))
-jest.unstable_mockModule('../src/parts/Platform/Platform.ts', () => ({ isProduction }))
 const originalPlatform = process.platform
 const update = {
   appPath: '/Applications/lvce.app',
@@ -28,7 +27,7 @@ beforeEach(() => {
   jest.resetModules()
   jest.resetAllMocks()
   events.removeAllListeners()
-  isProduction = true
+  app.getAppPath.mockReturnValue('/Applications/lvce.app/Contents/Resources/app')
   Object.defineProperty(process, 'platform', { value: 'darwin' })
   stageUpdate.mockResolvedValue(update)
   applyUpdate.mockImplementation((_update, _rename, onApplied: () => void) => onApplied())
@@ -57,7 +56,7 @@ test('stages production bundles retaining the Electron executable and applies on
 })
 
 test('rejects development builds before staging', async () => {
-  isProduction = false
+  app.getAppPath.mockReturnValue('/workspace/main-process')
   const updater = await import('../src/parts/ElectronMacUpdater/ElectronMacUpdater.ts')
   await expect(updater.stage('/cache/update.dmg', '0.115.15')).rejects.toThrow('installed application build')
   expect(stageUpdate).not.toHaveBeenCalled()
