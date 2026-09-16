@@ -2,13 +2,14 @@ import { app, dialog } from 'electron'
 import { dirname } from 'node:path'
 import type { StagedUpdate } from '../MacUpdate/MacUpdate.ts'
 import { applyUpdate, stageUpdate } from '../MacUpdate/MacUpdate.ts'
+import * as Platform from '../Platform/Platform.ts'
 
 let staged: StagedUpdate | undefined
 let pending: Promise<void> | undefined
 let restartRequested = false
 
 export const stage = async (diskImage: string, version: string): Promise<void> => {
-  if (process.platform !== 'darwin' || !app.isPackaged) {
+  if (process.platform !== 'darwin' || !Platform.isProduction) {
     throw new Error('macOS updates require an installed application build')
   }
   if (staged?.version === version) {
