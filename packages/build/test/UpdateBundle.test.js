@@ -16,7 +16,7 @@ test('bundled updater retains a working runtime eligibility check', async () => 
   const context = {
     app: {
       getPath: () => '/Applications/lvce.app/Contents/MacOS/Electron',
-      getAppPath: () => '/Applications/lvce.app/Contents/Resources/app',
+      getAppPath: () => join('/Applications/lvce.app/Contents', 'Resources', 'app'),
       isPackaged: false,
     },
     process: { platform: 'darwin', arch: 'arm64' },

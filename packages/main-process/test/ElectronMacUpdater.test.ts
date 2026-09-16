@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, expect, jest, test } from '@jest/globals'
 import { EventEmitter } from 'node:events'
+import { dirname, join } from 'node:path'
 
 const events = new EventEmitter()
 const app = {
@@ -27,7 +28,7 @@ beforeEach(() => {
   jest.resetModules()
   jest.resetAllMocks()
   events.removeAllListeners()
-  app.getAppPath.mockReturnValue('/Applications/lvce.app/Contents/Resources/app')
+  app.getAppPath.mockReturnValue(join(dirname(dirname(app.getPath())), 'Resources', 'app'))
   Object.defineProperty(process, 'platform', { value: 'darwin' })
   stageUpdate.mockResolvedValue(update)
   applyUpdate.mockImplementation((_update, _rename, onApplied: () => void) => onApplied())
