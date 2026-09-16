@@ -4,7 +4,7 @@ import { EventEmitter } from 'node:events'
 const events = new EventEmitter()
 const app = {
   getPath: () => '/Applications/lvce.app/Contents/MacOS/Electron',
-  isPackaged: true,
+  isPackaged: false,
   once: events.once.bind(events),
   quit: jest.fn(),
   relaunch: jest.fn(),
@@ -12,8 +12,10 @@ const app = {
 const showErrorBox = jest.fn()
 const stageUpdate = jest.fn<(...args: unknown[]) => Promise<unknown>>()
 const applyUpdate = jest.fn<(update: unknown, rename: unknown, onApplied: () => void) => void>()
+let isProduction = true
 jest.unstable_mockModule('electron', () => ({ app, dialog: { showErrorBox } }))
 jest.unstable_mockModule('../src/parts/MacUpdate/MacUpdate.ts', () => ({ applyUpdate, stageUpdate }))
+jest.unstable_mockModule('../src/parts/Platform/Platform.ts', () => ({ isProduction }))
 const originalPlatform = process.platform
 const update = {
   appPath: '/Applications/lvce.app',
@@ -26,6 +28,7 @@ beforeEach(() => {
   jest.resetModules()
   jest.resetAllMocks()
   events.removeAllListeners()
+  isProduction = true
   Object.defineProperty(process, 'platform', { value: 'darwin' })
   stageUpdate.mockResolvedValue(update)
   applyUpdate.mockImplementation((_update, _rename, onApplied: () => void) => onApplied())
@@ -37,7 +40,7 @@ afterEach(() => {
 
 const flush = async (): Promise<void> => new Promise((resolve) => setImmediate(resolve))
 
-test('stages first and applies only after normal shutdown is accepted', async () => {
+test('stages production bundles retaining the Electron executable and applies only after normal shutdown is accepted', async () => {
   const updater = await import('../src/parts/ElectronMacUpdater/ElectronMacUpdater.ts')
   await updater.stage('/cache/update.dmg', '0.115.15')
   updater.restart()
@@ -51,6 +54,20 @@ test('stages first and applies only after normal shutdown is accepted', async ()
   events.emit('will-quit', { preventDefault: jest.fn() })
   expect(applyUpdate).toHaveBeenCalledWith(update, undefined, expect.any(Function))
   expect(app.relaunch).toHaveBeenCalledWith({ execPath: app.getPath() })
+})
+
+test('rejects development builds before staging', async () => {
+  isProduction = false
+  const updater = await import('../src/parts/ElectronMacUpdater/ElectronMacUpdater.ts')
+  await expect(updater.stage('/cache/update.dmg', '0.115.15')).rejects.toThrow('installed application build')
+  expect(stageUpdate).not.toHaveBeenCalled()
+})
+
+test('rejects non-macOS builds before staging', async () => {
+  Object.defineProperty(process, 'platform', { value: 'linux' })
+  const updater = await import('../src/parts/ElectronMacUpdater/ElectronMacUpdater.ts')
+  await expect(updater.stage('/cache/update.dmg', '0.115.15')).rejects.toThrow('installed application build')
+  expect(stageUpdate).not.toHaveBeenCalled()
 })
 
 test('native replacement failure prevents quit and reports the error without relaunching', async () => {
