@@ -31,6 +31,9 @@ beforeEach(async () => {
       await mkdir(source)
       await writeFile(join(source, 'version'), 'new')
     }
+    if (command.endsWith('/file')) {
+      return { stderr: '', stdout: 'Mach-O universal binary [arm64] [x86_64]' }
+    }
     if (command.endsWith('ditto')) {
       await cp(args[0], args[1], { recursive: true })
     }
@@ -57,7 +60,7 @@ afterEach(async () => {
 test('stages a verified bundle without replacing the running app, then retains a backup when applied', async () => {
   const staged = await stageUpdate(diskImage, '0.115.15', appPath, 'arm64', run)
   expect(await readFile(join(appPath, 'version'), 'utf8')).toBe('old')
-  expect(run).toHaveBeenCalledWith('/usr/bin/lipo', [join(staged.stagedPath, 'Contents/MacOS/Electron'), '-verify_arch', 'arm64'])
+  expect(run).toHaveBeenCalledWith('/usr/bin/file', ['-b', join(staged.stagedPath, 'Contents/MacOS/Electron')])
   expect(run).toHaveBeenCalledWith('/usr/bin/codesign', ['--verify', '--deep', '--strict', staged.stagedPath])
 
   applyUpdate(staged)

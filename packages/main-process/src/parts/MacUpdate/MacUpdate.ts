@@ -31,7 +31,12 @@ const validateBundle = async (stagedPath: string, appPath: string, version: stri
   if (!next.CFBundleExecutable || basename(next.CFBundleExecutable) !== next.CFBundleExecutable) {
     throw new Error('Invalid update executable')
   }
-  await execute('/usr/bin/lipo', [join(stagedPath, 'Contents/MacOS', next.CFBundleExecutable), '-verify_arch', arch === 'x64' ? 'x86_64' : arch])
+  const executable = join(stagedPath, 'Contents/MacOS', next.CFBundleExecutable)
+  const { stdout: executableInfo } = await execute('/usr/bin/file', ['-b', executable])
+  const architecture = arch === 'x64' ? /\bx86_64\b/ : /\barm64\b/
+  if (!executableInfo.includes('Mach-O') || !architecture.test(executableInfo)) {
+    throw new Error('Update executable architecture does not match')
+  }
   await execute('/usr/bin/codesign', ['--verify', '--deep', '--strict', stagedPath])
   const currentSignature = await execute('/usr/bin/codesign', ['-dv', '--verbose=4', appPath])
   const nextSignature = await execute('/usr/bin/codesign', ['-dv', '--verbose=4', stagedPath])
