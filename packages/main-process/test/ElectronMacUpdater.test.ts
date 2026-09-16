@@ -4,8 +4,8 @@ import { dirname, join } from 'node:path'
 
 const events = new EventEmitter()
 const app = {
-  getPath: () => '/Applications/lvce.app/Contents/MacOS/Electron',
   getAppPath: jest.fn(),
+  getPath: () => '/Applications/lvce.app/Contents/MacOS/Electron',
   isPackaged: false,
   once: events.once.bind(events),
   quit: jest.fn(),
@@ -28,7 +28,8 @@ beforeEach(() => {
   jest.resetModules()
   jest.resetAllMocks()
   events.removeAllListeners()
-  app.getAppPath.mockReturnValue(join(dirname(dirname(app.getPath())), 'Resources', 'app'))
+  const contentsPath = dirname(dirname(app.getPath()))
+  app.getAppPath.mockReturnValue(join(contentsPath, 'Resources', 'app'))
   Object.defineProperty(process, 'platform', { value: 'darwin' })
   stageUpdate.mockResolvedValue(update)
   applyUpdate.mockImplementation((_update, _rename, onApplied: () => void) => onApplied())
