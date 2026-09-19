@@ -42,7 +42,11 @@ export const restart = (): void => {
   restartRequested = true
   // Wait until normal window shutdown succeeds, so a cancelled close leaves the installed app untouched.
   const update = staged
+  const resumeQuit = (): void => {
+    setImmediate(() => app.quit())
+  }
   const onWillQuit = (event: { preventDefault: () => void }): void => {
+    app.off('window-all-closed', resumeQuit)
     try {
       applyUpdate(update, undefined, () => app.relaunch({ execPath: app.getPath('exe') }))
     } catch (error) {
@@ -51,6 +55,9 @@ export const restart = (): void => {
       dialog.showErrorBox('Unable to install update', String(error))
     }
   }
+  // Window state persistence cancels the first quit while closing asynchronously.
+  // macOS keeps the process alive after that close, so resume once every window is gone.
+  app.once('window-all-closed', resumeQuit)
   app.once('will-quit', onWillQuit)
   setImmediate(() => app.quit())
 }
