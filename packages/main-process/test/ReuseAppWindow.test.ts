@@ -1,4 +1,6 @@
 import { beforeEach, expect, jest, test } from '@jest/globals'
+import { resolve } from 'node:path'
+import { pathToFileURL } from 'node:url'
 
 const rpc = {
   invoke: jest.fn(),
@@ -29,7 +31,7 @@ test('reuseAppWindow switches the focused window to a relative workspace', async
   const reused = await ReuseAppWindow.reuseAppWindow({ _: ['../notebook'] }, '/workspace/project')
 
   expect(reused).toBe(true)
-  expect(rpc.invoke).toHaveBeenCalledWith('Workspace.setUri', 'file:///workspace/notebook')
+  expect(rpc.invoke).toHaveBeenCalledWith('Workspace.setUri', pathToFileURL(resolve('/workspace/project', '../notebook')).toString())
   expect(focusedWindow.focus).toHaveBeenCalledTimes(1)
 })
 
