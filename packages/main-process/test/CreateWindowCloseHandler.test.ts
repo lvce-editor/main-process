@@ -88,6 +88,42 @@ test('reports persistence errors and still closes the window', async () => {
   expect(close).toHaveBeenCalledTimes(1)
 })
 
+test('does not report an error when the renderer frame is disposed asynchronously', async () => {
+  jest.useFakeTimers()
+  const error = new Error('Render frame was disposed before WebFrameMain could be accessed')
+  invoke.mockRejectedValue(error)
+  const window = { close, off }
+  const handleWindowClose = createWindowCloseHandler(window, { invoke }, onError, dispose)
+
+  handleWindowClose({ preventDefault })
+  await jest.runAllTimersAsync()
+
+  expect(onError).not.toHaveBeenCalled()
+  expect(off).toHaveBeenCalledWith('close', handleWindowClose)
+  expect(close).toHaveBeenCalledTimes(1)
+  expect(dispose).toHaveBeenCalledTimes(1)
+  expect(jest.getTimerCount()).toBe(0)
+})
+
+test('does not report an error when the renderer frame is disposed synchronously', async () => {
+  jest.useFakeTimers()
+  const error = new Error('Render frame was disposed before WebFrameMain could be accessed')
+  invoke.mockImplementation(() => {
+    throw error
+  })
+  const window = { close, off }
+  const handleWindowClose = createWindowCloseHandler(window, { invoke }, onError, dispose)
+
+  handleWindowClose({ preventDefault })
+  await jest.runAllTimersAsync()
+
+  expect(onError).not.toHaveBeenCalled()
+  expect(off).toHaveBeenCalledWith('close', handleWindowClose)
+  expect(close).toHaveBeenCalledTimes(1)
+  expect(dispose).toHaveBeenCalledTimes(1)
+  expect(jest.getTimerCount()).toBe(0)
+})
+
 test('reports disposal errors and still closes the window', async () => {
   const error = new Error('dispose failed')
   invoke.mockResolvedValue(undefined)
