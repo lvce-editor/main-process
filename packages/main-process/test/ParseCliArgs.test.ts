@@ -6,12 +6,22 @@ test('parseCliArgs', () => {
     _: ['/test/'],
     'built-in-self-test': false,
     help: false,
+    r: false,
+    reuse: false,
     sandbox: true,
     v: false,
     version: false,
     wait: false,
     'wait-10-seconds': false,
     web: false,
+  })
+})
+
+test('parseCliArgs - reuse window', () => {
+  expect(ParseCliArgs.parseCliArgs(['/usr/lib/lvce-oss/lvce-oss', '-r', '../notebook'])).toMatchObject({
+    _: ['../notebook'],
+    r: true,
+    reuse: true,
   })
 })
 
