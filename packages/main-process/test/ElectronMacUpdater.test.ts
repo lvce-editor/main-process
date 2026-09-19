@@ -7,6 +7,7 @@ const app = {
   getAppPath: jest.fn(),
   getPath: () => '/Applications/lvce.app/Contents/MacOS/Electron',
   isPackaged: false,
+  off: events.off.bind(events),
   once: events.once.bind(events),
   quit: jest.fn(),
   relaunch: jest.fn(),
@@ -62,6 +63,24 @@ test('rejects development builds before staging', async () => {
   const updater = await import('../src/parts/ElectronMacUpdater/ElectronMacUpdater.ts')
   await expect(updater.stage('/cache/update.dmg', '0.115.15')).rejects.toThrow('installed application build')
   expect(stageUpdate).not.toHaveBeenCalled()
+})
+
+test('resumes quit after asynchronous window persistence cancels the initial quit', async () => {
+  const updater = await import('../src/parts/ElectronMacUpdater/ElectronMacUpdater.ts')
+  await updater.stage('/cache/update.dmg', '0.115.15')
+  updater.restart()
+  await flush()
+  expect(app.quit).toHaveBeenCalledTimes(1)
+  expect(applyUpdate).not.toHaveBeenCalled()
+  // The close handler prevents Electron quit, persists renderer state, then closes the window.
+  events.emit('window-all-closed')
+  await flush()
+  expect(app.quit).toHaveBeenCalledTimes(2)
+  expect(applyUpdate).not.toHaveBeenCalled()
+  events.emit('will-quit', { preventDefault: jest.fn() })
+  expect(applyUpdate).toHaveBeenCalledTimes(1)
+  expect(app.relaunch).toHaveBeenCalledTimes(1)
+  expect(events.listenerCount('window-all-closed')).toBe(0)
 })
 
 test('rejects non-macOS builds before staging', async () => {
