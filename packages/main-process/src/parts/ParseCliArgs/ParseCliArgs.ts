@@ -4,6 +4,7 @@ import * as CliCommandType from '../CliCommandType/CliCommandType.ts'
 export const parseCliArgs = (argv) => {
   const CLI_OPTIONS = {
     alias: {
+      reuse: 'r',
       version: 'v',
     },
     boolean: [
@@ -14,6 +15,7 @@ export const parseCliArgs = (argv) => {
       CliCommandType.BuiltinSelfTest,
       CliCommandType.Web,
       CliCommandType.SandBox,
+      CliCommandType.Reuse,
     ],
     default: {
       sandbox: true,

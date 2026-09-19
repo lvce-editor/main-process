@@ -1,5 +1,6 @@
 import { ElectronWebContentsRpcClient } from '@lvce-editor/rpc'
 import { BrowserWindow } from 'electron'
+import * as AppWindowRpc from '../AppWindowRpc/AppWindowRpc.ts'
 import * as BrowserFullWidthGesture from '../BrowserFullWidthGesture/BrowserFullWidthGesture.ts'
 import * as CommandMapRef from '../CommandMapRef/CommandMapRef.ts'
 import { createWindowCloseHandler } from '../CreateWindowCloseHandler/CreateWindowCloseHandler.ts'
@@ -77,6 +78,7 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
     commandMap: CommandMapRef.commandMapRef,
     webContents: window.webContents,
   })
+  AppWindowRpc.register(window, rpc)
   const disposeFullScreenListener = ElectronWindowFullScreen.listen(window, rpc)
   const disposeBrowserGesture = BrowserFullWidthGesture.listen(window, rpc)
   const handleWindowClose = createWindowCloseHandler(
