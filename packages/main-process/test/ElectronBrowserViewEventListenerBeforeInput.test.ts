@@ -110,3 +110,17 @@ test('forwards a registered Ctrl+Tab keybinding', () => {
   expect(result).toEqual({ messages: [['handleKeyBinding', 2050]], result: undefined })
   expect(preventDefault).toHaveBeenCalledTimes(1)
 })
+
+test('forwards a registered Command+Tab keybinding on macOS', () => {
+  const preventDefault = jest.fn()
+  ElectronWebContentsViewState.setFallthroughKeyBindings([2050])
+
+  const result = ElectronBrowserViewEventListenerBeforeInput.handler(
+    { preventDefault },
+    createInput({ control: false, key: 'Tab', meta: true, shift: false }),
+    webContentsId,
+  )
+
+  expect(result).toEqual({ messages: [['handleKeyBinding', 2050]], result: undefined })
+  expect(preventDefault).toHaveBeenCalledTimes(1)
+})
