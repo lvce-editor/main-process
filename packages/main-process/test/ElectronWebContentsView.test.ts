@@ -14,6 +14,7 @@ const send = jest.fn()
 const setBounds = jest.fn()
 const webContents = {
   id: 1,
+  isDestroyed: () => false,
   loadURL: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
   on: jest.fn(),
 } as unknown as Electron.WebContents
@@ -166,3 +167,45 @@ test.each([null, { isDestroyed: () => true }])(
     expect(addChildView).not.toHaveBeenCalled()
   },
 )
+
+test('repeated restoration reuses the attached native view without changing its page or presentation', async () => {
+  ElectronWebContentsViewState.add(1, browserWindow, view)
+  windowFromId.mockReturnValue(browserWindow)
+
+  await expect(ElectronWebContentsView.createWebContentsView(1, 7)).resolves.toBe(1)
+  await expect(ElectronWebContentsView.createWebContentsView(1, 7)).resolves.toBe(1)
+
+  expect(createView).not.toHaveBeenCalled()
+  expect(addChildView).not.toHaveBeenCalled()
+  expect(setBounds).not.toHaveBeenCalled()
+  expect(webContents.loadURL).not.toHaveBeenCalled()
+  expect(listenerAttach).not.toHaveBeenCalled()
+  expect(ElectronWebContentsViewState.get(1)).toEqual({ browserWindow, view })
+})
+
+test('restoration rejects a native view owned by another window', async () => {
+  ElectronWebContentsViewState.add(1, browserWindow, view)
+  windowFromId.mockReturnValue({ isDestroyed: () => false })
+
+  await expect(ElectronWebContentsView.createWebContentsView(1, 8)).rejects.toThrow('another window')
+  expect(createView).not.toHaveBeenCalled()
+  expect(addChildView).not.toHaveBeenCalled()
+  expect(ElectronWebContentsViewState.get(1)).toEqual({ browserWindow, view })
+})
+
+test('a missing restore ID creates a new native view for an ordinary reload', async () => {
+  windowFromId.mockReturnValue(browserWindow)
+  await expect(ElectronWebContentsView.createWebContentsView(123, 7)).resolves.toBe(1)
+  expect(createView).toHaveBeenCalledTimes(1)
+  expect(addChildView).toHaveBeenCalledWith(view, 0)
+})
+
+test('a destroyed restore target is replaced', async () => {
+  ElectronWebContentsViewState.add(2, browserWindow, { webContents: { isDestroyed: () => true } })
+  windowFromId.mockReturnValue(browserWindow)
+
+  await expect(ElectronWebContentsView.createWebContentsView(2, 7)).resolves.toBe(1)
+
+  expect(createView).toHaveBeenCalledTimes(1)
+  expect(ElectronWebContentsViewState.get(2)).toBeUndefined()
+})
