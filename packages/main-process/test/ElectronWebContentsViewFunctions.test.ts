@@ -307,3 +307,37 @@ test('capturePage releases a failed pending capture so the next request can reco
   await expect(ElectronWebContentsViewFunctions.capturePage(view)).resolves.toEqual(png)
   expect(webContents.capturePage).toHaveBeenCalledTimes(3)
 })
+
+test('reload retries a failed navigation instead of reloading the error page', async () => {
+  const loadURL = jest.fn<(url: string) => Promise<void>>().mockResolvedValue(undefined)
+  const view = {
+    webContents: {
+      id: 42,
+      loadURL,
+      reload: jest.fn(),
+    },
+  } as unknown as Electron.BrowserView
+  const failedNavigationUrl = 'http://localhost:3000/'
+  ElectronWebContentsViewState.setFailedNavigationUrl(42, failedNavigationUrl)
+
+  await ElectronWebContentsViewFunctions.reload(view)
+
+  expect(loadURL).toHaveBeenCalledWith(failedNavigationUrl)
+  expect(view.webContents.reload).not.toHaveBeenCalled()
+})
+
+test('setIframeSrc clears a previous failed navigation', async () => {
+  const loadURL = jest.fn<(url: string) => Promise<void>>().mockResolvedValue(undefined)
+  const view = {
+    webContents: {
+      id: 42,
+      loadURL,
+    },
+  } as unknown as Electron.BrowserView
+  ElectronWebContentsViewState.setFailedNavigationUrl(42, 'http://localhost:3000/')
+
+  await ElectronWebContentsViewFunctions.setIframeSrc(view, 'https://example.com/')
+
+  expect(ElectronWebContentsViewState.getFailedNavigationUrl(42)).toBeUndefined()
+  expect(loadURL).toHaveBeenCalledWith('https://example.com/')
+})

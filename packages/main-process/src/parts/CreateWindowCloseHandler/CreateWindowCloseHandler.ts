@@ -12,6 +12,11 @@ interface RendererRpc {
 }
 
 const closePreparationTimeout = 1000
+const disposedRenderFrameError = 'Render frame was disposed before WebFrameMain could be accessed'
+
+const isDisposedRenderFrameError = (error: unknown): boolean => {
+  return error instanceof Error && error.message === disposedRenderFrameError
+}
 
 const prepareClose = async (rpc: RendererRpc): Promise<void> => {
   const { promise, reject } = Promise.withResolvers<never>()
@@ -44,7 +49,9 @@ export const createWindowCloseHandler = (
       try {
         await prepareClose(rpc)
       } catch (error) {
-        onError(error)
+        if (!isDisposedRenderFrameError(error)) {
+          onError(error)
+        }
       } finally {
         try {
           dispose()

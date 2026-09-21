@@ -43,6 +43,27 @@ jobs:
       - name: Test hidden browser freezing in Electron
         if: matrix.os == 'ubuntu-24.04'
         run: xvfb-run -a npm run test:browser-freeze
+      - name: Test native browser view restoration in Electron
+        if: matrix.os == 'ubuntu-24.04'
+        run: xvfb-run -a npm run test:browser-restore
+      - name: Test native Wayland window startup
+        if: matrix.os == 'ubuntu-24.04'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends --yes weston
+          export XDG_RUNTIME_DIR="$(mktemp -d)"
+          export WAYLAND_DISPLAY=wayland-startup
+          unset DISPLAY
+          weston --backend=headless-backend.so --renderer=pixman --socket="$WAYLAND_DISPLAY" --idle-time=0 > "$RUNNER_TEMP/weston-startup.log" 2>&1 &
+          weston_pid=$!
+          trap 'kill "$weston_pid" 2>/dev/null || true; wait "$weston_pid" 2>/dev/null || true; cat "$RUNNER_TEMP/weston-startup.log"; rm -rf "$XDG_RUNTIME_DIR"' EXIT
+          for attempt in {1..30}; do
+            if test -S "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"; then break; fi
+            sleep 1
+          done
+          test -S "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"
+          node scripts/test-window-startup.mjs --ozone-platform=wayland --disable-gpu
       - run: npm run type-check
       - run: npm run lint
       - name: Build

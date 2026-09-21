@@ -14,48 +14,54 @@ export const detach = (webContents, listener): void => {
   webContents.off(ElectronWebContentsEventType.PageFaviconUpdated, listener)
 }
 
-const getFaviconDataUrl = async (fetcher, favicon: string, signal: AbortSignal): Promise<string> => {
+export interface FaviconData {
+  readonly bytes: Uint8Array
+  readonly mimeType: string
+  readonly url: string
+}
+
+const getFaviconData = async (fetcher, favicon: string, signal: AbortSignal): Promise<FaviconData | undefined> => {
   try {
     const response = await fetcher(favicon, { signal })
     if (!response.ok) {
-      return ''
+      return undefined
     }
     const contentLength = Number(response.headers.get('content-length'))
     if (contentLength > maxFaviconBytes) {
-      return ''
+      return undefined
     }
-    const bytes = Buffer.from(await response.arrayBuffer())
+    const bytes = new Uint8Array(await response.arrayBuffer())
     if (bytes.byteLength > maxFaviconBytes) {
-      return ''
+      return undefined
     }
     const contentType = response.headers.get('content-type') || 'image/x-icon'
     const mimeType = contentType.split(';', 1)[0].trim()
     if (!mimeType.startsWith('image/') && mimeType !== 'application/octet-stream') {
-      return ''
+      return undefined
     }
-    return `data:${mimeType};base64,${bytes.toString('base64')}`
+    return { bytes, mimeType, url: favicon }
   } catch {
-    return ''
+    return undefined
   }
 }
 
-const resolveWithFetcher = async (fetcher, favicons: readonly string[], signal: AbortSignal): Promise<string> => {
+const resolveWithFetcher = async (fetcher, favicons: readonly string[], signal: AbortSignal): Promise<FaviconData | undefined> => {
   for (const favicon of favicons) {
-    const dataUrl = await getFaviconDataUrl(fetcher, favicon, signal)
-    if (dataUrl) {
-      return dataUrl
+    const data = await getFaviconData(fetcher, favicon, signal)
+    if (data) {
+      return data
     }
   }
-  return ''
+  return undefined
 }
 
-const resolveWithTimeout = async (fetcher, favicons: readonly string[]): Promise<string> => {
+const resolveWithTimeout = async (fetcher, favicons: readonly string[]): Promise<FaviconData | undefined> => {
   const controller = new AbortController()
   let timeout: NodeJS.Timeout | undefined
-  const timeoutPromise = new Promise<string>((resolve) => {
+  const timeoutPromise = new Promise<FaviconData | undefined>((resolve) => {
     timeout = setTimeout(() => {
       controller.abort()
-      resolve('')
+      resolve(undefined)
     }, faviconFetchTimeout)
   })
   try {
@@ -65,10 +71,11 @@ const resolveWithTimeout = async (fetcher, favicons: readonly string[]): Promise
   }
 }
 
-const resolveFavicon = async (webContents, favicons: readonly string[]): Promise<readonly string[]> => {
+const resolveFavicon = async (webContents, favicons: readonly string[]): Promise<readonly (string | FaviconData)[]> => {
   const dataUrl = favicons.find((favicon) => favicon.startsWith('data:'))
   if (dataUrl) {
-    return [dataUrl]
+    const data = await resolveWithTimeout((url, options) => fetch(url, options), [dataUrl])
+    return data ? [data] : [dataUrl]
   }
   const sessionFavicon = await resolveWithTimeout((url, options) => webContents.session.fetch(url, options), favicons)
   if (sessionFavicon) {
@@ -78,10 +85,11 @@ const resolveFavicon = async (webContents, favicons: readonly string[]): Promise
   return networkFavicons.length > 0 ? networkFavicons : favicons
 }
 
-export const resolveNetworkFavicon = async (favicons: readonly string[]): Promise<readonly string[]> => {
+export const resolveNetworkFavicon = async (favicons: readonly string[]): Promise<readonly (string | FaviconData)[]> => {
   const dataUrl = favicons.find((favicon) => favicon.startsWith('data:'))
   if (dataUrl) {
-    return [dataUrl]
+    const data = await resolveWithTimeout((url, options) => fetch(url, options), [dataUrl])
+    return data ? [data] : [dataUrl]
   }
   const networkFavicon = await resolveWithTimeout((url, options) => fetch(url, options), favicons)
   return networkFavicon ? [networkFavicon] : []

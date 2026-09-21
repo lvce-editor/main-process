@@ -1,6 +1,7 @@
 import * as Cli from '../Cli/Cli.ts'
 import * as HandleElectronReady from '../HandleElectronReady/HandleElectronReady.ts'
 import * as ParseCliArgs from '../ParseCliArgs/ParseCliArgs.ts'
+import * as ReuseAppWindow from '../ReuseAppWindow/ReuseAppWindow.ts'
 
 export const handleSecondInstance = async (
   event,
@@ -12,6 +13,9 @@ export const handleSecondInstance = async (
   const moduleId = Cli.canHandleFastCliArgs(parsedArgs)
   const handled = await Cli.handleFastCliArgs(moduleId, parsedArgs) // TODO don't like the side effect here
   if (handled) {
+    return
+  }
+  if (parsedArgs.reuse && (await ReuseAppWindow.reuseAppWindow(parsedArgs, workingDirectory))) {
     return
   }
   await HandleElectronReady.handleReady(parsedArgs, workingDirectory)

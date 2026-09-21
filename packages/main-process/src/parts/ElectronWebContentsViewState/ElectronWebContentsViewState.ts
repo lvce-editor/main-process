@@ -2,6 +2,7 @@ import * as Assert from '../Assert/Assert.ts'
 
 const state = {
   canceled: Object.create(null),
+  failedNavigationUrls: Object.create(null),
   fallThroughKeyBindings: [],
   views: Object.create(null),
 }
@@ -30,6 +31,7 @@ export const getAll = () => {
 
 export const remove = (id) => {
   delete state.views[id]
+  delete state.failedNavigationUrls[id]
 }
 
 export const getAnyKey = () => {
@@ -74,4 +76,16 @@ export const removeCanceled = (id) => {
 
 export const setCanceled = (id) => {
   state.canceled[id] = true
+}
+
+export const setFailedNavigationUrl = (id, url) => {
+  state.failedNavigationUrls[id] = url
+}
+
+export const getFailedNavigationUrl = (id) => {
+  return state.failedNavigationUrls[id]
+}
+
+export const removeFailedNavigationUrl = (id) => {
+  delete state.failedNavigationUrls[id]
 }
