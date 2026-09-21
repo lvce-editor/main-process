@@ -2,7 +2,9 @@ import type { FaviconData } from '../ElectronBrowserViewEventListenerPageFavicon
 import * as ElectronBrowserViewEventListenerPageFaviconUpdated from '../ElectronBrowserViewEventListenerPageFaviconUpdated/ElectronBrowserViewEventListenerPageFaviconUpdated.ts'
 import * as ElectronBrowserViewFaviconState from '../ElectronBrowserViewFaviconState/ElectronBrowserViewFaviconState.ts'
 import * as ElectronWebContentsEventType from '../ElectronWebContentsEventType/ElectronWebContentsEventType.ts'
+import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
 import * as EmbedsProcess from '../EmbedsProcess/EmbedsProcess.ts'
+import * as WebContentsViewErrorPath from '../WebContentsViewErrorPath/WebContentsViewErrorPath.ts'
 
 export const key = 'did-navigate'
 
@@ -12,6 +14,22 @@ export const attach = (webContents, listener) => {
 
 export const detach = (webContents, listener) => {
   webContents.off(ElectronWebContentsEventType.DidNavigate, listener)
+}
+
+const isErrorPageUrl = (url: string): boolean => {
+  return url.startsWith(`file://${WebContentsViewErrorPath.webContentsViewErrorPath}`)
+}
+
+const getNavigationUrl = (webContentsId: number, url: string): string => {
+  const failedNavigationUrl = ElectronWebContentsViewState.getFailedNavigationUrl(webContentsId)
+  if (!failedNavigationUrl) {
+    return url
+  }
+  if (isErrorPageUrl(url)) {
+    return failedNavigationUrl
+  }
+  ElectronWebContentsViewState.removeFailedNavigationUrl(webContentsId)
+  return url
 }
 
 const loadDefaultFavicon = async (webContents, url: string): Promise<readonly (string | FaviconData)[]> => {
@@ -36,7 +54,8 @@ const loadDefaultFavicon = async (webContents, url: string): Promise<readonly (s
 }
 
 export const handler = (_event, url, _httpResponseCode, _httpStatusText, webContentsId, webContents) => {
-  void loadDefaultFavicon(webContents, url)
+  const navigationUrl = getNavigationUrl(webContentsId, url)
+  void loadDefaultFavicon(webContents, navigationUrl)
     .then((favicons) => {
       if (favicons.length > 0) {
         EmbedsProcess.send('ElectronWebContents.handlePageFaviconUpdated', webContentsId, favicons)
@@ -44,7 +63,7 @@ export const handler = (_event, url, _httpResponseCode, _httpStatusText, webCont
     })
     .catch(console.error)
   return {
-    messages: [['handleDidNavigate', url]],
+    messages: [['handleDidNavigate', navigationUrl]],
     result: undefined,
   }
 }

@@ -35,7 +35,9 @@ export const resizeBrowserView = (view: BrowserView, x: number, y: number, width
   })
 }
 
-export const setIframeSrcFallback = async (view, code, message) => {
+export const setIframeSrcFallback = async (view, code, message, iframeSrc) => {
+  const { webContents } = view
+  ElectronWebContentsViewState.setFailedNavigationUrl(webContents.id, iframeSrc)
   await view.webContents.loadFile(WebContentsViewErrorPath.webContentsViewErrorPath, {
     query: {
       code,
@@ -58,6 +60,7 @@ export const setIframeSrc = async (view: BrowserView, iframeSrc: string) => {
     Assert.object(view)
     Assert.string(iframeSrc)
     const { webContents } = view
+    ElectronWebContentsViewState.removeFailedNavigationUrl(webContents.id)
     await webContents.loadURL(iframeSrc)
   } catch (error) {
     const betterError = new VError(error, `Failed to set iframe src`)
@@ -188,9 +191,18 @@ export const pressKey = (view: WebContentsView, keyCode: string, modifiers: Keyb
   webContents.sendInputEvent({ keyCode, modifiers, type: 'keyUp' })
 }
 
-export const reload = (view: BrowserView) => {
+export const reload = async (view: BrowserView) => {
   const { webContents } = view
-  webContents.reload()
+  const failedNavigationUrl = ElectronWebContentsViewState.getFailedNavigationUrl(webContents.id)
+  if (!failedNavigationUrl) {
+    return webContents.reload()
+  }
+  try {
+    await webContents.loadURL(failedNavigationUrl)
+  } catch (error) {
+    // @ts-ignore
+    await setIframeSrcFallback(view, error.code, error.message, failedNavigationUrl)
+  }
 }
 
 export const forward = (view: BrowserView) => {
