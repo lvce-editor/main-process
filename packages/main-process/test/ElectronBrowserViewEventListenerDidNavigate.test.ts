@@ -13,9 +13,10 @@ jest.unstable_mockModule('../src/parts/ElectronBrowserViewFaviconState/ElectronB
 
 jest.unstable_mockModule('../src/parts/EmbedsProcess/EmbedsProcess.ts', () => ({ send }))
 
-const ElectronBrowserViewEventListenerDidNavigate = await import(
-  '../src/parts/ElectronBrowserViewEventListenerDidNavigate/ElectronBrowserViewEventListenerDidNavigate.ts'
-)
+const ElectronBrowserViewEventListenerDidNavigate =
+  await import('../src/parts/ElectronBrowserViewEventListenerDidNavigate/ElectronBrowserViewEventListenerDidNavigate.ts')
+const ElectronWebContentsViewState = await import('../src/parts/ElectronWebContentsViewState/ElectronWebContentsViewState.ts')
+const WebContentsViewErrorPath = await import('../src/parts/WebContentsViewErrorPath/WebContentsViewErrorPath.ts')
 
 beforeEach(() => {
   jest.clearAllMocks()
@@ -115,4 +116,29 @@ test('keeps the fallback when electron reports a favicon while it loads', async 
   await new Promise((resolve) => setImmediate(resolve))
   expect(send).toHaveBeenCalledWith('ElectronWebContents.handlePageFaviconUpdated', 12, ['data:image/x-icon;base64,AAEC'])
   expect(has).toHaveBeenCalledTimes(1)
+})
+
+test('reports the failed destination while the error page is displayed', () => {
+  const failedNavigationUrl = 'http://localhost:3000/'
+  const errorPageUrl = `file://${WebContentsViewErrorPath.webContentsViewErrorPath}?code=ERR_CONNECTION_REFUSED`
+  ElectronWebContentsViewState.setFailedNavigationUrl(12, failedNavigationUrl)
+  const webContents = { getURL: () => errorPageUrl }
+
+  expect(ElectronBrowserViewEventListenerDidNavigate.handler({}, errorPageUrl, 200, 'OK', 12, webContents)).toEqual({
+    messages: [['handleDidNavigate', failedNavigationUrl]],
+    result: undefined,
+  })
+  expect(ElectronWebContentsViewState.getFailedNavigationUrl(12)).toBe(failedNavigationUrl)
+})
+
+test('clears a failed destination after a successful retry', () => {
+  const failedNavigationUrl = 'http://localhost:3000/'
+  ElectronWebContentsViewState.setFailedNavigationUrl(12, failedNavigationUrl)
+  const webContents = { getURL: () => failedNavigationUrl }
+
+  expect(ElectronBrowserViewEventListenerDidNavigate.handler({}, failedNavigationUrl, 200, 'OK', 12, webContents)).toEqual({
+    messages: [['handleDidNavigate', failedNavigationUrl]],
+    result: undefined,
+  })
+  expect(ElectronWebContentsViewState.getFailedNavigationUrl(12)).toBeUndefined()
 })
