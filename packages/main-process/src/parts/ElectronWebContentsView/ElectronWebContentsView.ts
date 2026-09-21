@@ -84,12 +84,25 @@ const createWebContentsViewForWindow = (
   return view
 }
 
-export const createWebContentsView = async (_restoreId = 0, windowId = 0) => {
+export const createWebContentsView = async (restoreId = 0, windowId = 0) => {
+  Assert.number(restoreId)
   Assert.number(windowId)
   // Legacy callers omit the owner. A supplied owner must never be replaced by whichever window currently has focus.
   const browserWindow = windowId ? BrowserWindow.fromId(windowId) : BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0]
   if (!browserWindow || browserWindow.isDestroyed()) {
     throw new Error('Cannot create a browser tab because its window is closed')
+  }
+  const existing = restoreId ? ElectronWebContentsViewState.get(restoreId) : undefined
+  if (existing) {
+    if (existing.browserWindow !== browserWindow) {
+      throw new Error('Cannot restore a browser tab from another window')
+    }
+    if (!existing.view.webContents.isDestroyed()) {
+      // Keep the native view attached: reattachment must not navigate, resize,
+      // change visibility/focus, or interrupt media playback.
+      return existing.view.webContents.id
+    }
+    ElectronWebContentsViewState.remove(restoreId)
   }
   const view = createWebContentsViewForWindow(browserWindow)
   return view.webContents.id
