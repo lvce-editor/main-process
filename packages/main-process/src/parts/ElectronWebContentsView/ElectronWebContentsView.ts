@@ -1,3 +1,4 @@
+import * as RpcRegistry from '@lvce-editor/rpc-registry'
 import * as Electron from 'electron'
 import { BrowserWindow, WebContentsView } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
@@ -6,10 +7,11 @@ import * as DisposeWebContents from '../DisposeWebContents/DisposeWebContents.ts
 import * as ElectronBrowserViewEventListeners from '../ElectronBrowserViewEventListeners/ElectronBrowserViewEventListeners.ts'
 import * as ElectronSessionForBrowserView from '../ElectronSessionForBrowserView/ElectronSessionForBrowserView.ts'
 import * as ElectronWebContentsViewAuthenticationState from '../ElectronWebContentsViewAuthenticationState/ElectronWebContentsViewAuthenticationState.ts'
+import * as ElectronWebContentsViewIpc from '../ElectronWebContentsViewIpc/ElectronWebContentsViewIpc.ts'
 import * as ElectronWebContentsViewNavigationFocus from '../ElectronWebContentsViewNavigationFocus/ElectronWebContentsViewNavigationFocus.ts'
 import * as ElectronWebContentsViewPerformance from '../ElectronWebContentsViewPerformance/ElectronWebContentsViewPerformance.ts'
 import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
-import * as EmbedsProcess from '../EmbedsProcess/EmbedsProcess.ts'
+import * as HandleElectronMessagePort from '../HandleElectronMessagePort/HandleElectronMessagePort.ts'
 import * as WebContentsFocus from '../WebContentsFocus/WebContentsFocus.ts'
 
 const webContentsWithEventListeners = new WeakSet<Electron.WebContents>()
@@ -27,7 +29,11 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
     const handleResult = ({ messages, result }) => {
       for (const message of messages) {
         const [key, ...rest] = message
-        EmbedsProcess.send(`ElectronWebContents.${key}`, webContentsId, ...rest)
+        if (key === 'handleContextMenu') {
+          ElectronWebContentsViewIpc.send(webContentsId, `ElectronBrowserView.${key}`, ...rest)
+        } else {
+          ElectronWebContentsViewIpc.send(webContentsId, `ElectronBrowserView.${key}`, webContentsId, ...rest)
+        }
       }
       return result
     }
@@ -41,8 +47,16 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
     const wrappedListener = (...args) => {
       // @ts-ignore
       const createWindow = (options: Electron.WebContentsViewConstructorOptions, url: string, disposition: string): Electron.WebContents => {
-        const view = createWebContentsViewForWindow(browserWindow, options)
-        EmbedsProcess.send('ElectronWebContents.handleWindowOpen', webContentsId, view.webContents.id, url, disposition)
+        const connectionId = ElectronWebContentsViewState.getConnectionId(webContentsId)
+        const view = createWebContentsViewForWindow(browserWindow, options, connectionId)
+        ElectronWebContentsViewIpc.send(
+          webContentsId,
+          'ElectronBrowserView.handleWindowOpen',
+          webContentsId,
+          view.webContents.id,
+          url,
+          disposition,
+        )
         // Link-created tabs have no supplied contents or pending navigation, unlike scripted popups.
         if (!options.webContents) {
           void view.webContents.loadURL(url).catch(console.error)
@@ -64,6 +78,7 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
 const createWebContentsViewForWindow = (
   browserWindow: Electron.BrowserWindow,
   options: Electron.WebContentsViewConstructorOptions = {},
+  connectionId = undefined,
 ): Electron.WebContentsView => {
   const view = new WebContentsView({
     // Electron's popup contents carry the opener relationship and pending navigation.
@@ -79,12 +94,12 @@ const createWebContentsViewForWindow = (
   view.setBounds({ height: 720, width: 1280, x: 0, y: 0 })
   browserWindow.contentView.addChildView(view, 0)
   const { webContents } = view
-  ElectronWebContentsViewState.add(webContents.id, browserWindow, view)
+  ElectronWebContentsViewState.add(webContents.id, browserWindow, view, connectionId)
   attachEventListenersToWebContents(webContents.id, webContents, browserWindow)
   return view
 }
 
-export const createWebContentsView = async (restoreId = 0, windowId = 0) => {
+export const createWebContentsView = async (restoreId = 0, windowId = 0, connectionId = undefined) => {
   Assert.number(restoreId)
   Assert.number(windowId)
   // Legacy callers omit the owner. A supplied owner must never be replaced by whichever window currently has focus.
@@ -104,8 +119,28 @@ export const createWebContentsView = async (restoreId = 0, windowId = 0) => {
     }
     ElectronWebContentsViewState.remove(restoreId)
   }
-  const view = createWebContentsViewForWindow(browserWindow)
+  const view = createWebContentsViewForWindow(browserWindow, {}, connectionId)
   return view.webContents.id
+}
+
+export const handleMessagePort = async (messagePort, connectionId) => {
+  await HandleElectronMessagePort.handleElectronMessagePort(messagePort, connectionId)
+  const handleClose = async () => {
+    await disposeWebContentsViewsForConnection(connectionId)
+    RpcRegistry.remove(connectionId)
+  }
+  if ('addEventListener' in messagePort) {
+    messagePort.addEventListener('close', handleClose, { once: true })
+  } else if ('once' in messagePort) {
+    messagePort.once('close', handleClose)
+  }
+}
+
+export const disposeWebContentsViewsForConnection = async (connectionId) => {
+  const ids = ElectronWebContentsViewState.getIdsByConnectionId(connectionId)
+  for (const id of ids) {
+    disposeWebContentsView(id)
+  }
 }
 
 export const attachEventListeners = (webContentsId) => {

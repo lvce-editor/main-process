@@ -6,4 +6,5 @@ export const Commands = {
   attachEventListeners: ElectronWebContentsView.attachEventListeners,
   createWebContentsView: ElectronWebContentsView.createWebContentsView,
   disposeWebContentsView: ElectronWebContentsView.disposeWebContentsView,
+  handleMessagePort: ElectronWebContentsView.handleMessagePort,
 }

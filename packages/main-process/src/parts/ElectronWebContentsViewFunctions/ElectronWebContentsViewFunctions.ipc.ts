@@ -27,5 +27,7 @@ export const Commands = {
   setFallthroughKeyBindings: ElectronWebContentsViewFunctions.setFallThroughKeyBindings,
   setIframeSrc: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.setIframeSrc),
   setIframeSrcFallback: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.setIframeSrcFallback),
+  setZoomLevel: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.setZoomLevel),
   show: ElectronWebContentsViewFunctions.show,
+  toggleDevTools: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.toggleDevTools),
 }

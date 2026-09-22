@@ -94,6 +94,7 @@ export const commandMap = {
   'ElectronWebContentsView.cancelLogin': ElectronWebContentsViewAuthenticationState.cancel,
   'ElectronWebContentsView.createWebContentsView': ElectronWebContentsView.createWebContentsView,
   'ElectronWebContentsView.disposeWebContentsView': ElectronWebContentsView.disposeWebContentsView,
+  'ElectronWebContentsView.handleMessagePort': ElectronWebContentsView.handleMessagePort,
   'ElectronWebContentsView.removeCookies': ElectronWebContentsViewCookies.removeCookies,
   'ElectronWebContentsViewFunctions.addToWindow': ElectronWebContentsViewFunctions.addToWindow,
   'ElectronWebContentsViewFunctions.backward': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.backward),
@@ -145,7 +146,13 @@ export const commandMap = {
   'ElectronWebContentsViewFunctions.setIframeSrcFallback': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.setIframeSrcFallback,
   ),
+  'ElectronWebContentsViewFunctions.setZoomLevel': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.setZoomLevel,
+  ),
   'ElectronWebContentsViewFunctions.show': ElectronWebContentsViewFunctions.show,
+  'ElectronWebContentsViewFunctions.toggleDevTools': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.toggleDevTools,
+  ),
   'ElectronWindow.executeWebContentsFunction': ElectronWindow.executeWebContentsFunction,
   'ElectronWindow.executeWindowFunction': ElectronWindow.executeWindowFunction,
   'ElectronWindow.getFocusedWindowId': ElectronWindow.getFocusedWindowId,
