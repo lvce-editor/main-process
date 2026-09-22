@@ -64,7 +64,7 @@ jest.unstable_mockModule('../src/parts/ElectronWebContentsViewPerformance/Electr
   attach: performanceAttach,
 }))
 
-jest.unstable_mockModule('../src/parts/EmbedsProcess/EmbedsProcess.ts', () => ({
+jest.unstable_mockModule('../src/parts/ElectronWebContentsViewIpc/ElectronWebContentsViewIpc.ts', () => ({
   send,
 }))
 
@@ -92,7 +92,7 @@ test('createWebContentsView attaches event listeners before returning', async ()
   await listener({}, ['https://example.com/favicon.png'])
 
   expect(listenerHandler).toHaveBeenCalledWith({}, ['https://example.com/favicon.png'], 1, webContents, expect.any(Function))
-  expect(send).toHaveBeenCalledWith('ElectronWebContents.handlePageFaviconUpdated', 1, ['https://example.com/favicon.png'])
+  expect(send).toHaveBeenCalledWith(1, 'ElectronBrowserView.handlePageFaviconUpdated', 1, ['https://example.com/favicon.png'])
 
   const createWindow = listenerHandler.mock.calls[0][4] as (
     options: Electron.BrowserWindowConstructorOptions,
@@ -100,7 +100,7 @@ test('createWebContentsView attaches event listeners before returning', async ()
     disposition: string,
   ) => Electron.WebContents
   expect(createWindow({ webPreferences: { sandbox: true } }, 'https://accounts.google.com', 'new-window')).toBe(webContents)
-  expect(send).toHaveBeenCalledWith('ElectronWebContents.handleWindowOpen', 1, 1, 'https://accounts.google.com', 'new-window')
+  expect(send).toHaveBeenCalledWith(1, 'ElectronBrowserView.handleWindowOpen', 1, 1, 'https://accounts.google.com', 'new-window')
 
   expect(webContents.loadURL).toHaveBeenCalledWith('https://accounts.google.com')
 
@@ -119,7 +119,7 @@ test('createWebContentsView attaches event listeners before returning', async ()
   })
   expect(addChildView).toHaveBeenLastCalledWith(popupView, 0)
   expect(ElectronWebContentsViewState.get(2)).toEqual({ browserWindow, view: popupView })
-  expect(send).toHaveBeenLastCalledWith('ElectronWebContents.handleWindowOpen', 1, 2, 'https://accounts.google.com', 'new-window')
+  expect(send).toHaveBeenLastCalledWith(1, 'ElectronBrowserView.handleWindowOpen', 1, 2, 'https://accounts.google.com', 'new-window')
 })
 
 test('disposeWebContentsView removes and closes the view', () => {

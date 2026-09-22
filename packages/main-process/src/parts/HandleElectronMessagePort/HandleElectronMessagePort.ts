@@ -14,4 +14,5 @@ export const handleElectronMessagePort = async (messagePort, rpcId) => {
   if (rpcId) {
     RpcRegistry.set(rpcId, rpc)
   }
+  return rpc
 }

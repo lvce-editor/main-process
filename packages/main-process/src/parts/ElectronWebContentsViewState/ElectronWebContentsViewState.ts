@@ -7,9 +7,13 @@ const state = {
   views: Object.create(null),
 }
 
-export const add = (id, browserWindow, view) => {
+export const add = (id, browserWindow, view, connectionId = undefined) => {
   // state
-  state.views[id] = { browserWindow, view }
+  state.views[id] = {
+    browserWindow,
+    ...(connectionId !== undefined && { connectionId }),
+    view,
+  }
 }
 
 export const hasWebContents = (id) => {
@@ -27,6 +31,16 @@ export const get = (id) => {
 
 export const getAll = () => {
   return Object.values(state.views)
+}
+
+export const getConnectionId = (id) => {
+  return state.views[id]?.connectionId
+}
+
+export const getIdsByConnectionId = (connectionId) => {
+  return Object.entries(state.views)
+    .filter(([, value]: [string, any]) => value.connectionId === connectionId)
+    .map(([id]) => Number.parseInt(id))
 }
 
 export const remove = (id) => {
