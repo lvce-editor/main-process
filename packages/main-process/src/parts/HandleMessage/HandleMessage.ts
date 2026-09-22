@@ -18,6 +18,11 @@ const logError = (error, prettyError) => {
 }
 
 export const handleMessage = (event) => {
+  // MessagePortRpcClient sends this once when it starts. It is a transport
+  // signal, not a JSON-RPC message.
+  if (event.data === 'ready') {
+    return
+  }
   return JsonRpc.handleJsonRpcMessage(
     event.target,
     event.data,
