@@ -1,7 +1,7 @@
 import { expect, jest, test } from '@jest/globals'
 
 const rpc = { invoke: jest.fn(), dispose: jest.fn() }
-const create = jest.fn(async () => rpc)
+const create = jest.fn<(options: unknown) => Promise<typeof rpc>>(async () => rpc)
 const set = jest.fn()
 jest.unstable_mockModule('@lvce-editor/rpc', () => ({ ElectronMessagePortRpcClient: { create } }))
 jest.unstable_mockModule('@lvce-editor/rpc-registry', () => ({ set }))
