@@ -15,6 +15,7 @@ jest.unstable_mockModule('../src/parts/ParseCliArgs/ParseCliArgs.ts', () => ({
 
 jest.unstable_mockModule('../src/parts/ReuseAppWindow/ReuseAppWindow.ts', () => ({
   reuseAppWindow: jest.fn(() => true),
+  openFileInAppWindow: jest.fn(() => true),
 }))
 
 const HandleSecondInstance = await import('../src/parts/HandleSecondInstance/HandleSecondInstance.ts')
@@ -45,4 +46,25 @@ test('handleSecondInstance opens a new window when reuse is unavailable', async 
   await HandleSecondInstance.handleSecondInstance({}, [], '/home/test', ['/usr/bin/lvce', '-r', '/workspace'])
 
   expect(HandleElectronReady.handleReady).toHaveBeenCalledWith({ _: ['/workspace'], reuse: true }, '/home/test')
+})
+
+test('handleSecondInstance opens a file in an existing window by default', async () => {
+  // @ts-ignore
+  ParseCliArgs.parseCliArgs.mockReturnValue({ _: ['/workspace/file.txt'] })
+
+  await HandleSecondInstance.handleSecondInstance({}, [], '/home/test', ['/usr/bin/lvce', '/workspace/file.txt'])
+
+  expect(ReuseAppWindow.openFileInAppWindow).toHaveBeenCalledWith({ _: ['/workspace/file.txt'] }, '/home/test')
+  expect(HandleElectronReady.handleReady).not.toHaveBeenCalled()
+})
+
+test('handleSecondInstance starts normally when no existing window can open a file', async () => {
+  // @ts-ignore
+  ParseCliArgs.parseCliArgs.mockReturnValue({ _: ['/workspace/file.txt'] })
+  // @ts-ignore
+  ReuseAppWindow.openFileInAppWindow.mockResolvedValue(false)
+
+  await HandleSecondInstance.handleSecondInstance({}, [], '/home/test', ['/usr/bin/lvce', '/workspace/file.txt'])
+
+  expect(HandleElectronReady.handleReady).toHaveBeenCalledWith({ _: ['/workspace/file.txt'] }, '/home/test')
 })
