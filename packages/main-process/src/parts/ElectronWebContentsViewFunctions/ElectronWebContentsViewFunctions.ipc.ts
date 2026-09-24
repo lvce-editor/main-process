@@ -1,3 +1,4 @@
+import * as WebsitePasswords from '../WebsitePasswords/WebsitePasswords.ts'
 import * as ElectronWebContentsViewFunctions from './ElectronWebContentsViewFunctions.ts'
 
 export const name = 'ElectronWebContentsViewFunctions'
@@ -19,6 +20,7 @@ export const Commands = {
   insertJavaScript: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.executeJavaScript),
   inspectElement: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.inspectElement),
   openDevtools: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.openDevtools),
+  passwords: WebsitePasswords.show,
   pressKey: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.pressKey),
   reload: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.reload),
   resizeBrowserView: ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.resizeBrowserView),

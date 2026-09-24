@@ -23,7 +23,9 @@
     "test:browser-capture": "node scripts/test-browser-capture.mjs",
     "test:browser-restore": "node scripts/test-browser-restore.mjs",
     "test:browser-visibility": "node scripts/test-browser-visibility.mjs",
-    "type-check": "tsc -b"
+    "type-check": "tsc -b",
+    "test:browser-passwords": "node scripts/test-browser-passwords.mjs",
+    "test:password-storage": "node scripts/test-password-storage.mjs"
   },
   "prettier": {
     "semi": false,
