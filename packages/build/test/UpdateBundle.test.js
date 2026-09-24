@@ -21,10 +21,12 @@ test('bundled updater retains a working runtime eligibility check', async () => 
     },
     process: { platform: 'darwin', arch: 'arm64' },
     stageUpdate: async (...args) => calls.push(args),
-    pending: undefined,
-    staged: undefined,
   }
   const stageCode = code.slice(start, end)
+  // Other modules can cause Rollup to rename the updater's module state.
+  for (const name of stageCode.match(/\b(?:pending|staged)(?:\$\d+)?\b/g) || []) {
+    context[name] = undefined
+  }
   // Rollup disambiguates imported path functions in the full application bundle.
   for (const name of stageCode.match(/\b(?:dirname|join)(?:\$\d+)?\b/g) || []) {
     context[name] = name.startsWith('dirname') ? dirname : join
