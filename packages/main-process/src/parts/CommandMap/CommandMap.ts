@@ -40,6 +40,7 @@ import * as ProcessId from '../ProcessId/ProcessId.ts'
 import * as SecretStorage from '../SecretStorage/SecretStorage.ts'
 import * as TemporaryMessagePort from '../TemporaryMessagePort/TemporaryMessagePort.ts'
 import * as Trash from '../Trash/Trash.ts'
+import * as WebsitePasswords from '../WebsitePasswords/WebsitePasswords.ts'
 
 export const commandMap = {
   'AppWindow.createAppWindow': AppWindow.createAppWindow,
@@ -127,6 +128,7 @@ export const commandMap = {
   'ElectronWebContentsViewFunctions.openDevtools': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.openDevtools,
   ),
+  'ElectronWebContentsViewFunctions.passwords': WebsitePasswords.show,
   'ElectronWebContentsViewFunctions.pressKey': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.pressKey),
   'ElectronWebContentsViewFunctions.reload': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.reload),
   'ElectronWebContentsViewFunctions.resizeBrowserView': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
