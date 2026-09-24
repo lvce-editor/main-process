@@ -1,5 +1,7 @@
-import { app, BrowserWindow, session } from 'electron'
+import { app, BrowserWindow, session, WebContentsView, dialog } from 'electron'
 import assert from 'node:assert/strict'
+import { commandMap } from '../../packages/main-process/src/parts/CommandMap/CommandMap.ts'
+import * as State from '../../packages/main-process/src/parts/ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
 import * as Form from '../../packages/main-process/src/parts/WebsitePasswordForm/WebsitePasswordForm.ts'
 
 const main = async (): Promise<void> => {
@@ -21,6 +23,24 @@ const main = async (): Promise<void> => {
   const href = 'https://site.test/login'
   const values = (): Promise<any> => contents.executeJavaScript('[document.querySelector("#user")?.value, document.querySelector("#password").value]')
   try {
+    // Exercise the runtime RPC registration, not just the implementation module.
+    const view = new WebContentsView()
+    State.add(view.webContents.id, window, view)
+    const originalDialog = dialog.showMessageBox
+    const messages: string[] = []
+    dialog.showMessageBox = async (_window, options) => {
+      messages.push(options.detail || '')
+      return { response: 0, checkboxChecked: false }
+    }
+    try {
+      await commandMap['ElectronWebContentsViewFunctions.passwords'](view.webContents.id, 'save')
+      assert.equal(messages.length, 1)
+      assert.match(messages[0], /OS keyring|HTTPS/)
+    } finally {
+      dialog.showMessageBox = originalDialog
+      State.remove(view.webContents.id)
+      view.webContents.close()
+    }
     await window.loadURL(href)
     assert.deepEqual(await Form.capture(contents, 'first', href, false), { username: '', password: '' })
     // Neither forging page-world state nor postMessage grants access to the isolated-world target.
