@@ -14,8 +14,8 @@ jest.unstable_mockModule('../src/parts/ParseCliArgs/ParseCliArgs.ts', () => ({
 }))
 
 jest.unstable_mockModule('../src/parts/ReuseAppWindow/ReuseAppWindow.ts', () => ({
-  reuseAppWindow: jest.fn(() => true),
   openFileInAppWindow: jest.fn(() => true),
+  reuseAppWindow: jest.fn(() => true),
 }))
 
 const HandleSecondInstance = await import('../src/parts/HandleSecondInstance/HandleSecondInstance.ts')
