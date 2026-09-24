@@ -16,6 +16,14 @@ const debuggerApi = {
     switch (method) {
       case 'Page.getFrameTree':
         return { frameTree: { frame: { id: 'frame-1' } } }
+      case 'Runtime.evaluate':
+        return { result: { value: runtimeNames.get(sessionId!) } }
+      case 'Runtime.getHeapUsage':
+        return { totalSize: 2048, usedSize: 1234 }
+      case 'Target.attachToTarget':
+        return { sessionId: `${parameters.targetId}-session` }
+      case 'Target.detachFromTarget':
+        return {}
       case 'Target.getTargets':
         return {
           targetInfos: [
@@ -24,14 +32,6 @@ const debuggerApi = {
             { parentFrameId: 'other-frame', targetId: 'other-window', type: 'worker' },
           ],
         }
-      case 'Target.attachToTarget':
-        return { sessionId: `${parameters.targetId}-session` }
-      case 'Runtime.evaluate':
-        return { result: { value: runtimeNames.get(sessionId!) } }
-      case 'Runtime.getHeapUsage':
-        return { usedSize: 1234, totalSize: 2048 }
-      case 'Target.detachFromTarget':
-        return {}
       default:
         throw new Error(`Unexpected command: ${method}`)
     }
@@ -62,11 +62,15 @@ test('matches a unique runtime name when workers have duplicate target titles', 
 
   const result = await getWorkerMemoryUsage(7, 'Editor Worker [worker-2]')
 
-  expect(result).toEqual({ usedSize: 1234, totalSize: 2048 })
-  expect(debuggerApi.sendCommand).toHaveBeenCalledWith('Runtime.evaluate', {
-    expression: 'self.name',
-    returnByValue: true,
-  }, 'worker-b-session')
+  expect(result).toEqual({ totalSize: 2048, usedSize: 1234 })
+  expect(debuggerApi.sendCommand).toHaveBeenCalledWith(
+    'Runtime.evaluate',
+    {
+      expression: 'self.name',
+      returnByValue: true,
+    },
+    'worker-b-session',
+  )
   expect(debuggerApi.sendCommand).toHaveBeenCalledWith('Runtime.getHeapUsage', undefined, 'worker-b-session')
   expect(debuggerApi.detach).toHaveBeenCalledTimes(1)
 })
