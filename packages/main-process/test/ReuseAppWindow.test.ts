@@ -2,10 +2,10 @@ import { beforeEach, expect, jest, test } from '@jest/globals'
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
-const stat = jest.fn()
+const stat = jest.fn<() => Promise<{ isFile: () => boolean }>>()
 
 const rpc = {
-  invoke: jest.fn(),
+  invoke: jest.fn<(...args: any[]) => Promise<unknown>>(),
 }
 const focusedWindow = {
   focus: jest.fn(),
