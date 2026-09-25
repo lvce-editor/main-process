@@ -136,6 +136,27 @@ test('takes a heap snapshot when Electron omits the worker parent frame id', asy
   })
 })
 
+test('takes a heap snapshot when Electron prefixes the worker target title', async () => {
+  electronDebugger.sendCommand.mockResolvedValueOnce({ frameTree: { frame: { id: 'main-frame' } } }).mockResolvedValueOnce({
+    targetInfos: [
+      {
+        parentFrameId: 'main-frame',
+        targetId: 'worker-target',
+        title: '[worker-18] Extension API (Electron): sample.extension',
+        type: 'worker',
+      },
+    ],
+  })
+
+  const result = await takeWorkerHeapSnapshot(7, 'Extension API (Electron): sample.extension')
+
+  expect(readFileSync(fileURLToPath(result), 'utf8')).toBe('{"snapshot":{}}')
+  expect(electronDebugger.sendCommand).toHaveBeenCalledWith('Target.attachToTarget', {
+    flatten: true,
+    targetId: 'worker-target',
+  })
+})
+
 test('reuses an attached debugger', async () => {
   attached = true
 
