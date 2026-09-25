@@ -32,6 +32,10 @@ const getFileName = (workerName: string): string => {
   return `${safeWorkerName}-${Date.now()}.heapsnapshot`
 }
 
+const normalizeWorkerName = (workerName: string): string => {
+  return workerName.replace(/^\[worker-\d+\] /, '').replace(/ \[worker-\d+\]$/, '')
+}
+
 export const takeWorkerHeapSnapshot = async (windowId: number, workerName: string): Promise<string> => {
   Assert.number(windowId)
   Assert.string(workerName)
@@ -51,12 +55,17 @@ export const takeWorkerHeapSnapshot = async (windowId: number, workerName: strin
   try {
     const { frameTree } = (await electronDebugger.sendCommand('Page.getFrameTree')) as FrameTreeResult
     const { targetInfos } = (await electronDebugger.sendCommand('Target.getTargets')) as TargetInfosResult
+    const normalizedWorkerName = normalizeWorkerName(workerName)
     const matchingTargets = targetInfos.filter(
-      (targetInfo) => targetInfo.type === 'worker' && targetInfo.title.replace(/^\[worker-\d+\] /, '') === workerName,
+      (targetInfo) => targetInfo.type === 'worker' && normalizeWorkerName(targetInfo.title) === normalizedWorkerName,
     )
-    const target =
-      matchingTargets.find((targetInfo) => targetInfo.parentFrameId === frameTree.frame.id) ??
-      (matchingTargets.length === 1 && matchingTargets[0].parentFrameId === undefined ? matchingTargets[0] : undefined)
+    const matchingFrameTargets = matchingTargets.filter((targetInfo) => targetInfo.parentFrameId === frameTree.frame.id)
+    let target: TargetInfo | undefined
+    if (matchingFrameTargets.length === 1) {
+      target = matchingFrameTargets[0]
+    } else if (matchingTargets.length === 1 && matchingTargets[0].parentFrameId === undefined) {
+      target = matchingTargets[0]
+    }
     if (!target) {
       throw new Error(`Worker not found: ${workerName}`)
     }
