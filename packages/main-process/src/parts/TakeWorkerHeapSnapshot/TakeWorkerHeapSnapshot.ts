@@ -51,7 +51,9 @@ export const takeWorkerHeapSnapshot = async (windowId: number, workerName: strin
   try {
     const { frameTree } = (await electronDebugger.sendCommand('Page.getFrameTree')) as FrameTreeResult
     const { targetInfos } = (await electronDebugger.sendCommand('Target.getTargets')) as TargetInfosResult
-    const matchingTargets = targetInfos.filter((targetInfo) => targetInfo.type === 'worker' && targetInfo.title === workerName)
+    const matchingTargets = targetInfos.filter(
+      (targetInfo) => targetInfo.type === 'worker' && targetInfo.title.replace(/^\[worker-\d+\] /, '') === workerName,
+    )
     const target =
       matchingTargets.find((targetInfo) => targetInfo.parentFrameId === frameTree.frame.id) ??
       (matchingTargets.length === 1 && matchingTargets[0].parentFrameId === undefined ? matchingTargets[0] : undefined)
