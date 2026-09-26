@@ -345,9 +345,9 @@ test('setIframeSrc clears a previous failed navigation', async () => {
 test('getStats reports the failed navigation URL until a replacement navigation clears it', () => {
   const view = {
     webContents: {
-      id: 42,
       getTitle: () => 'Connection error',
       getURL: () => 'file:///app/pages/error/error.html?code=ERR_CONNECTION_REFUSED',
+      id: 42,
       isAudioMuted: () => false,
       isFocused: () => false,
       navigationHistory: { canGoBack: () => true, canGoForward: () => false },
