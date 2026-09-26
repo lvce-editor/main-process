@@ -162,6 +162,10 @@ export const disposeWebContentsView = (browserViewId) => {
   }
   const { browserWindow, view } = instance
   ElectronWebContentsViewState.remove(browserViewId)
-  browserWindow.contentView.removeChildView(view)
-  DisposeWebContents.disposeWebContents(view.webContents)
+  if (!browserWindow.isDestroyed()) {
+    browserWindow.contentView.removeChildView(view)
+  }
+  if (!view.webContents.isDestroyed()) {
+    DisposeWebContents.disposeWebContents(view.webContents)
+  }
 }

@@ -128,12 +128,14 @@ test('disposeWebContentsView removes and closes the view', () => {
   const view = {
     webContents: {
       close,
+      isDestroyed: () => false,
     },
   }
   const browserWindow = {
     contentView: {
       removeChildView,
     },
+    isDestroyed: () => false,
   }
   ElectronWebContentsViewState.add(1, browserWindow, view)
 
@@ -208,4 +210,21 @@ test('a destroyed restore target is replaced', async () => {
 
   expect(createView).toHaveBeenCalledTimes(1)
   expect(ElectronWebContentsViewState.get(2)).toBeUndefined()
+})
+
+test.each([false, true])('disposes a guest after its owner is destroyed (guest destroyed: %s)', (guestDestroyed) => {
+  const close = jest.fn()
+  const view = { webContents: { close, isDestroyed: () => guestDestroyed } }
+  const owner = {
+    get contentView() {
+      throw new Error('Object has been destroyed')
+    },
+    isDestroyed: () => true,
+  }
+  ElectronWebContentsViewState.add(1, owner, view)
+  ElectronWebContentsView.disposeWebContentsView(1)
+  expect(close).toHaveBeenCalledTimes(guestDestroyed ? 0 : 1)
+  expect(ElectronWebContentsViewState.get(1)).toBeUndefined()
+  ElectronWebContentsView.disposeWebContentsView(1)
+  expect(close).toHaveBeenCalledTimes(guestDestroyed ? 0 : 1)
 })
