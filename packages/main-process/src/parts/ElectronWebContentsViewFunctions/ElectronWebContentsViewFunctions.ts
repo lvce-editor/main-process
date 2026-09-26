@@ -326,7 +326,7 @@ export const getStats = (view: BrowserView, includeMemory = false) => {
   const canGoBack = webContents.navigationHistory.canGoBack()
   const canGoForward = webContents.navigationHistory.canGoForward()
   const isAudioMuted = webContents.isAudioMuted()
-  const url = webContents.getURL()
+  const url = ElectronWebContentsViewState.getFailedNavigationUrl(webContents.id) || webContents.getURL()
   const title = webContents.getTitle()
   const stats = {
     canGoBack,
