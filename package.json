@@ -25,7 +25,8 @@
     "test:browser-visibility": "node scripts/test-browser-visibility.mjs",
     "type-check": "tsc -b",
     "test:browser-passwords": "node scripts/test-browser-passwords.mjs",
-    "test:password-storage": "node scripts/test-password-storage.mjs"
+    "test:password-storage": "node scripts/test-password-storage.mjs",
+    "test:browser-period": "node scripts/test-browser-period.mjs"
   },
   "prettier": {
     "semi": false,

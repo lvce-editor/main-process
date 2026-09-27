@@ -3,6 +3,7 @@ import * as Electron from 'electron'
 import { BrowserWindow, WebContentsView } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
 import * as BrowserFullWidthGesture from '../BrowserFullWidthGesture/BrowserFullWidthGesture.ts'
+import * as BrowserPeriodKeyBinding from '../BrowserPeriodKeyBinding/BrowserPeriodKeyBinding.ts'
 import * as DisposeWebContents from '../DisposeWebContents/DisposeWebContents.ts'
 import * as ElectronBrowserViewEventListeners from '../ElectronBrowserViewEventListeners/ElectronBrowserViewEventListeners.ts'
 import * as ElectronSessionForBrowserView from '../ElectronSessionForBrowserView/ElectronSessionForBrowserView.ts'
@@ -20,6 +21,7 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
   if (webContentsWithEventListeners.has(webContents)) {
     return
   }
+  BrowserPeriodKeyBinding.attach(webContents)
   WebContentsFocus.attach(webContents)
   BrowserFullWidthGesture.attach(browserWindow, webContents)
   ElectronWebContentsViewNavigationFocus.attach(webContents, browserWindow.webContents)
@@ -31,6 +33,25 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
         const [key, ...rest] = message
         if (key === 'handleContextMenu') {
           ElectronWebContentsViewIpc.send(webContentsId, `ElectronBrowserView.${key}`, ...rest)
+        } else {
+          ElectronWebContentsViewIpc.send(webContentsId, `ElectronBrowserView.${key}`, webContentsId, ...rest)
+        }
+      }
+      return result
+    }
+    const handleAsyncResult = async (handlerResult) => {
+      try {
+        return handleResult(await handlerResult)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    const wrappedListener = (...args) => {
+      // @ts-ignore
+      const createWindow = (options: Electron.WebContentsViewConstructorOptions, url: string, disposition: string): Electron.WebContents => {
+        const connectionId = ElectronWebContentsViewState.getConnectionId(webContentsId)
+        const view = createWebContentsViewForWindow(browserWindow, options, connectionId)
+        ElectronWebContentsViewIpc.send(webContentsId, `ElectronBrowserView.${key}`, ...rest)
         } else {
           ElectronWebContentsViewIpc.send(webContentsId, `ElectronBrowserView.${key}`, webContentsId, ...rest)
         }
@@ -85,9 +106,15 @@ const createWebContentsViewForWindow = (
     ...(options.webContents && { webContents: options.webContents }),
     webPreferences: {
       ...options.webPreferences,
+      // Run the isolated keyboard preload in subframes too, retaining the sandbox
+      // and keeping Node APIs out of page scripts.
+      contextIsolation: true,
       // Tab selection controls focus. A hidden background tab must not steal it
       // when Electron commits its navigation while the view remains attached.
       focusOnNavigation: false,
+      nodeIntegration: false,
+      nodeIntegrationInSubFrames: true,
+      sandbox: true,
       session: ElectronSessionForBrowserView.getSession(),
     },
   })
