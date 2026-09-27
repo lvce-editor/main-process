@@ -3,6 +3,7 @@ import * as Electron from 'electron'
 import { BrowserWindow, WebContentsView } from 'electron'
 import * as Assert from '../Assert/Assert.ts'
 import * as BrowserFullWidthGesture from '../BrowserFullWidthGesture/BrowserFullWidthGesture.ts'
+import * as BrowserPeriodKeyBinding from '../BrowserPeriodKeyBinding/BrowserPeriodKeyBinding.ts'
 import * as DisposeWebContents from '../DisposeWebContents/DisposeWebContents.ts'
 import * as ElectronBrowserViewEventListeners from '../ElectronBrowserViewEventListeners/ElectronBrowserViewEventListeners.ts'
 import * as ElectronSessionForBrowserView from '../ElectronSessionForBrowserView/ElectronSessionForBrowserView.ts'
@@ -20,6 +21,7 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
   if (webContentsWithEventListeners.has(webContents)) {
     return
   }
+  BrowserPeriodKeyBinding.attach(webContents)
   WebContentsFocus.attach(webContents)
   BrowserFullWidthGesture.attach(browserWindow, webContents)
   ElectronWebContentsViewNavigationFocus.attach(webContents, browserWindow.webContents)
@@ -85,9 +87,14 @@ const createWebContentsViewForWindow = (
     ...(options.webContents && { webContents: options.webContents }),
     webPreferences: {
       ...options.webPreferences,
+      // Keep the keyboard preload isolated from page scripts in every frame.
+      contextIsolation: true,
       // Tab selection controls focus. A hidden background tab must not steal it
       // when Electron commits its navigation while the view remains attached.
       focusOnNavigation: false,
+      nodeIntegration: false,
+      nodeIntegrationInSubFrames: true,
+      sandbox: true,
       session: ElectronSessionForBrowserView.getSession(),
     },
   })

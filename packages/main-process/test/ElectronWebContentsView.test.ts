@@ -14,6 +14,7 @@ const send = jest.fn()
 const setBounds = jest.fn()
 const webContents = {
   id: 1,
+  ipc: { on: jest.fn() },
   isDestroyed: () => false,
   loadURL: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
   on: jest.fn(),
@@ -107,7 +108,7 @@ test('createWebContentsView attaches event listeners before returning', async ()
   ElectronWebContentsView.attachEventListeners(1)
   expect(listenerAttach).toHaveBeenCalledTimes(1)
 
-  const popupContents = { id: 2, loadURL: jest.fn(), on: jest.fn() } as unknown as Electron.WebContents
+  const popupContents = { id: 2, ipc: { on: jest.fn() }, loadURL: jest.fn(), on: jest.fn() } as unknown as Electron.WebContents
   const popupView = { setBounds: jest.fn(), webContents: popupContents }
   const popupOptions = { webContents: popupContents, webPreferences: { sandbox: true } }
   createView.mockReturnValueOnce(popupView)
@@ -115,7 +116,14 @@ test('createWebContentsView attaches event listeners before returning', async ()
   expect(popupContents.loadURL).not.toHaveBeenCalled()
   expect(createView).toHaveBeenLastCalledWith({
     webContents: popupContents,
-    webPreferences: { focusOnNavigation: false, sandbox: true, session: undefined },
+    webPreferences: {
+      contextIsolation: true,
+      focusOnNavigation: false,
+      nodeIntegration: false,
+      nodeIntegrationInSubFrames: true,
+      sandbox: true,
+      session: undefined,
+    },
   })
   expect(addChildView).toHaveBeenLastCalledWith(popupView, 0)
   expect(ElectronWebContentsViewState.get(2)).toEqual({ browserWindow, view: popupView })

@@ -1,6 +1,8 @@
 import * as Electron from 'electron'
 import * as ElectronBrowserViewAdBlock from '../ElectronBrowserViewAdBlock/ElectronBrowserViewAdBlock.ts'
 import * as ElectronPermissionType from '../ElectronPermissionType/ElectronPermissionType.ts'
+import * as Path from '../Path/Path.ts'
+import * as Root from '../Root/Root.ts'
 
 interface State {
   session: Electron.Session | undefined
@@ -44,6 +46,10 @@ const createSession = () => {
   const sessionId = `persist:browserView`
   const session = Electron.session.fromPartition(sessionId, {
     cache: true,
+  })
+  session.registerPreloadScript({
+    filePath: Path.join(Root.root, 'packages', 'main-process', 'pages', 'browser-keybindings.cjs'),
+    type: 'frame',
   })
   session.setPermissionRequestHandler(handlePermissionRequest)
   session.setPermissionCheckHandler(handlePermissionCheck)

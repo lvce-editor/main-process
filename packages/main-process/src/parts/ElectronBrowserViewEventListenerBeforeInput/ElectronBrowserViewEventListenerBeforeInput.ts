@@ -15,7 +15,9 @@ export const detach = (webContents, listener): void => {
 }
 
 export const handler = (event, input, webContentsId): any => {
-  if (input.type !== ElectronInputType.KeyDown) {
+  // The page preload decides whether a period targets editable content.
+  const isPeriod = input.key === '.' && !input.control && !input.meta && !input.alt && !input.shift
+  if (input.type !== ElectronInputType.KeyDown || isPeriod) {
     return {
       messages: [],
       result: undefined,
