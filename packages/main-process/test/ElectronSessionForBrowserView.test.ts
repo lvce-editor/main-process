@@ -4,8 +4,8 @@ const on = jest.fn()
 const setPermissionCheckHandler = jest.fn()
 const setPermissionRequestHandler = jest.fn()
 const session = {
-  registerPreloadScript: jest.fn(),
   on,
+  registerPreloadScript: jest.fn(),
   setPermissionCheckHandler,
   setPermissionRequestHandler,
   webRequest: {
