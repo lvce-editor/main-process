@@ -51,25 +51,6 @@ const attachEventListenersToWebContents = (webContentsId, webContents, browserWi
       const createWindow = (options: Electron.WebContentsViewConstructorOptions, url: string, disposition: string): Electron.WebContents => {
         const connectionId = ElectronWebContentsViewState.getConnectionId(webContentsId)
         const view = createWebContentsViewForWindow(browserWindow, options, connectionId)
-        ElectronWebContentsViewIpc.send(webContentsId, `ElectronBrowserView.${key}`, ...rest)
-        } else {
-          ElectronWebContentsViewIpc.send(webContentsId, `ElectronBrowserView.${key}`, webContentsId, ...rest)
-        }
-      }
-      return result
-    }
-    const handleAsyncResult = async (handlerResult) => {
-      try {
-        return handleResult(await handlerResult)
-      } catch (error) {
-        console.error(error)
-      }
-    }
-    const wrappedListener = (...args) => {
-      // @ts-ignore
-      const createWindow = (options: Electron.WebContentsViewConstructorOptions, url: string, disposition: string): Electron.WebContents => {
-        const connectionId = ElectronWebContentsViewState.getConnectionId(webContentsId)
-        const view = createWebContentsViewForWindow(browserWindow, options, connectionId)
         ElectronWebContentsViewIpc.send(
           webContentsId,
           'ElectronBrowserView.handleWindowOpen',
@@ -106,8 +87,7 @@ const createWebContentsViewForWindow = (
     ...(options.webContents && { webContents: options.webContents }),
     webPreferences: {
       ...options.webPreferences,
-      // Run the isolated keyboard preload in subframes too, retaining the sandbox
-      // and keeping Node APIs out of page scripts.
+      // Keep the keyboard preload isolated from page scripts in every frame.
       contextIsolation: true,
       // Tab selection controls focus. A hidden background tab must not steal it
       // when Electron commits its navigation while the view remains attached.
