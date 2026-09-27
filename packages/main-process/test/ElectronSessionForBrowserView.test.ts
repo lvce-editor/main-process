@@ -70,3 +70,14 @@ test('ignores downloads from web contents that are not registered browser views'
   expect(send).not.toHaveBeenCalled()
   hasWebContents.mockReturnValue(true)
 })
+
+test('reports an interrupted download as failed', () => {
+  ElectronSessionForBrowserView.getSession()
+  send.mockClear()
+  const willDownload = on.mock.calls.find(([eventName]) => eventName === 'will-download')?.[1] as (...args: any[]) => void
+  const once = jest.fn()
+  willDownload({}, { once }, { id: 43 })
+  const done = once.mock.calls[0][1] as (...args: any[]) => void
+  done({}, 'interrupted')
+  expect(send).toHaveBeenLastCalledWith(43, 'ElectronBrowserView.handleDownloadStateChanged', 43, expect.any(Number), 'failed')
+})
