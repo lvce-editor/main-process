@@ -33,6 +33,7 @@ import * as ElectronWindowProcessExplorer from '../ElectronWindowProcessExplorer
 import * as Exit from '../Exit/Exit.ts'
 import * as GetWindowId from '../GetWindowId/GetWindowId.ts'
 import * as HandleElectronMessagePort from '../HandleElectronMessagePort/HandleElectronMessagePort.ts'
+import * as HandleWorkerMemoryMessagePort from '../HandleWorkerMemoryMessagePort/HandleWorkerMemoryMessagePort.ts'
 import * as IpcParent from '../IpcParent/IpcParent.ts'
 import * as OpenExternal from '../OpenExternal/OpenExternal.ts'
 import * as Process from '../Process/Process.ts'
@@ -185,4 +186,5 @@ export const commandMap = {
   'TemporaryMessagePort.sendTo': TemporaryMessagePort.sendTo,
   'TemporaryMessagePort.sendTo2': TemporaryMessagePort.sendTo2,
   'Trash.trash': Trash.trash,
+  'WorkerMemory.handleMessagePort': HandleWorkerMemoryMessagePort.handleWorkerMemoryMessagePort,
 }
