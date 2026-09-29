@@ -12,8 +12,8 @@ jest.unstable_mockModule('electron', () => {
       getFocusedWindow: jest.fn(() => ({})),
     },
     dialog: {
-      showOpenDialog: jest.fn(),
       showMessageBox: jest.fn(),
+      showOpenDialog: jest.fn(),
     },
   }
 })
