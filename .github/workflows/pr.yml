@@ -76,6 +76,12 @@ jobs:
           done
           test -S "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"
           node scripts/test-window-startup.mjs --ozone-platform=wayland --disable-gpu
+      - name: Test window state across Electron relaunches
+        if: matrix.os == 'ubuntu-24.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends --yes openbox
+          xvfb-run -a bash -c 'openbox >/dev/null 2>&1 & openbox_pid=$!; trap "kill $openbox_pid 2>/dev/null || true" EXIT; node scripts/test-window-state.mjs'
       - name: Test worker memory sessions in Electron
         if: matrix.os == 'ubuntu-24.04'
         run: xvfb-run -a npm run test:worker-memory
