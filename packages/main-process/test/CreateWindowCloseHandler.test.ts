@@ -8,6 +8,10 @@ const onError = jest.fn()
 const preventDefault = jest.fn()
 const dispose = jest.fn()
 
+const flushClose = async (): Promise<void> => {
+  await new Promise<void>((resolve) => setImmediate(resolve))
+}
+
 beforeEach(() => {
   jest.resetAllMocks()
 })
@@ -34,14 +38,53 @@ test('waits for renderer state persistence before closing the window', async () 
   expect(close).not.toHaveBeenCalled()
 
   resolveSave()
-  await Promise.resolve()
-  await Promise.resolve()
-  await Promise.resolve()
+  await flushClose()
 
   expect(off).toHaveBeenCalledWith('close', handleWindowClose)
   expect(close).toHaveBeenCalledTimes(1)
   expect(dispose).toHaveBeenCalledTimes(1)
   expect(onError).not.toHaveBeenCalled()
+})
+
+test('persists window state before closing the live window', async () => {
+  const order: string[] = []
+  invoke.mockImplementation(async () => {
+    order.push('renderer')
+  })
+  const window = {
+    close: jest.fn(() => {
+      order.push('close')
+    }),
+    off: jest.fn(),
+  }
+  const persistState = jest.fn(async () => {
+    order.push('window-state')
+  })
+  const handleWindowClose = createWindowCloseHandler(window, { invoke }, onError, undefined, persistState)
+
+  handleWindowClose({ preventDefault })
+  await flushClose()
+
+  expect(order).toEqual(['renderer', 'window-state', 'close'])
+  expect(persistState).toHaveBeenCalledTimes(1)
+})
+
+test('closes the window when window state storage does not finish', async () => {
+  jest.useFakeTimers()
+  const closeWindow = jest.fn()
+  const handleWindowClose = createWindowCloseHandler(
+    { close: closeWindow, off },
+    { invoke: async () => {} },
+    onError,
+    undefined,
+    () => new Promise<void>(() => {}),
+  )
+
+  handleWindowClose({ preventDefault })
+  await jest.advanceTimersByTimeAsync(1000)
+
+  expect(onError).not.toHaveBeenCalled()
+  expect(closeWindow).toHaveBeenCalledTimes(1)
 })
 
 test('coalesces repeated close requests while state persistence is pending', () => {
@@ -79,9 +122,7 @@ test('reports persistence errors and still closes the window', async () => {
   const handleWindowClose = createWindowCloseHandler(window, { invoke }, onError)
 
   handleWindowClose({ preventDefault })
-  await Promise.resolve()
-  await Promise.resolve()
-  await Promise.resolve()
+  await flushClose()
 
   expect(onError).toHaveBeenCalledWith(error)
   expect(off).toHaveBeenCalledWith('close', handleWindowClose)
@@ -134,9 +175,7 @@ test('reports disposal errors and still closes the window', async () => {
   const handleWindowClose = createWindowCloseHandler(window, { invoke }, onError, dispose)
 
   handleWindowClose({ preventDefault })
-  await Promise.resolve()
-  await Promise.resolve()
-  await Promise.resolve()
+  await flushClose()
 
   expect(onError).toHaveBeenCalledWith(error)
   expect(off).toHaveBeenCalledWith('close', handleWindowClose)

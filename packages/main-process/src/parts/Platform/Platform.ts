@@ -40,6 +40,8 @@ export const getWebPath = () => {
 
 export const electronSessionDataPath = Path.join(xdgCache || tmpdir(), applicationName, 'userdata')
 
+export const windowStatePath = Path.join(xdgCache || tmpdir(), applicationName, 'window-state.json')
+
 export const getArgvConfigPath = () => {
   return Path.join(configDir, 'argv.json')
 }

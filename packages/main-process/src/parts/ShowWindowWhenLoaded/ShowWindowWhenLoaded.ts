@@ -8,7 +8,7 @@ interface StartupWindow extends EventSource {
   readonly webContents: EventSource
 }
 
-export const showWindowWhenLoaded = (window: StartupWindow): void => {
+export const showWindowWhenLoaded = (window: StartupWindow, onShow: () => void = (): void => {}): void => {
   const dispose = (): void => {
     window.off('ready-to-show', show)
     window.webContents.off('did-finish-load', show)
@@ -17,6 +17,7 @@ export const showWindowWhenLoaded = (window: StartupWindow): void => {
   const show = (): void => {
     dispose()
     window.show()
+    onShow()
   }
   // On Wayland, ready-to-show may never fire for an initially hidden window.
   // Load completion also permits showing it, without waiting for a first paint.

@@ -1,5 +1,5 @@
 import { ElectronWebContentsRpcClient } from '@lvce-editor/rpc'
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, screen } from 'electron'
 import * as AppWindowRpc from '../AppWindowRpc/AppWindowRpc.ts'
 import * as BrowserFullWidthGesture from '../BrowserFullWidthGesture/BrowserFullWidthGesture.ts'
 import * as CommandMapRef from '../CommandMapRef/CommandMapRef.ts'
@@ -17,6 +17,8 @@ import * as ShowWindowWhenLoaded from '../ShowWindowWhenLoaded/ShowWindowWhenLoa
 import { VError } from '../VError/VError.ts'
 import { WindowLoadError } from '../WindowLoadError/WindowLoadError.ts'
 import * as WindowLogger from '../WindowLogger/WindowLogger.ts'
+import * as GetRestoredWindowOptions from '../WindowState/GetRestoredWindowOptions.ts'
+import * as WindowState from '../WindowState/WindowState.ts'
 // TODO impossible to test these methods
 // and ensure that there is no memory leak
 
@@ -52,20 +54,26 @@ const addDevDiagnostics = (window) => {
 // TODO avoid mixing BrowserWindow, childprocess and various lifecycle methods in one file -> separate concerns
 export const createAppWindow = async (windowOptions, parsedArgs, workingDirectory, titleBarItems, url) => {
   const session = Session.get()
+  const promptMode = IsPromptMode.isPromptMode(parsedArgs)
+  const savedWindowState = promptMode ? undefined : await WindowState.readWindowState()
+  const workArea = screen.getPrimaryDisplay().workAreaSize
+  const restoredWindowOptions = GetRestoredWindowOptions.getRestoredWindowOptions(savedWindowState, workArea)
   Performance.mark(PerformanceMarkerType.WillCreateCodeWindow)
   const window = new BrowserWindow({
     ...windowOptions,
+    ...restoredWindowOptions,
     webPreferences: {
       ...windowOptions.webPreferences,
       session,
     },
   })
+  const windowStateTracker = promptMode ? undefined : WindowState.trackWindowState(window)
   Performance.mark(PerformanceMarkerType.DidCreateCodeWindow)
   WindowLogger.addListener(window.id, window.webContents)
   addDevDiagnostics(window)
 
-  if (!IsPromptMode.isPromptMode(parsedArgs)) {
-    ShowWindowWhenLoaded.showWindowWhenLoaded(window)
+  if (!promptMode) {
+    ShowWindowWhenLoaded.showWindowWhenLoaded(window, savedWindowState?.maximized ? () => window.maximize() : undefined)
   }
   // TODO query applicarion menu items from shared process
   const menu = ElectronApplicationMenu.createTitleBar(titleBarItems)
@@ -88,6 +96,13 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
     () => {
       disposeBrowserGesture()
       disposeFullScreenListener()
+      windowStateTracker?.dispose()
+    },
+    async () => {
+      if (!windowStateTracker) {
+        return
+      }
+      await WindowState.writeWindowState(windowStateTracker.getState())
     },
   )
   window.on('close', handleWindowClose)

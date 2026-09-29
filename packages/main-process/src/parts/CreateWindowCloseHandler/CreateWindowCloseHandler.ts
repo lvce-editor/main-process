@@ -12,6 +12,7 @@ interface RendererRpc {
 }
 
 const closePreparationTimeout = 1000
+const closeCallbackTimeout = 1000
 const disposedRenderFrameError = 'Render frame was disposed before WebFrameMain could be accessed'
 
 const isDisposedRenderFrameError = (error: unknown): boolean => {
@@ -30,11 +31,24 @@ const prepareClose = async (rpc: RendererRpc): Promise<void> => {
   }
 }
 
+const runCloseCallback = async (callback: () => Promise<void>): Promise<void> => {
+  const { promise, reject } = Promise.withResolvers<never>()
+  const timeout = setTimeout(() => {
+    reject(new Error(`Timed out saving window state after ${closeCallbackTimeout}ms`))
+  }, closeCallbackTimeout)
+  try {
+    await Promise.race([callback(), promise])
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
 export const createWindowCloseHandler = (
   window: ClosableWindow,
   rpc: RendererRpc,
   onError: (error: unknown) => void,
   dispose: () => void = (): void => {},
+  onClose: () => Promise<void> = async (): Promise<void> => {},
 ): ((event: CloseEvent) => void) => {
   let closePending = false
 
@@ -53,6 +67,11 @@ export const createWindowCloseHandler = (
           onError(error)
         }
       } finally {
+        try {
+          await runCloseCallback(onClose)
+        } catch {
+          // Window state storage is best-effort; continue closing the window.
+        }
         try {
           dispose()
         } catch (error) {
