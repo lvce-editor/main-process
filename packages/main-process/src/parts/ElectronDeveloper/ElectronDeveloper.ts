@@ -1,4 +1,5 @@
 import * as Performance from '../Performance/Performance.ts'
+export { getWorkerMemoryUsage } from '../GetWorkerMemoryUsage/GetWorkerMemoryUsage.ts'
 export { takeWindowCpuProfile, takeWorkerCpuProfile } from '../TakeCpuProfile/TakeCpuProfile.ts'
 export { takeWorkerHeapSnapshot } from '../TakeWorkerHeapSnapshot/TakeWorkerHeapSnapshot.ts'
 export { takeRendererHeapSnapshot } from '../TakeRendererHeapSnapshot/TakeRendererHeapSnapshot.ts'

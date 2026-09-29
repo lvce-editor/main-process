@@ -116,6 +116,90 @@ test('takes a heap snapshot for the named worker', async () => {
   expect(electronDebugger.detach).toHaveBeenCalledTimes(1)
 })
 
+test('takes a heap snapshot when Electron omits the worker parent frame id', async () => {
+  electronDebugger.sendCommand.mockResolvedValueOnce({ frameTree: { frame: { id: 'main-frame' } } }).mockResolvedValueOnce({
+    targetInfos: [
+      {
+        targetId: 'worker-target',
+        title: 'Extension API (Electron): sample.extension',
+        type: 'worker',
+      },
+    ],
+  })
+
+  const result = await takeWorkerHeapSnapshot(7, 'Extension API (Electron): sample.extension')
+
+  expect(readFileSync(fileURLToPath(result), 'utf8')).toBe('{"snapshot":{}}')
+  expect(electronDebugger.sendCommand).toHaveBeenCalledWith('Target.attachToTarget', {
+    flatten: true,
+    targetId: 'worker-target',
+  })
+})
+
+test('takes a heap snapshot when Electron prefixes the worker target title', async () => {
+  electronDebugger.sendCommand.mockResolvedValueOnce({ frameTree: { frame: { id: 'main-frame' } } }).mockResolvedValueOnce({
+    targetInfos: [
+      {
+        parentFrameId: 'main-frame',
+        targetId: 'worker-target',
+        title: '[worker-18] Extension API (Electron): sample.extension',
+        type: 'worker',
+      },
+    ],
+  })
+
+  const result = await takeWorkerHeapSnapshot(7, 'Extension API (Electron): sample.extension')
+
+  expect(readFileSync(fileURLToPath(result), 'utf8')).toBe('{"snapshot":{}}')
+  expect(electronDebugger.sendCommand).toHaveBeenCalledWith('Target.attachToTarget', {
+    flatten: true,
+    targetId: 'worker-target',
+  })
+})
+
+test('takes a heap snapshot when the requested worker name has an internal worker suffix', async () => {
+  electronDebugger.sendCommand.mockResolvedValueOnce({ frameTree: { frame: { id: 'main-frame' } } }).mockResolvedValueOnce({
+    targetInfos: [
+      {
+        parentFrameId: 'main-frame',
+        targetId: 'worker-target',
+        title: '[worker-21] Explorer Worker',
+        type: 'worker',
+      },
+    ],
+  })
+
+  const result = await takeWorkerHeapSnapshot(7, 'Explorer Worker [worker-1]')
+
+  expect(readFileSync(fileURLToPath(result), 'utf8')).toBe('{"snapshot":{}}')
+  expect(electronDebugger.sendCommand).toHaveBeenCalledWith('Target.attachToTarget', {
+    flatten: true,
+    targetId: 'worker-target',
+  })
+})
+
+test('does not select an ambiguous same-window worker', async () => {
+  electronDebugger.sendCommand.mockResolvedValueOnce({ frameTree: { frame: { id: 'main-frame' } } }).mockResolvedValueOnce({
+    targetInfos: [
+      {
+        parentFrameId: 'main-frame',
+        targetId: 'first-worker-target',
+        title: '[worker-21] Explorer Worker',
+        type: 'worker',
+      },
+      {
+        parentFrameId: 'main-frame',
+        targetId: 'second-worker-target',
+        title: '[worker-22] Explorer Worker',
+        type: 'worker',
+      },
+    ],
+  })
+
+  await expect(takeWorkerHeapSnapshot(7, 'Explorer Worker [worker-1]')).rejects.toThrow('Worker not found: Explorer Worker [worker-1]')
+  expect(electronDebugger.sendCommand).not.toHaveBeenCalledWith('Target.attachToTarget', expect.objectContaining({ targetId: expect.any(String) }))
+})
+
 test('reuses an attached debugger', async () => {
   attached = true
 

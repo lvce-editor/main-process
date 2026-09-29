@@ -24,7 +24,11 @@
     "test:browser-restore": "node scripts/test-browser-restore.mjs",
     "test:browser-visibility": "node scripts/test-browser-visibility.mjs",
     "type-check": "tsc -b",
-    "test:browser-freeze": "node scripts/test-browser-freeze.mjs"
+    "test:browser-freeze": "node scripts/test-browser-freeze.mjs",
+    "test:browser-passwords": "node scripts/test-browser-passwords.mjs",
+    "test:password-storage": "node scripts/test-password-storage.mjs",
+    "test:browser-period": "node scripts/test-browser-period.mjs",
+    "test:worker-memory": "node scripts/test-worker-memory.mjs"
   },
   "prettier": {
     "semi": false,

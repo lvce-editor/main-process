@@ -14,6 +14,7 @@ const send = jest.fn()
 const setBounds = jest.fn()
 const webContents = {
   id: 1,
+  ipc: { on: jest.fn() },
   isDestroyed: () => false,
   loadURL: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
   on: jest.fn(),
@@ -64,7 +65,7 @@ jest.unstable_mockModule('../src/parts/ElectronWebContentsViewPerformance/Electr
   attach: performanceAttach,
 }))
 
-jest.unstable_mockModule('../src/parts/EmbedsProcess/EmbedsProcess.ts', () => ({
+jest.unstable_mockModule('../src/parts/ElectronWebContentsViewIpc/ElectronWebContentsViewIpc.ts', () => ({
   send,
 }))
 
@@ -92,7 +93,7 @@ test('createWebContentsView attaches event listeners before returning', async ()
   await listener({}, ['https://example.com/favicon.png'])
 
   expect(listenerHandler).toHaveBeenCalledWith({}, ['https://example.com/favicon.png'], 1, webContents, expect.any(Function))
-  expect(send).toHaveBeenCalledWith('ElectronWebContents.handlePageFaviconUpdated', 1, ['https://example.com/favicon.png'])
+  expect(send).toHaveBeenCalledWith(1, 'ElectronBrowserView.handlePageFaviconUpdated', 1, ['https://example.com/favicon.png'])
 
   const createWindow = listenerHandler.mock.calls[0][4] as (
     options: Electron.BrowserWindowConstructorOptions,
@@ -100,14 +101,14 @@ test('createWebContentsView attaches event listeners before returning', async ()
     disposition: string,
   ) => Electron.WebContents
   expect(createWindow({ webPreferences: { sandbox: true } }, 'https://accounts.google.com', 'new-window')).toBe(webContents)
-  expect(send).toHaveBeenCalledWith('ElectronWebContents.handleWindowOpen', 1, 1, 'https://accounts.google.com', 'new-window')
+  expect(send).toHaveBeenCalledWith(1, 'ElectronBrowserView.handleWindowOpen', 1, 1, 'https://accounts.google.com', 'new-window')
 
   expect(webContents.loadURL).toHaveBeenCalledWith('https://accounts.google.com')
 
   ElectronWebContentsView.attachEventListeners(1)
   expect(listenerAttach).toHaveBeenCalledTimes(1)
 
-  const popupContents = { id: 2, loadURL: jest.fn(), on: jest.fn() } as unknown as Electron.WebContents
+  const popupContents = { id: 2, ipc: { on: jest.fn() }, loadURL: jest.fn(), on: jest.fn() } as unknown as Electron.WebContents
   const popupView = { setBounds: jest.fn(), webContents: popupContents }
   const popupOptions = { webContents: popupContents, webPreferences: { sandbox: true } }
   createView.mockReturnValueOnce(popupView)
@@ -115,11 +116,18 @@ test('createWebContentsView attaches event listeners before returning', async ()
   expect(popupContents.loadURL).not.toHaveBeenCalled()
   expect(createView).toHaveBeenLastCalledWith({
     webContents: popupContents,
-    webPreferences: { focusOnNavigation: false, sandbox: true, session: undefined },
+    webPreferences: {
+      contextIsolation: true,
+      focusOnNavigation: false,
+      nodeIntegration: false,
+      nodeIntegrationInSubFrames: true,
+      sandbox: true,
+      session: undefined,
+    },
   })
   expect(addChildView).toHaveBeenLastCalledWith(popupView, 0)
   expect(ElectronWebContentsViewState.get(2)).toEqual({ browserWindow, view: popupView })
-  expect(send).toHaveBeenLastCalledWith('ElectronWebContents.handleWindowOpen', 1, 2, 'https://accounts.google.com', 'new-window')
+  expect(send).toHaveBeenLastCalledWith(1, 'ElectronBrowserView.handleWindowOpen', 1, 2, 'https://accounts.google.com', 'new-window')
 })
 
 test('disposeWebContentsView removes and closes the view', () => {
@@ -128,12 +136,14 @@ test('disposeWebContentsView removes and closes the view', () => {
   const view = {
     webContents: {
       close,
+      isDestroyed: () => false,
     },
   }
   const browserWindow = {
     contentView: {
       removeChildView,
     },
+    isDestroyed: () => false,
   }
   ElectronWebContentsViewState.add(1, browserWindow, view)
 
@@ -208,4 +218,21 @@ test('a destroyed restore target is replaced', async () => {
 
   expect(createView).toHaveBeenCalledTimes(1)
   expect(ElectronWebContentsViewState.get(2)).toBeUndefined()
+})
+
+test.each([false, true])('disposes a guest after its owner is destroyed (guest destroyed: %s)', (guestDestroyed) => {
+  const close = jest.fn()
+  const view = { webContents: { close, isDestroyed: () => guestDestroyed } }
+  const owner = {
+    get contentView() {
+      throw new Error('Object has been destroyed')
+    },
+    isDestroyed: () => true,
+  }
+  ElectronWebContentsViewState.add(1, owner, view)
+  ElectronWebContentsView.disposeWebContentsView(1)
+  expect(close).toHaveBeenCalledTimes(guestDestroyed ? 0 : 1)
+  expect(ElectronWebContentsViewState.get(1)).toBeUndefined()
+  ElectronWebContentsView.disposeWebContentsView(1)
+  expect(close).toHaveBeenCalledTimes(guestDestroyed ? 0 : 1)
 })

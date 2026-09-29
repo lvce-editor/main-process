@@ -82,6 +82,20 @@ export const openDevtools = (view: BrowserView) => {
   webContents.openDevTools()
 }
 
+export const toggleDevTools = (view: BrowserView) => {
+  const { webContents } = view
+  if (webContents.isDevToolsOpened()) {
+    webContents.closeDevTools()
+  } else {
+    webContents.openDevTools()
+  }
+}
+
+export const setZoomLevel = (view: BrowserView, zoomLevel: number) => {
+  Assert.number(zoomLevel)
+  view.webContents.setZoomLevel(zoomLevel)
+}
+
 const getSlimCode = (html: string): string => {
   let result = html
   result = result.replaceAll(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, '')
@@ -318,7 +332,7 @@ export const getStats = (view: BrowserView, includeMemory = false) => {
   const canGoBack = webContents.navigationHistory.canGoBack()
   const canGoForward = webContents.navigationHistory.canGoForward()
   const isAudioMuted = webContents.isAudioMuted()
-  const url = webContents.getURL()
+  const url = ElectronWebContentsViewState.getFailedNavigationUrl(webContents.id) || webContents.getURL()
   const title = webContents.getTitle()
   const stats = {
     canGoBack,

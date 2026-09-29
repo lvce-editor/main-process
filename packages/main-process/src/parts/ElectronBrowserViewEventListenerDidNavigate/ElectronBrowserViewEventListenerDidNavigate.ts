@@ -2,8 +2,8 @@ import type { FaviconData } from '../ElectronBrowserViewEventListenerPageFavicon
 import * as ElectronBrowserViewEventListenerPageFaviconUpdated from '../ElectronBrowserViewEventListenerPageFaviconUpdated/ElectronBrowserViewEventListenerPageFaviconUpdated.ts'
 import * as ElectronBrowserViewFaviconState from '../ElectronBrowserViewFaviconState/ElectronBrowserViewFaviconState.ts'
 import * as ElectronWebContentsEventType from '../ElectronWebContentsEventType/ElectronWebContentsEventType.ts'
+import * as ElectronWebContentsViewIpc from '../ElectronWebContentsViewIpc/ElectronWebContentsViewIpc.ts'
 import * as ElectronWebContentsViewState from '../ElectronWebContentsViewState/ElectronWebContentsViewState.ts'
-import * as EmbedsProcess from '../EmbedsProcess/EmbedsProcess.ts'
 import * as WebContentsViewErrorPath from '../WebContentsViewErrorPath/WebContentsViewErrorPath.ts'
 
 export const key = 'did-navigate'
@@ -58,7 +58,7 @@ export const handler = (_event, url, _httpResponseCode, _httpStatusText, webCont
   void loadDefaultFavicon(webContents, navigationUrl)
     .then((favicons) => {
       if (favicons.length > 0) {
-        EmbedsProcess.send('ElectronWebContents.handlePageFaviconUpdated', webContentsId, favicons)
+        ElectronWebContentsViewIpc.send(webContentsId, 'ElectronBrowserView.handlePageFaviconUpdated', webContentsId, favicons)
       }
     })
     .catch(console.error)

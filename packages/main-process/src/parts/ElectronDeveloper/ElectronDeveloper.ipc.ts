@@ -5,6 +5,7 @@ export const name = 'ElectronDeveloper'
 export const Commands = {
   crashMainProcess: Developer.crashMainProcess,
   getPerformanceEntries: Developer.getPerformanceEntries,
+  getWorkerMemoryUsage: Developer.getWorkerMemoryUsage,
   takeRendererHeapSnapshot: Developer.takeRendererHeapSnapshot,
   takeWindowCpuProfile: Developer.takeWindowCpuProfile,
   takeWorkerCpuProfile: Developer.takeWorkerCpuProfile,

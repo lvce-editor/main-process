@@ -96,6 +96,14 @@ export const executeWindowFunction = (browserWindowId, key, modifier = 'ctrl=twi
     toggleDevtools(browserWindow)
     return
   }
+  if (key === 'toggleMaximize') {
+    if (browserWindow.isMaximized()) {
+      browserWindow.unmaximize()
+    } else {
+      browserWindow.maximize()
+    }
+    return
+  }
   if (key === 'toggleFullScreen') {
     toggleFullScreen(browserWindow)
     return

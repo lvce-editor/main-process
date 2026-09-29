@@ -33,6 +33,7 @@ import * as ElectronWindowProcessExplorer from '../ElectronWindowProcessExplorer
 import * as Exit from '../Exit/Exit.ts'
 import * as GetWindowId from '../GetWindowId/GetWindowId.ts'
 import * as HandleElectronMessagePort from '../HandleElectronMessagePort/HandleElectronMessagePort.ts'
+import * as HandleWorkerMemoryMessagePort from '../HandleWorkerMemoryMessagePort/HandleWorkerMemoryMessagePort.ts'
 import * as IpcParent from '../IpcParent/IpcParent.ts'
 import * as OpenExternal from '../OpenExternal/OpenExternal.ts'
 import * as Process from '../Process/Process.ts'
@@ -40,6 +41,7 @@ import * as ProcessId from '../ProcessId/ProcessId.ts'
 import * as SecretStorage from '../SecretStorage/SecretStorage.ts'
 import * as TemporaryMessagePort from '../TemporaryMessagePort/TemporaryMessagePort.ts'
 import * as Trash from '../Trash/Trash.ts'
+import * as WebsitePasswords from '../WebsitePasswords/WebsitePasswords.ts'
 
 export const commandMap = {
   'AppWindow.createAppWindow': AppWindow.createAppWindow,
@@ -60,6 +62,7 @@ export const commandMap = {
   'ElectronContextMenu.openContextMenu': ElectronContextMenu.openContextMenu,
   'ElectronDeveloper.crashMainProcess': ElectronDeveloper.crashMainProcess,
   'ElectronDeveloper.getPerformanceEntries': ElectronDeveloper.getPerformanceEntries,
+  'ElectronDeveloper.getWorkerMemoryUsage': ElectronDeveloper.getWorkerMemoryUsage,
   'ElectronDeveloper.takeRendererHeapSnapshot': ElectronDeveloper.takeRendererHeapSnapshot,
   'ElectronDeveloper.takeWindowCpuProfile': ElectronDeveloper.takeWindowCpuProfile,
   'ElectronDeveloper.takeWorkerCpuProfile': ElectronDeveloper.takeWorkerCpuProfile,
@@ -94,6 +97,7 @@ export const commandMap = {
   'ElectronWebContentsView.cancelLogin': ElectronWebContentsViewAuthenticationState.cancel,
   'ElectronWebContentsView.createWebContentsView': ElectronWebContentsView.createWebContentsView,
   'ElectronWebContentsView.disposeWebContentsView': ElectronWebContentsView.disposeWebContentsView,
+  'ElectronWebContentsView.handleMessagePort': ElectronWebContentsView.handleMessagePort,
   'ElectronWebContentsView.removeCookies': ElectronWebContentsViewCookies.removeCookies,
   'ElectronWebContentsViewFunctions.addToWindow': ElectronWebContentsViewFunctions.addToWindow,
   'ElectronWebContentsViewFunctions.backward': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.backward),
@@ -125,6 +129,7 @@ export const commandMap = {
   'ElectronWebContentsViewFunctions.openDevtools': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.openDevtools,
   ),
+  'ElectronWebContentsViewFunctions.passwords': WebsitePasswords.show,
   'ElectronWebContentsViewFunctions.pressKey': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.pressKey),
   'ElectronWebContentsViewFunctions.reload': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(ElectronWebContentsViewFunctions.reload),
   'ElectronWebContentsViewFunctions.resizeBrowserView': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
@@ -145,7 +150,13 @@ export const commandMap = {
   'ElectronWebContentsViewFunctions.setIframeSrcFallback': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
     ElectronWebContentsViewFunctions.setIframeSrcFallback,
   ),
+  'ElectronWebContentsViewFunctions.setZoomLevel': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.setZoomLevel,
+  ),
   'ElectronWebContentsViewFunctions.show': ElectronWebContentsViewFunctions.show,
+  'ElectronWebContentsViewFunctions.toggleDevTools': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(
+    ElectronWebContentsViewFunctions.toggleDevTools,
+  ),
   'ElectronWindow.executeWebContentsFunction': ElectronWindow.executeWebContentsFunction,
   'ElectronWindow.executeWindowFunction': ElectronWindow.executeWindowFunction,
   'ElectronWindow.getFocusedWindowId': ElectronWindow.getFocusedWindowId,
@@ -175,4 +186,5 @@ export const commandMap = {
   'TemporaryMessagePort.sendTo': TemporaryMessagePort.sendTo,
   'TemporaryMessagePort.sendTo2': TemporaryMessagePort.sendTo2,
   'Trash.trash': Trash.trash,
+  'WorkerMemory.handleMessagePort': HandleWorkerMemoryMessagePort.handleWorkerMemoryMessagePort,
 }

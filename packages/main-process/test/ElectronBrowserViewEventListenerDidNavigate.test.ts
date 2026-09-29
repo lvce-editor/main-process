@@ -11,7 +11,7 @@ jest.unstable_mockModule(
 
 jest.unstable_mockModule('../src/parts/ElectronBrowserViewFaviconState/ElectronBrowserViewFaviconState.ts', () => ({ has }))
 
-jest.unstable_mockModule('../src/parts/EmbedsProcess/EmbedsProcess.ts', () => ({ send }))
+jest.unstable_mockModule('../src/parts/ElectronWebContentsViewIpc/ElectronWebContentsViewIpc.ts', () => ({ send }))
 
 const ElectronBrowserViewEventListenerDidNavigate =
   await import('../src/parts/ElectronBrowserViewEventListenerDidNavigate/ElectronBrowserViewEventListenerDidNavigate.ts')
@@ -36,7 +36,7 @@ test('sends navigation before loading the default origin favicon', async () => {
 
   await new Promise((resolve) => setImmediate(resolve))
 
-  expect(send).toHaveBeenCalledWith('ElectronWebContents.handlePageFaviconUpdated', 12, ['data:image/x-icon;base64,AAEC'])
+  expect(send).toHaveBeenCalledWith(12, 'ElectronBrowserView.handlePageFaviconUpdated', 12, ['data:image/x-icon;base64,AAEC'])
   expect(resolveNetworkFavicon).toHaveBeenCalledWith(['https://www.reddit.com/favicon.ico'])
 })
 
@@ -114,7 +114,7 @@ test('keeps the fallback when electron reports a favicon while it loads', async 
   resolveFavicon(['data:image/x-icon;base64,AAEC'])
 
   await new Promise((resolve) => setImmediate(resolve))
-  expect(send).toHaveBeenCalledWith('ElectronWebContents.handlePageFaviconUpdated', 12, ['data:image/x-icon;base64,AAEC'])
+  expect(send).toHaveBeenCalledWith(12, 'ElectronBrowserView.handlePageFaviconUpdated', 12, ['data:image/x-icon;base64,AAEC'])
   expect(has).toHaveBeenCalledTimes(1)
 })
 

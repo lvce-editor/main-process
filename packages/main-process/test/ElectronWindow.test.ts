@@ -233,3 +233,18 @@ test('executeWindowFunction - toggleDevtools - waits for devtools-opened when de
   expect(event.preventDefault).toHaveBeenCalledTimes(1)
   expect(pageWebContents.closeDevTools).toHaveBeenCalledTimes(1)
 })
+
+for (const maximized of [false, true]) {
+  test(`executeWindowFunction - toggleMaximize uses current native state (${maximized})`, () => {
+    mockWindow = {
+      id: 1,
+      isMaximized: jest.fn(() => maximized),
+      maximize: jest.fn(),
+      unmaximize: jest.fn(),
+    }
+    ElectronWindow.executeWindowFunction(1, 'toggleMaximize')
+    expect(mockWindow.isMaximized).toHaveBeenCalledTimes(1)
+    expect(mockWindow.maximize).toHaveBeenCalledTimes(maximized ? 0 : 1)
+    expect(mockWindow.unmaximize).toHaveBeenCalledTimes(maximized ? 1 : 0)
+  })
+}

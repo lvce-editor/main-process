@@ -18,5 +18,8 @@ export const handleSecondInstance = async (
   if (parsedArgs.reuse && (await ReuseAppWindow.reuseAppWindow(parsedArgs, workingDirectory))) {
     return
   }
+  if (!parsedArgs.reuse && (await ReuseAppWindow.openFileInAppWindow(parsedArgs, workingDirectory))) {
+    return
+  }
   await HandleElectronReady.handleReady(parsedArgs, workingDirectory)
 }

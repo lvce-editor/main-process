@@ -341,3 +341,20 @@ test('setIframeSrc clears a previous failed navigation', async () => {
   expect(ElectronWebContentsViewState.getFailedNavigationUrl(42)).toBeUndefined()
   expect(loadURL).toHaveBeenCalledWith('https://example.com/')
 })
+
+test('getStats reports the failed navigation URL until a replacement navigation clears it', () => {
+  const view = {
+    webContents: {
+      getTitle: () => 'Connection error',
+      getURL: () => 'file:///app/pages/error/error.html?code=ERR_CONNECTION_REFUSED',
+      id: 42,
+      isAudioMuted: () => false,
+      isFocused: () => false,
+      navigationHistory: { canGoBack: () => true, canGoForward: () => false },
+    },
+  } as unknown as Electron.BrowserView
+  ElectronWebContentsViewState.setFailedNavigationUrl(42, 'http://127.0.0.1:12345/')
+  expect(ElectronWebContentsViewFunctions.getStats(view).url).toBe('http://127.0.0.1:12345/')
+  ElectronWebContentsViewState.removeFailedNavigationUrl(42)
+  expect(ElectronWebContentsViewFunctions.getStats(view).url).toBe(view.webContents.getURL())
+})
