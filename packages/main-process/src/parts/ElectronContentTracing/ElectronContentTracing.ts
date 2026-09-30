@@ -1,8 +1,8 @@
+import { contentTracing } from 'electron'
 import { randomUUID } from 'node:crypto'
 import { mkdir } from 'node:fs/promises'
 import * as Path from '../Path/Path.ts'
 import * as Platform from '../Platform/Platform.ts'
-import { contentTracing } from 'electron'
 
 /**
  * @param { Electron.TraceConfig | Electron.TraceCategoriesAndOptions} options

@@ -1,18 +1,18 @@
 import { afterEach, beforeEach, expect, jest, test } from '@jest/globals'
+import { randomUUID } from 'node:crypto'
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
-import { randomUUID } from 'node:crypto'
+import { basename, dirname, join } from 'node:path'
 
 const testCacheDir = join(tmpdir(), `lvce-main-process-${randomUUID()}`)
 
 beforeEach(async () => {
   jest.resetAllMocks()
-  await rm(testCacheDir, { recursive: true, force: true })
+  await rm(testCacheDir, { force: true, recursive: true })
 })
 
 afterEach(async () => {
-  await rm(testCacheDir, { recursive: true, force: true })
+  await rm(testCacheDir, { force: true, recursive: true })
 })
 
 jest.unstable_mockModule('electron', () => {
@@ -69,7 +69,8 @@ test('stopRecording - creates cache directory and saves readable trace', async (
 
   const tracePath = await ElectronContentTracing.stopRecording()
 
-  expect(tracePath).toMatch(new RegExp(`^${testCacheDir}/traces/trace-.+\\.json$`))
+  expect(dirname(tracePath)).toBe(join(testCacheDir, 'traces'))
+  expect(basename(tracePath)).toMatch(/^trace-.+\.json$/)
   expect(JSON.parse(await readFile(tracePath, 'utf8'))).toEqual({ traceEvents: [] })
   expect(electron.contentTracing.stopRecording).toHaveBeenCalledWith(tracePath)
 })
