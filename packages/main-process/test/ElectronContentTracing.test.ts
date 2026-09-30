@@ -1,7 +1,18 @@
-import { beforeEach, expect, jest, test } from '@jest/globals'
+import { afterEach, beforeEach, expect, jest, test } from '@jest/globals'
+import { randomUUID } from 'node:crypto'
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { basename, dirname, join } from 'node:path'
 
-beforeEach(() => {
+const testCacheDir = join(tmpdir(), `lvce-main-process-${randomUUID()}`)
+
+beforeEach(async () => {
   jest.resetAllMocks()
+  await rm(testCacheDir, { force: true, recursive: true })
+})
+
+afterEach(async () => {
+  await rm(testCacheDir, { force: true, recursive: true })
 })
 
 jest.unstable_mockModule('electron', () => {
@@ -11,6 +22,12 @@ jest.unstable_mockModule('electron', () => {
       startRecording: jest.fn(),
       stopRecording: jest.fn(),
     },
+  }
+})
+
+jest.unstable_mockModule('../src/parts/Platform/Platform.ts', () => {
+  return {
+    cacheDir: testCacheDir,
   }
 })
 
@@ -43,19 +60,50 @@ test('startRecording', async () => {
   })
 })
 
-test('stopRecording - error', async () => {
+test('stopRecording - creates cache directory and saves readable trace', async () => {
   // @ts-expect-error
-  electron.contentTracing.stopRecording.mockImplementation(async () => {
-    throw new TypeError('x is not a function')
+  electron.contentTracing.stopRecording.mockImplementation(async (path) => {
+    await writeFile(path, '{"traceEvents":[]}')
+    return path
   })
-  await expect(ElectronContentTracing.stopRecording()).rejects.toThrow(new TypeError('x is not a function'))
+
+  const tracePath = await ElectronContentTracing.stopRecording()
+
+  expect(dirname(tracePath)).toBe(join(testCacheDir, 'traces'))
+  expect(basename(tracePath)).toMatch(/^trace-.+\.json$/)
+  expect(JSON.parse(await readFile(tracePath, 'utf8'))).toEqual({ traceEvents: [] })
+  expect(electron.contentTracing.stopRecording).toHaveBeenCalledWith(tracePath)
 })
 
-test('stopRecording', async () => {
+test('stopRecording - repeated recordings use distinct files', async () => {
   // @ts-expect-error
-  electron.contentTracing.stopRecording.mockImplementation(() => {
-    return '/test/records.txt'
+  electron.contentTracing.stopRecording.mockImplementation(async (path) => {
+    await writeFile(path, '{"traceEvents":[]}')
+    return path
   })
-  expect(await ElectronContentTracing.stopRecording()).toBe('/test/records.txt')
-  expect(electron.contentTracing.stopRecording).toHaveBeenCalledTimes(1)
+
+  const firstTracePath = await ElectronContentTracing.stopRecording()
+  const secondTracePath = await ElectronContentTracing.stopRecording()
+
+  expect(secondTracePath).not.toBe(firstTracePath)
+  expect(await readFile(firstTracePath, 'utf8')).toBe('{"traceEvents":[]}')
+  expect(await readFile(secondTracePath, 'utf8')).toBe('{"traceEvents":[]}')
+})
+
+test('stopRecording - directory creation error', async () => {
+  const traceDirectory = join(testCacheDir, 'traces')
+  await mkdir(testCacheDir)
+  await writeFile(traceDirectory, 'not a directory')
+
+  await expect(ElectronContentTracing.stopRecording()).rejects.toMatchObject({ code: 'EEXIST' })
+  expect(electron.contentTracing.stopRecording).not.toHaveBeenCalled()
+})
+
+test('stopRecording - Electron error', async () => {
+  // @ts-expect-error
+  electron.contentTracing.stopRecording.mockImplementation(async () => {
+    throw new TypeError('trace write failed')
+  })
+
+  await expect(ElectronContentTracing.stopRecording()).rejects.toThrow(new TypeError('trace write failed'))
 })
