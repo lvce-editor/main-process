@@ -4,6 +4,8 @@ import { createWindowCloseHandler } from '../src/parts/CreateWindowCloseHandler/
 const close = jest.fn()
 const off = jest.fn()
 const invoke = jest.fn<(method: string) => Promise<void>>()
+const permission = jest.fn<() => Promise<boolean>>()
+const rpc = { invoke: (method: string): Promise<unknown> => (method === 'Window.canClose' ? permission() : invoke(method)) }
 const onError = jest.fn()
 const preventDefault = jest.fn()
 const dispose = jest.fn()
@@ -14,6 +16,7 @@ const flushClose = async (): Promise<void> => {
 
 beforeEach(() => {
   jest.resetAllMocks()
+  permission.mockResolvedValue(true)
 })
 
 afterEach(() => {
@@ -29,11 +32,12 @@ test('waits for renderer state persistence before closing the window', async () 
   )
   const window = { close, off }
   const event = { preventDefault }
-  const handleWindowClose = createWindowCloseHandler(window, { invoke }, onError, dispose)
+  const handleWindowClose = createWindowCloseHandler(window, rpc, onError, dispose)
 
   handleWindowClose(event)
 
   expect(preventDefault).toHaveBeenCalledTimes(1)
+  await Promise.resolve()
   expect(invoke).toHaveBeenCalledWith('Window.prepareClose')
   expect(close).not.toHaveBeenCalled()
 
@@ -60,7 +64,7 @@ test('persists window state before closing the live window', async () => {
   const persistState = jest.fn(async () => {
     order.push('window-state')
   })
-  const handleWindowClose = createWindowCloseHandler(window, { invoke }, onError, undefined, persistState)
+  const handleWindowClose = createWindowCloseHandler(window, rpc, onError, undefined, persistState)
 
   handleWindowClose({ preventDefault })
   await flushClose()
@@ -87,15 +91,16 @@ test('closes the window when window state storage does not finish', async () => 
   expect(closeWindow).toHaveBeenCalledTimes(1)
 })
 
-test('coalesces repeated close requests while state persistence is pending', () => {
+test('coalesces repeated close requests while state persistence is pending', async () => {
   jest.useFakeTimers()
   invoke.mockReturnValue(new Promise<void>(() => {}))
-  const handleWindowClose = createWindowCloseHandler({ close, off }, { invoke }, onError)
+  const handleWindowClose = createWindowCloseHandler({ close, off }, rpc, onError)
 
   handleWindowClose({ preventDefault })
   handleWindowClose({ preventDefault })
 
   expect(preventDefault).toHaveBeenCalledTimes(2)
+  await Promise.resolve()
   expect(invoke).toHaveBeenCalledTimes(1)
   expect(close).not.toHaveBeenCalled()
 })
@@ -104,7 +109,7 @@ test('closes the window when renderer state persistence does not finish', async 
   jest.useFakeTimers()
   invoke.mockReturnValue(new Promise<void>(() => {}))
   const window = { close, off }
-  const handleWindowClose = createWindowCloseHandler(window, { invoke }, onError, dispose)
+  const handleWindowClose = createWindowCloseHandler(window, rpc, onError, dispose)
 
   handleWindowClose({ preventDefault })
   await jest.advanceTimersByTimeAsync(1000)
@@ -119,7 +124,7 @@ test('reports persistence errors and still closes the window', async () => {
   const error = new Error('save failed')
   invoke.mockRejectedValue(error)
   const window = { close, off }
-  const handleWindowClose = createWindowCloseHandler(window, { invoke }, onError)
+  const handleWindowClose = createWindowCloseHandler(window, rpc, onError)
 
   handleWindowClose({ preventDefault })
   await flushClose()
@@ -134,7 +139,7 @@ test('does not report an error when the renderer frame is disposed asynchronousl
   const error = new Error('Render frame was disposed before WebFrameMain could be accessed')
   invoke.mockRejectedValue(error)
   const window = { close, off }
-  const handleWindowClose = createWindowCloseHandler(window, { invoke }, onError, dispose)
+  const handleWindowClose = createWindowCloseHandler(window, rpc, onError, dispose)
 
   handleWindowClose({ preventDefault })
   await jest.runAllTimersAsync()
@@ -153,7 +158,7 @@ test('does not report an error when the renderer frame is disposed synchronously
     throw error
   })
   const window = { close, off }
-  const handleWindowClose = createWindowCloseHandler(window, { invoke }, onError, dispose)
+  const handleWindowClose = createWindowCloseHandler(window, rpc, onError, dispose)
 
   handleWindowClose({ preventDefault })
   await jest.runAllTimersAsync()
@@ -172,7 +177,7 @@ test('reports disposal errors and still closes the window', async () => {
     throw error
   })
   const window = { close, off }
-  const handleWindowClose = createWindowCloseHandler(window, { invoke }, onError, dispose)
+  const handleWindowClose = createWindowCloseHandler(window, rpc, onError, dispose)
 
   handleWindowClose({ preventDefault })
   await flushClose()
@@ -180,4 +185,55 @@ test('reports disposal errors and still closes the window', async () => {
   expect(onError).toHaveBeenCalledWith(error)
   expect(off).toHaveBeenCalledWith('close', handleWindowClose)
   expect(close).toHaveBeenCalledTimes(1)
+})
+
+test('cancelled close preserves the live window and allows retry', async () => {
+  permission.mockResolvedValueOnce(false).mockResolvedValueOnce(true)
+  const handle = createWindowCloseHandler({ close, off }, rpc, onError, dispose)
+  handle({ preventDefault })
+  await flushClose()
+  expect(close).not.toHaveBeenCalled()
+  expect(dispose).not.toHaveBeenCalled()
+  expect(invoke).not.toHaveBeenCalled()
+  handle({ preventDefault })
+  await flushClose()
+  expect(close).toHaveBeenCalledTimes(1)
+})
+
+test('user confirmation is not limited by the state persistence deadline', async () => {
+  jest.useFakeTimers()
+  const confirmation = Promise.withResolvers<boolean>()
+  permission.mockReturnValue(confirmation.promise)
+  const handle = createWindowCloseHandler({ close, off }, rpc, onError, dispose)
+  handle({ preventDefault })
+  handle({ preventDefault })
+  await jest.advanceTimersByTimeAsync(5000)
+  expect(close).not.toHaveBeenCalled()
+  expect(permission).toHaveBeenCalledTimes(1)
+  confirmation.resolve(false)
+  await jest.advanceTimersByTimeAsync(0)
+  expect(dispose).not.toHaveBeenCalled()
+})
+
+test('failed document save prevents closing and permits retry', async () => {
+  const error = new Error('write failed')
+  permission.mockRejectedValueOnce(error).mockResolvedValueOnce(true)
+  const handle = createWindowCloseHandler({ close, off }, rpc, onError, dispose)
+  handle({ preventDefault })
+  await flushClose()
+  expect(close).not.toHaveBeenCalled()
+  expect(onError).toHaveBeenCalledWith(error)
+  handle({ preventDefault })
+  await flushClose()
+  expect(close).toHaveBeenCalledTimes(1)
+})
+
+test('legacy renderer without the permission command retains state persistence', async () => {
+  permission.mockRejectedValue(new Error('Command not found Window.canClose'))
+  const handle = createWindowCloseHandler({ close, off }, rpc, onError, dispose)
+  handle({ preventDefault })
+  await flushClose()
+  expect(invoke).toHaveBeenCalledWith('Window.prepareClose')
+  expect(close).toHaveBeenCalledTimes(1)
+  expect(onError).not.toHaveBeenCalled()
 })
