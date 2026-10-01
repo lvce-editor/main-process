@@ -10,7 +10,12 @@ beforeEach(() => {
 
 const setup = () => {
   const contents = {
-    debugger: { attach: jest.fn(), isAttached: () => true, on: jest.fn(), sendCommand: jest.fn<() => Promise<void>>().mockResolvedValue() },
+    debugger: {
+      attach: jest.fn(),
+      isAttached: () => true,
+      on: jest.fn(),
+      sendCommand: jest.fn<(method: string, params: { state: string }) => Promise<void>>().mockResolvedValue(),
+    },
     getURL: () => 'https://example.com',
     isAudioMuted: () => false,
     isCurrentlyAudible: () => false,
