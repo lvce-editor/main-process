@@ -71,3 +71,23 @@ test('reapplies freezing when a new document replaces a frozen page', async () =
     ['Page.setWebLifecycleState', { state: 'frozen' }],
   ])
 })
+
+test('retries freezing when loading stops after did-finish-load', async () => {
+  const contents = setup()
+  await BrowserFreeze.setHidden(1, true, true)
+  contents.debugger.sendCommand.mockClear()
+  const emit = (event: string): void => {
+    const listener = contents.on.mock.calls.find(([name]) => name === event)?.[1]
+    listener?.()
+  }
+  contents.isLoadingMainFrame = () => true
+  emit('did-navigate')
+  emit('did-finish-load')
+  await BrowserFreeze.refresh(contents as never)
+  expect(contents.debugger.sendCommand).not.toHaveBeenCalled()
+  contents.isLoadingMainFrame = () => false
+  emit('did-stop-loading')
+  await Promise.resolve()
+  await Promise.resolve()
+  expect(contents.debugger.sendCommand).toHaveBeenCalledWith('Page.setWebLifecycleState', { state: 'frozen' })
+})

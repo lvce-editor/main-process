@@ -64,6 +64,8 @@ const getState = (webContents: WebContents): State => {
     state.navigation++
   })
   webContents.on('did-finish-load', update)
+  // did-finish-load can precede isLoadingMainFrame becoming false.
+  webContents.on('did-stop-loading', update)
   webContents.debugger.on('detach', () => {
     state.frozen = false
   })
