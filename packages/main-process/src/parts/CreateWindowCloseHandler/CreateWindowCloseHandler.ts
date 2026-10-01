@@ -8,7 +8,7 @@ interface ClosableWindow {
 }
 
 interface RendererRpc {
-  invoke(method: 'Window.prepareClose'): Promise<unknown>
+  invoke(method: 'Window.prepareClose' | 'Window.canClose'): Promise<unknown>
 }
 
 const closePreparationTimeout = 1000
@@ -60,6 +60,22 @@ export const createWindowCloseHandler = (
     closePending = true
 
     void (async (): Promise<void> => {
+      // Keep user confirmation outside the bounded, best-effort state persistence.
+      try {
+        const allowed = await rpc.invoke('Window.canClose')
+        if (allowed === false) {
+          closePending = false
+          return
+        }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        const legacyRenderer = message === 'Command not found Window.canClose'
+        if (!legacyRenderer && !isDisposedRenderFrameError(error)) {
+          closePending = false
+          onError(error)
+          return
+        }
+      }
       try {
         await prepareClose(rpc)
       } catch (error) {
