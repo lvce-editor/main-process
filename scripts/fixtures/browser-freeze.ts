@@ -100,6 +100,9 @@ const main = async (): Promise<void> => {
   await delay(150)
   assert.ok((await read()) > videoCount, 'video with sound must remain active')
   await wc.executeJavaScript('video.pause(); videoOsc.stop()')
+  // Chromium reports audio cessation asynchronously; navigation below tests a silent tab.
+  for (let i = 0; i < 100 && wc.isCurrentlyAudible(); i++) await delay(50)
+  assert.equal(wc.isCurrentlyAudible(), false, 'video audio must stop before testing silent navigation')
   await Views.show(id)
   await wc.loadURL('data:text/html,<script>window.count=0;setInterval(()=>count++,10)</script>')
   Views.hide(id)
