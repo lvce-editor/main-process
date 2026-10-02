@@ -25,8 +25,8 @@ export const enable = (parsedCliArgs, memoryUsage = ApplicationMemoryUsage.Defau
     }
   }
   if (memoryUsage === ApplicationMemoryUsage.Reduce) {
-    ElectronApp.appendCommandLineSwitch('in-process-gpu')
-    ElectronApp.appendCommandLineSwitch('enable-low-end-device-mode')
+    ElectronApp.appendCommandLineSwitch('in-process-gpu', undefined)
+    ElectronApp.appendCommandLineSwitch('enable-low-end-device-mode', undefined)
     ElectronApp.appendCommandLineSwitch('disable-features', getDisabledFeatures())
     ElectronApp.appendCommandLineSwitch('num-raster-threads', '1')
   }
