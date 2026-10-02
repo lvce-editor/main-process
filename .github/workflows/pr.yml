@@ -31,6 +31,9 @@ jobs:
         run: npm ci
         if: steps.npm-cache.outputs.cache-hit != 'true'
       - run: npm test
+      - name: Test startup CPU profile coverage in Electron
+        if: matrix.os == 'ubuntu-24.04'
+        run: xvfb-run -a npm run test:startup-cpu-profile
       - name: Test authentication popup tabs in Electron
         if: matrix.os == 'ubuntu-24.04'
         run: xvfb-run -a npm run test:auth-popup

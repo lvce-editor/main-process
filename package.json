@@ -28,7 +28,8 @@
     "test:browser-passwords": "node scripts/test-browser-passwords.mjs",
     "test:password-storage": "node scripts/test-password-storage.mjs",
     "test:browser-period": "node scripts/test-browser-period.mjs",
-    "test:worker-memory": "node scripts/test-worker-memory.mjs"
+    "test:worker-memory": "node scripts/test-worker-memory.mjs",
+    "test:startup-cpu-profile": "node scripts/test-startup-cpu-profile.mjs"
   },
   "prettier": {
     "semi": false,
