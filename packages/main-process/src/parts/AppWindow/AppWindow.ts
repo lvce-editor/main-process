@@ -14,6 +14,7 @@ import * as Logger from '../Logger/Logger.ts'
 import * as Performance from '../Performance/Performance.ts'
 import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMarkerType.ts'
 import * as ShowWindowWhenLoaded from '../ShowWindowWhenLoaded/ShowWindowWhenLoaded.ts'
+import * as StartupCpuProfile from '../StartupCpuProfile/StartupCpuProfile.ts'
 import { VError } from '../VError/VError.ts'
 import { WindowLoadError } from '../WindowLoadError/WindowLoadError.ts'
 import * as WindowLogger from '../WindowLogger/WindowLogger.ts'
@@ -55,7 +56,7 @@ const addDevDiagnostics = (window) => {
 export const createAppWindow = async (windowOptions, parsedArgs, workingDirectory, titleBarItems, url) => {
   const session = Session.get()
   const promptMode = IsPromptMode.isPromptMode(parsedArgs)
-  const savedWindowState = promptMode ? undefined : await WindowState.readWindowState()
+  const savedWindowState = promptMode || StartupCpuProfile.isEnabled() ? undefined : await WindowState.readWindowState()
   const workArea = screen.getPrimaryDisplay().workAreaSize
   const restoredWindowOptions = GetRestoredWindowOptions.getRestoredWindowOptions(savedWindowState, workArea)
   Performance.mark(PerformanceMarkerType.WillCreateCodeWindow)
@@ -67,7 +68,7 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
       session,
     },
   })
-  const windowStateTracker = promptMode ? undefined : WindowState.trackWindowState(window)
+  const windowStateTracker = promptMode || StartupCpuProfile.isEnabled() ? undefined : WindowState.trackWindowState(window)
   Performance.mark(PerformanceMarkerType.DidCreateCodeWindow)
   WindowLogger.addListener(window.id, window.webContents)
   addDevDiagnostics(window)

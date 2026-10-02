@@ -11,6 +11,7 @@ import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMark
 import * as Platform from '../Platform/Platform.ts'
 import * as Process from '../Process/Process.ts'
 import * as RequiresSocket from '../RequiresSocket/RequiresSocket.ts'
+import * as StartupCpuProfile from '../StartupCpuProfile/StartupCpuProfile.ts'
 
 const handleChildError = (error) => {
   Process.exit(ExitCode.Error)
@@ -18,6 +19,10 @@ const handleChildError = (error) => {
 
 const handleChildExit = (code) => {
   Logger.info(`[main process] shared process exited with code ${code}`)
+  if (StartupCpuProfile.isEnabled()) {
+    void StartupCpuProfile.complete(`Shared process exited with code ${code}`)
+    return
+  }
   Process.exit(code)
 }
 

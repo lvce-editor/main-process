@@ -8,6 +8,7 @@ export const parseCliArgs = (argv) => {
       version: 'v',
     },
     boolean: [
+      'cpu-profile',
       CliCommandType.Version,
       CliCommandType.Help,
       CliCommandType.Wait,
@@ -20,7 +21,7 @@ export const parseCliArgs = (argv) => {
     default: {
       sandbox: true,
     },
-    string: [CliCommandType.Prompt],
+    string: [CliCommandType.Prompt, 'open', 'cpu-profile-dir'],
   }
   const relevantArgv = argv.slice(1)
   const parsedArgs = minimist(relevantArgv, CLI_OPTIONS)
