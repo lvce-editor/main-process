@@ -1,3 +1,4 @@
+import * as WorkerCpu from '../WorkerCpu/WorkerCpu.ts'
 import * as WorkerMemoryDebugger from '../WorkerMemoryDebugger/WorkerMemoryDebugger.ts'
 
 interface TargetInfo {
@@ -10,11 +11,14 @@ export const create = (webContents: Electron.WebContents) => {
   const debuggerApi = webContents.debugger
   const release = WorkerMemoryDebugger.acquire(debuggerApi)
   const sessions = new Set<string>()
+  const targetsBySession = new Map<string, string>()
+  const cpu = WorkerCpu.create(webContents)
   let closed = false
   let initialization: Promise<void> | undefined
 
   const detach = async (sessionId: string): Promise<void> => {
     sessions.delete(sessionId)
+    targetsBySession.delete(sessionId)
     try {
       await debuggerApi.sendCommand('Target.detachFromTarget', { sessionId })
     } catch {
@@ -73,6 +77,7 @@ export const create = (webContents: Electron.WebContents) => {
             await detach(sessionId)
             return null
           }
+          targetsBySession.set(sessionId, targetId)
           return { runtimeName: evaluated.value as string, sessionId, targetId }
         } catch {
           if (sessionId) await detach(sessionId)
@@ -100,6 +105,7 @@ export const create = (webContents: Electron.WebContents) => {
   const dispose = async (): Promise<void> => {
     if (closed) return
     closed = true
+    await cpu.dispose()
     await Promise.all(Array.from(sessions, detach))
     release()
   }
@@ -110,6 +116,11 @@ export const create = (webContents: Electron.WebContents) => {
         return attach(values)
       case 'WorkerMemory.detach':
         return detachSessions(values)
+      case 'WorkerMemory.getCpuUsages': {
+        if (!debuggerApi.isAttached()) return values.map(() => null)
+        const targetIds = values.map((id) => targetsBySession.get(id) || '')
+        return cpu.get(targetIds)
+      }
       case 'WorkerMemory.getHeapUsages':
         return getHeapUsages(values)
       case 'WorkerMemory.getTargets':
