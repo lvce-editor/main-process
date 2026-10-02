@@ -46,9 +46,40 @@ const main = async (): Promise<void> => {
     await connection.dispose()
     assert.equal(debuggerApi.isAttached(), false)
     const reopened = create(window.webContents)
+    await reopened.execute('WorkerMemory.getTargets')
+    await window.webContents.executeJavaScript(
+      `globalThis.restarted = new Worker(URL.createObjectURL(new Blob(['setInterval(() => {}, 1000)'])), { name: 'idle' })`,
+    )
+    await delay(100)
+    const restartedTargets = (await reopened.execute('WorkerMemory.getTargets')) as string[]
+    const restartedSessions = (await reopened.execute('WorkerMemory.attach', restartedTargets)) as { sessionId: string }[]
+    const restartedIds = restartedSessions.map((session) => session.sessionId)
+    assert.equal(restartedIds.length, 1)
+    assert.deepEqual(await reopened.execute('WorkerMemory.getCpuUsages', restartedIds), [null])
+    await delay(500)
+    const restartedCpu = (await reopened.execute('WorkerMemory.getCpuUsages', restartedIds)) as number[]
+    assert.ok(restartedCpu[0] < 10, 'restarted worker must get fresh counters')
     assert.deepEqual(await reopened.execute('WorkerMemory.getCpuUsages', ['foreign']), [null])
     await reopened.dispose()
     assert.equal(debuggerApi.isAttached(), false)
+
+    debuggerApi.attach()
+    await debuggerApi.sendCommand('Tracing.start', { categories: 'disabled-by-default-devtools.timeline' })
+    const borrowed = create(window.webContents)
+    const borrowedTargets = (await borrowed.execute('WorkerMemory.getTargets')) as string[]
+    const borrowedSessions = (await borrowed.execute('WorkerMemory.attach', borrowedTargets)) as { sessionId: string }[]
+    assert.deepEqual(
+      await borrowed.execute(
+        'WorkerMemory.getCpuUsages',
+        borrowedSessions.map((session) => session.sessionId),
+      ),
+      [null],
+    )
+    await borrowed.dispose()
+    assert.equal(debuggerApi.isAttached(), true, 'must preserve a borrowed debugger')
+    // Stopping succeeds only if discovery left the external recording running.
+    await debuggerApi.sendCommand('Tracing.end')
+    debuggerApi.detach()
     console.log('PASS: independent CPU counters, first/disappeared samples, memory, profiling, and disposal')
   } finally {
     window.destroy()
