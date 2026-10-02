@@ -1,9 +1,18 @@
+import * as ApplicationMemoryUsage from '../ApplicationMemoryUsage/ApplicationMemoryUsage.ts'
 import * as ElectronApp from '../ElectronApp/ElectronApp.ts'
 import * as Locale from '../Locale/Locale.ts'
 import * as Platform from '../Platform/Platform.ts'
 import * as Sandbox from '../Sandbox/Sandbox.ts'
 
-export const enable = (parsedCliArgs) => {
+const getDisabledFeatures = () => {
+  const existingFeatures = ElectronApp.getCommandLineSwitchValue('disable-features')
+    .split(',')
+    .map((feature) => feature.trim())
+    .filter(Boolean)
+  return [...new Set([...existingFeatures, 'BackForwardCache', 'SpareRendererForSitePerProcess'])].join(',')
+}
+
+export const enable = (parsedCliArgs, memoryUsage = ApplicationMemoryUsage.Default) => {
   // command line switches
   if (parsedCliArgs.sandbox) {
     Sandbox.enableSandbox()
@@ -14,6 +23,12 @@ export const enable = (parsedCliArgs) => {
       // @ts-ignore
       ElectronApp.appendCommandLineSwitch('--disable-gpu-sandbox')
     }
+  }
+  if (memoryUsage === ApplicationMemoryUsage.Reduce) {
+    ElectronApp.appendCommandLineSwitch('in-process-gpu', undefined)
+    ElectronApp.appendCommandLineSwitch('enable-low-end-device-mode', undefined)
+    ElectronApp.appendCommandLineSwitch('disable-features', getDisabledFeatures())
+    ElectronApp.appendCommandLineSwitch('num-raster-threads', '1')
   }
   Locale.setLocale('en')
 }

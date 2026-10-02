@@ -1,6 +1,7 @@
 import * as Electron from 'electron'
 import unhandled from 'electron-unhandled' // TODO this might slow down initial startup
 import { spawn } from 'node:child_process'
+import * as ApplicationMemoryUsage from '../ApplicationMemoryUsage/ApplicationMemoryUsage.ts'
 import * as Cli from '../Cli/Cli.ts'
 import * as CommandLineSwitches from '../CommandLineSwitches/CommandLineSwitches.ts'
 import * as ElectronApp from '../ElectronApp/ElectronApp.ts'
@@ -79,7 +80,7 @@ export const hydrate = async (argv: readonly string[]) => {
   }
 
   // command line switches
-  CommandLineSwitches.enable(parsedCliArgs)
+  CommandLineSwitches.enable(parsedCliArgs, ApplicationMemoryUsage.getSetting())
 
   // protocol
   Protocol.enable(Electron.protocol)

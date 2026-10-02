@@ -48,6 +48,10 @@ export const getArgvConfigPath = () => {
   return Path.join(configDir, 'argv.json')
 }
 
+export const getUserSettingsPath = () => {
+  return Path.join(configDir, 'settings.json')
+}
+
 export const version = '0.0.0-dev'
 
 export const commit = 'unknown commit'
