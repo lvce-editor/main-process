@@ -103,66 +103,83 @@ const withTimeout = async <T>(promise: Promise<T>): Promise<T> => {
   }
 }
 
+const waitForPendingUtilities = async (): Promise<string[]> => {
+  // Utility RPC handshakes must finish before the corresponding profiler is stopped.
+  const pending = await Promise.allSettled(Array.from(pendingUtilities, (pending) => withTimeout(pending)))
+  return pending.flatMap((result) => (result.status === 'rejected' ? [String(result.reason)] : []))
+}
+
+const stopUtilityProfiles = async (): Promise<{ errors: string[]; profiles: { file: string; name: string }[] }> => {
+  const errors: string[] = []
+  const profiles: { file: string; name: string }[] = []
+  for (const utility of utilities) {
+    try {
+      const { profile } = await utility.connection.invoke('Profiler.stop')
+      writeFileSync(join(directory, utility.file), JSON.stringify(profile), { flag: 'wx' })
+      profiles.push({ file: utility.file, name: utility.name })
+    } catch (error) {
+      errors.push(`${utility.name}: ${error}`)
+    } finally {
+      utility.connection.close()
+    }
+  }
+  return { errors, profiles }
+}
+
+const stopTrace = async (): Promise<{ errors: string[]; trace: string | null }> => {
+  if (!recording) return { errors: [], trace: null }
+  const errors: string[] = []
+  try {
+    const usage = await Electron.contentTracing.getTraceBufferUsage()
+    if (usage.value >= 1) errors.push('CPU trace buffer filled before profiling completed')
+  } catch (error) {
+    errors.push(`CPU trace buffer usage: ${error}`)
+  }
+  try {
+    await withTimeout(Electron.contentTracing.stopRecording(join(directory, 'trace.json')))
+    recording = false
+    return { errors, trace: 'trace.json' }
+  } catch (error) {
+    errors.push(`CPU trace: ${error}`)
+    return { errors, trace: null }
+  }
+}
+
+const writeManifest = (errors: string[], trace: string | null, profiles: { file: string; name: string }[]): void => {
+  writeFileSync(
+    join(directory, 'manifest.json'),
+    JSON.stringify(
+      {
+        errors,
+        formatVersion: 1,
+        trace,
+        ...(trace && { traceTargets: ['main', 'renderer', 'web-workers'] }),
+        utilities: profiles,
+      },
+      null,
+      2,
+    ),
+    { flag: 'wx' },
+  )
+}
+
 const finish = async (failure: string): Promise<void> => {
   clearTimeout(watchdog)
   const errors = failure ? [failure] : []
-  const profiles: { file: string; name: string }[] = []
-  let trace: string | null = null
+  let profiles: { file: string; name: string }[] = []
   try {
-    // Utility RPC handshakes must finish before the corresponding profiler is stopped.
-    const pending = await Promise.allSettled(Array.from(pendingUtilities, (pending) => withTimeout(pending)))
-    for (const result of pending) {
-      if (result.status === 'rejected') errors.push(String(result.reason))
-    }
-
-    for (const utility of utilities) {
-      try {
-        const { profile } = await utility.connection.invoke('Profiler.stop')
-        writeFileSync(join(directory, utility.file), JSON.stringify(profile), { flag: 'wx' })
-        profiles.push({ file: utility.file, name: utility.name })
-      } catch (error) {
-        errors.push(`${utility.name}: ${error}`)
-      } finally {
-        utility.connection.close()
-      }
-    }
+    errors.push(...(await waitForPendingUtilities()))
+    const stoppedProfiles = await stopUtilityProfiles()
+    errors.push(...stoppedProfiles.errors)
+    profiles = stoppedProfiles.profiles
   } catch (error) {
     errors.push(String(error))
   }
-
-  if (recording) {
-    try {
-      const usage = await Electron.contentTracing.getTraceBufferUsage()
-      if (usage.value >= 1) errors.push('CPU trace buffer filled before profiling completed')
-    } catch (error) {
-      errors.push(`CPU trace buffer usage: ${error}`)
-    }
-    try {
-      await withTimeout(Electron.contentTracing.stopRecording(join(directory, 'trace.json')))
-      recording = false
-      trace = 'trace.json'
-    } catch (error) {
-      errors.push(`CPU trace: ${error}`)
-    }
-  }
-
+  const stoppedTrace = await stopTrace()
+  errors.push(...stoppedTrace.errors)
   for (const utility of utilities) utility.connection.close()
   try {
-    writeFileSync(
-      join(directory, 'manifest.json'),
-      JSON.stringify(
-        {
-          errors,
-          formatVersion: 1,
-          trace,
-          ...(trace && { traceTargets: ['main', 'renderer', 'web-workers'] }),
-          utilities: profiles,
-        },
-        null,
-        2,
-      ),
-      { flag: 'wx' },
-    )
+    writeManifest(errors, stoppedTrace.trace, profiles)
   } catch (error) {
     errors.push(`CPU profile manifest: ${error}`)
   } finally {

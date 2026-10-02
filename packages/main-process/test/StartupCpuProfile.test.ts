@@ -2,6 +2,7 @@ import { afterEach, beforeEach, expect, jest, test } from '@jest/globals'
 import { mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import type * as StartupCpuProfileModule from '../src/parts/StartupCpuProfile/StartupCpuProfile.ts'
 
 const testDirectory = mkdtempSync(join(tmpdir(), 'lvce-startup-cpu-profile-'))
 
@@ -21,7 +22,7 @@ const contentTracing = {
 
 jest.unstable_mockModule('electron', () => ({ app, contentTracing }))
 
-let StartupCpuProfile: typeof import('../src/parts/StartupCpuProfile/StartupCpuProfile.ts')
+let StartupCpuProfile: typeof StartupCpuProfileModule
 
 beforeEach(async () => {
   jest.useFakeTimers()
