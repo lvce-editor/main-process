@@ -106,37 +106,57 @@ const withTimeout = async <T>(promise: Promise<T>): Promise<T> => {
 const finish = async (failure: string): Promise<void> => {
   clearTimeout(watchdog)
   const errors = failure ? [failure] : []
+  const profiles: { file: string; name: string }[] = []
+  let trace: string | null = null
   try {
     // Utility RPC handshakes must finish before the corresponding profiler is stopped.
     const pending = await Promise.allSettled(Array.from(pendingUtilities, (pending) => withTimeout(pending)))
     for (const result of pending) {
       if (result.status === 'rejected') errors.push(String(result.reason))
     }
+
     for (const utility of utilities) {
       try {
         const { profile } = await utility.connection.invoke('Profiler.stop')
         writeFileSync(join(directory, utility.file), JSON.stringify(profile), { flag: 'wx' })
+        profiles.push({ file: utility.file, name: utility.name })
       } catch (error) {
         errors.push(`${utility.name}: ${error}`)
       } finally {
         utility.connection.close()
       }
     }
-    if (recording) {
+  } catch (error) {
+    errors.push(String(error))
+  }
+
+  if (recording) {
+    try {
       const usage = await Electron.contentTracing.getTraceBufferUsage()
       if (usage.value >= 1) errors.push('CPU trace buffer filled before profiling completed')
+    } catch (error) {
+      errors.push(`CPU trace buffer usage: ${error}`)
+    }
+    try {
       await withTimeout(Electron.contentTracing.stopRecording(join(directory, 'trace.json')))
       recording = false
+      trace = 'trace.json'
+    } catch (error) {
+      errors.push(`CPU trace: ${error}`)
     }
+  }
+
+  for (const utility of utilities) utility.connection.close()
+  try {
     writeFileSync(
       join(directory, 'manifest.json'),
       JSON.stringify(
         {
           errors,
           formatVersion: 1,
-          trace: 'trace.json',
-          traceTargets: ['main', 'renderer', 'web-workers'],
-          utilities: utilities.map(({ file, name }) => ({ file, name })),
+          trace,
+          ...(trace && { traceTargets: ['main', 'renderer', 'web-workers'] }),
+          utilities: profiles,
         },
         null,
         2,
@@ -144,9 +164,8 @@ const finish = async (failure: string): Promise<void> => {
       { flag: 'wx' },
     )
   } catch (error) {
-    errors.push(String(error))
+    errors.push(`CPU profile manifest: ${error}`)
   } finally {
-    for (const utility of utilities) utility.connection.close()
     console.log(`CPU profile: ${directory}`)
     if (errors.length > 0) console.error(errors.join('\n'))
     const code = errors.length > 0 ? 1 : 0
