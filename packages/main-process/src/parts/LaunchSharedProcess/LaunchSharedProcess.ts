@@ -9,9 +9,9 @@ import * as Logger from '../Logger/Logger.ts'
 import * as Performance from '../Performance/Performance.ts'
 import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMarkerType.ts'
 import * as Platform from '../Platform/Platform.ts'
-import * as StartupCpuProfile from '../StartupCpuProfile/StartupCpuProfile.ts'
 import * as Process from '../Process/Process.ts'
 import * as RequiresSocket from '../RequiresSocket/RequiresSocket.ts'
+import * as StartupCpuProfile from '../StartupCpuProfile/StartupCpuProfile.ts'
 
 const handleChildError = (error) => {
   Process.exit(ExitCode.Error)

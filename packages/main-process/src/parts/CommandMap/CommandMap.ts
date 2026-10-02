@@ -1,4 +1,3 @@
-import * as StartupCpuProfile from '../StartupCpuProfile/StartupCpuProfile.ts'
 import * as AppWindow from '../AppWindow/AppWindow.ts'
 import * as Beep from '../Beep/Beep.ts'
 import * as BrowserFind from '../BrowserFind/BrowserFind.ts'
@@ -40,12 +39,12 @@ import * as OpenExternal from '../OpenExternal/OpenExternal.ts'
 import * as Process from '../Process/Process.ts'
 import * as ProcessId from '../ProcessId/ProcessId.ts'
 import * as SecretStorage from '../SecretStorage/SecretStorage.ts'
+import * as StartupCpuProfile from '../StartupCpuProfile/StartupCpuProfile.ts'
 import * as TemporaryMessagePort from '../TemporaryMessagePort/TemporaryMessagePort.ts'
 import * as Trash from '../Trash/Trash.ts'
 import * as WebsitePasswords from '../WebsitePasswords/WebsitePasswords.ts'
 
 export const commandMap = {
-  'StartupCpuProfile.complete': StartupCpuProfile.complete,
   'AppWindow.createAppWindow': AppWindow.createAppWindow,
   'Beep.beep': Beep.beep,
   'BrowserFind.find': ElectronWebContentsViewFunctions.wrapBrowserViewCommand(BrowserFind.find),
@@ -183,6 +182,7 @@ export const commandMap = {
   'SecretStorage.get': SecretStorage.get,
   'SecretStorage.list': SecretStorage.list,
   'SecretStorage.store': SecretStorage.store,
+  'StartupCpuProfile.complete': StartupCpuProfile.complete,
   'TemporaryMessagePort.createPortTuple': TemporaryMessagePort.createPortTuple,
   'TemporaryMessagePort.dispose': TemporaryMessagePort.dispose,
   'TemporaryMessagePort.sendTo': TemporaryMessagePort.sendTo,
