@@ -12,6 +12,8 @@ let recording = false
 let finishing: Promise<void> | undefined
 let watchdog: ReturnType<typeof setTimeout> | undefined
 let utilityIndex = 0
+const profileOperationTimeoutMs = 120_000
+const profileReadinessTimeoutMs = 180_000
 const utilities: { name: string; file: string; connection: Awaited<ReturnType<typeof InspectorConnection.connect>> }[] = []
 const pendingUtilities = new Set<Promise<unknown>>()
 
@@ -37,7 +39,7 @@ export const configure = (args: any): void => {
     event.preventDefault()
     void complete('Application closed before diagnostics completed')
   })
-  watchdog = setTimeout(() => void complete('CPU profiling timed out waiting for editor readiness'), 60_000)
+  watchdog = setTimeout(() => void complete('CPU profiling timed out waiting for editor readiness'), profileReadinessTimeoutMs)
 }
 
 export const start = async (): Promise<void> => {
@@ -50,7 +52,7 @@ export const start = async (): Promise<void> => {
 }
 
 const waitForEndpoint = async (path: string): Promise<string> => {
-  const deadline = Date.now() + 10_000
+  const deadline = Date.now() + profileOperationTimeoutMs
   while (Date.now() < deadline && !finishing) {
     try {
       return await readFile(path, 'utf8')
@@ -95,7 +97,7 @@ const withTimeout = async <T>(promise: Promise<T>): Promise<T> => {
     return await Promise.race([
       promise,
       new Promise<never>((_resolve, reject) => {
-        timer = setTimeout(() => reject(new Error('CPU profile operation timed out')), 10_000)
+        timer = setTimeout(() => reject(new Error('CPU profile operation timed out')), profileOperationTimeoutMs)
       }),
     ])
   } finally {
