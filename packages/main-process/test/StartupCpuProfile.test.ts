@@ -60,7 +60,7 @@ test('writes a manifest that marks a timed out trace as missing', async () => {
 test('allows trace collection to finish after the previous operation timeout', async () => {
   StartupCpuProfile.configure({ 'cpu-profile': true, 'cpu-profile-dir': testDirectory, open: 'target.txt' })
   await StartupCpuProfile.start()
-  contentTracing.stopRecording.mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve('trace.json'), 60_000)))
+  contentTracing.stopRecording.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 60_000, 'trace.json')))
 
   const completion = StartupCpuProfile.complete()
   await jest.advanceTimersByTimeAsync(60_000)
