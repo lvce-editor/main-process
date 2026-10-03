@@ -44,7 +44,7 @@ test('writes a manifest that marks a timed out trace as missing', async () => {
   await StartupCpuProfile.start()
 
   const completion = StartupCpuProfile.complete('Diagnostics timed out')
-  await jest.advanceTimersByTimeAsync(10_000)
+  await jest.advanceTimersByTimeAsync(120_000)
   await completion
 
   const output = readdirSync(testDirectory).find((name) => name.startsWith('lvce-cpu-'))
@@ -54,5 +54,22 @@ test('writes a manifest that marks a timed out trace as missing', async () => {
   expect(manifest.trace).toBeNull()
   expect(manifest.traceTargets).toBeUndefined()
   expect(manifest.utilities).toEqual([])
+  expect(app.quit).toHaveBeenCalledTimes(1)
+})
+
+test('allows trace collection to finish after the previous operation timeout', async () => {
+  StartupCpuProfile.configure({ 'cpu-profile': true, 'cpu-profile-dir': testDirectory, open: 'target.txt' })
+  await StartupCpuProfile.start()
+  contentTracing.stopRecording.mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve('trace.json'), 60_000)))
+
+  const completion = StartupCpuProfile.complete()
+  await jest.advanceTimersByTimeAsync(60_000)
+  await completion
+
+  const output = readdirSync(testDirectory).find((name) => name.startsWith('lvce-cpu-'))
+  expect(output).toBeDefined()
+  const manifest = JSON.parse(readFileSync(join(testDirectory, output!, 'manifest.json'), 'utf8'))
+  expect(manifest.errors).toEqual([])
+  expect(manifest.trace).toBe('trace.json')
   expect(app.quit).toHaveBeenCalledTimes(1)
 })
