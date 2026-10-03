@@ -36,9 +36,11 @@ export const create = (webContents: Electron.WebContents) => {
     }
     const added = new Set(targetIds.filter((target) => target !== '' && !attempted.has(target)))
     if (added.size > 0) {
-      for (const target of added) attempted.add(target)
       const discovered = await WorkerThreadIds.get(webContents, added, controller.signal)
-      for (const [target, thread] of discovered) threads.set(target, thread)
+      for (const [target, thread] of discovered) {
+        attempted.add(target)
+        threads.set(target, thread)
+      }
     }
     const ticksPerSecond = await getClockTicks()
     if (controller.signal.aborted) return targetIds.map(() => null)
@@ -57,6 +59,7 @@ export const create = (webContents: Electron.WebContents) => {
           samples.set(target, current)
           return WorkerCpuSample.percentage(previous, current, ticksPerSecond)
         } catch {
+          attempted.delete(target)
           samples.delete(target)
           threads.delete(target)
           return null
