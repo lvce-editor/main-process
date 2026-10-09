@@ -4,6 +4,15 @@ import * as Scheme from '../Scheme/Scheme.ts'
 export const privilegedSchemes = [
   {
     privileges: {
+      corsEnabled: true,
+      secure: true,
+      standard: true,
+      supportFetchAPI: true,
+    },
+    scheme: Platform.fontScheme,
+  },
+  {
+    privileges: {
       codeCache: true,
       secure: true,
       standard: true,
