@@ -12,6 +12,7 @@
     "packages/*"
   ],
   "scripts": {
+    "test:font-source": "node scripts/test-font-source.mjs",
     "build": "node packages/build/src/build.js",
     "build:watch": "npm exec --workspace=packages/build -- esbuild --format=esm --bundle --external:node:buffer --external:electron --external:ws --external:node:* --watch packages/main-process/src/mainProcessMain.ts --outfile=.tmp/dist/dist/mainProcessMain.js",
     "dev:prepare": "node packages/local-dev/src/localDevMain.ts prepare",

@@ -58,6 +58,8 @@ export const commit = 'unknown commit'
 
 export const scheme = 'lvce-oss'
 
+export const fontScheme = `${scheme}-font`
+
 export const useIpcForResponse = JSON.parse('true')
 
 export const getSessionId = () => {
