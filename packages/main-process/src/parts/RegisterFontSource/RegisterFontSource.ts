@@ -3,8 +3,8 @@ import type { ParsedConfig } from '../GetOrCreateConfig/GetOrCreateConfig.ts'
 import * as Platform from '../Platform/Platform.ts'
 import * as Protocol from '../Protocol/Protocol.ts'
 
-// Only font loads are redirected. Fetches and worker requests keep their original
-// origin, response headers, and error handling in the existing protocol handler.
+// The packaged stylesheet uses this route directly. Existing font URLs, fetches,
+// and worker requests retain their original handler and response semantics.
 export const registerFontSource = (session: Electron.Session, config: ParsedConfig, root: string): boolean => {
   const fontPath = Object.keys(config.files).find((path) => path.endsWith('/fonts/FiraCode-VariableFont.ttf'))
   if (!fontPath || typeof session.protocol.registerSource !== 'function') {
@@ -26,14 +26,6 @@ export const registerFontSource = (session: Electron.Session, config: ParsedConf
         },
       },
     ],
-  })
-  session.webRequest.onBeforeRequest({ urls: [`${origin}${fontPath}*`] }, (details, callback) => {
-    const url = new URL(details.url)
-    if (details.resourceType === 'font' && details.method === 'GET' && url.pathname === fontPath) {
-      callback({ redirectURL: `${Platform.fontScheme}://-/fonts/FiraCode-VariableFont.ttf${url.search}` })
-      return
-    }
-    callback({})
   })
   return true
 }

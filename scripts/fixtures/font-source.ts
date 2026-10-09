@@ -9,6 +9,7 @@ import { registerFontSource } from '../../packages/main-process/src/parts/Regist
 import * as Root from '../../packages/main-process/src/parts/Root/Root.ts'
 
 Protocol.enable(protocol)
+app.on('window-all-closed', () => {})
 
 const main = async (): Promise<void> => {
   await app.whenReady()
@@ -28,6 +29,11 @@ const main = async (): Promise<void> => {
   assert.equal(registerFontSource(ses, config, Root.root), true)
   assert.equal(untouchedSession.protocol.getSource(Platform.fontScheme), null)
   const handled: string[] = []
+  let nativeFontRequests = 0
+  ses.webRequest.onBeforeRequest({ urls: [`${Platform.fontScheme}://-/*`] }, (_details, callback) => {
+    nativeFontRequests++
+    callback({})
+  })
   ses.protocol.handle(Platform.scheme, async (request) => {
     handled.push(request.url)
     if (new URL(request.url).pathname === fontPath) {
@@ -58,9 +64,20 @@ const main = async (): Promise<void> => {
   try {
     await window.loadURL(`${origin}/`)
     assert.equal(await window.webContents.executeJavaScript('crossOriginIsolated'), true)
-    const loaded = await window.webContents.executeJavaScript(`new FontFace('NativeFont', 'url(${fontPath})').load().then(font => font.status)`)
+    const loaded = await window.webContents.executeJavaScript(
+      `new FontFace('NativeFont', 'url(${Platform.fontScheme}://-/fonts/FiraCode-VariableFont.ttf)').load().then(font => font.status)`,
+    )
     assert.equal(loaded, 'loaded')
     assert.equal(handled.includes(`${origin}${fontPath}`), false, 'window font loads must bypass the JavaScript handler')
+    const coldRequests = nativeFontRequests
+    assert.ok(coldRequests > 0)
+    assert.equal(
+      await window.webContents.executeJavaScript(
+        `new FontFace('WarmNativeFont', 'url(${Platform.fontScheme}://-/fonts/FiraCode-VariableFont.ttf)').load().then(font => font.status)`,
+      ),
+      'loaded',
+    )
+    assert.equal(nativeFontRequests, coldRequests, 'warm font loads must reuse the font cache')
     const response = await window.webContents.executeJavaScript(`fetch(${JSON.stringify(fontPath)}).then(async response => ({
       status: response.status, policy: response.headers.get('cross-origin-resource-policy'), size: (await response.arrayBuffer()).byteLength
     }))`)
