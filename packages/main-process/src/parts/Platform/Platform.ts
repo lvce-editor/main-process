@@ -60,6 +60,8 @@ export const scheme = 'lvce-oss'
 
 export const fontScheme = `${scheme}-font`
 
+export const resourceScheme = `${scheme}-resource`
+
 export const useIpcForResponse = JSON.parse('true')
 
 export const getSessionId = () => {

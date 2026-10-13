@@ -9,6 +9,14 @@ The `main-process` is a NodeJS process that runs Electron.
 
 ## Profiling the main process
 
+Set `"application.useProtocolRegisterSource": true` in the application's `settings.json`
+and restart to load packaged resources through Electron's native directory source API.
+The default is `false`; missing or invalid settings leave it disabled. Both modes keep
+the existing application URLs, response security headers, and dynamic `/remote` IPC
+loading. The application handler forwards bundled requests to a separate source scheme
+in enabled mode, so it still runs on the main thread. Development builds use their
+existing IPC loader, and runtimes without `registerSource` use the existing file loader.
+
 ```sh
 killall electron &&
 npx electron --wait src/profile.js
