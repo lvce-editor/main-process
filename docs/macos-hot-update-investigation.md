@@ -31,7 +31,7 @@ hot-update PR found in the initial related-work search:
 | lvce-editor      | `06875a31d96d29b0b62f8f5c2e67cb096e48c414` |
 
 The existing macOS updater was introduced in main-process PR #428 and refined in
-#429, #430 and #431. The experiment uses its existing `MacUpdate.applyUpdate`
+PRs 429, 430 and 431. The experiment uses its existing `MacUpdate.applyUpdate`
 implementation; it does not bypass or modify the production updater.
 
 ## What currently survives a worker restart
