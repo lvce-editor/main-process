@@ -14,10 +14,12 @@ relaunch. There is no evidence here that macOS universally requires an applicati
 restart merely to rename a staged bundle into place. Installation on disk and
 activation of every running component are separate obligations.
 
-A minimal packaged Electron probe accompanies this report. Its macOS CI result
-must be inspected before drawing a positive conclusion about live replacement.
-It uses temporary, ad-hoc signed bundles, not the signed/notarized LVCE release.
-It does not enable a new product update path.
+A minimal packaged Electron probe passed on the macOS CI runner: two successive
+bundle replacements activated new worker code without restarting Electron, and
+a later cold launch used the final installed version. This demonstrates a
+possible case, not a universal OS guarantee. The probe uses temporary, ad-hoc
+signed bundles, not the signed/notarized LVCE release. It does not enable a new
+product update path.
 
 ## Source baseline
 
@@ -115,6 +117,33 @@ text is not a proof of restoring real unsaved editor documents or extensions.
 Ad-hoc signing and direct executable launch do not exercise Gatekeeper,
 notarization, LaunchServices, application translocation or an official DMG update.
 No packaged-LVCE hot-update prototype is claimed.
+
+## Measured result
+
+[PR run 39466909565, macOS job 118780564706](https://github.com/lvce-editor/main-process/actions/runs/39466909565/job/118780564706)
+passed the packaged probe on `macos-26` with Electron 44.8.0, validating PR head
+`4b0d9a68a21b304337e4bdf2972d0e5db926bc8e`. All five intended platform jobs
+passed at that head.
+
+| Phase                   | Main PID | Main startup/app version | Worker versions in both pages |
+| ----------------------- | -------- | ------------------------ | ----------------------------- |
+| Initial launch          | 2585     | 1.0.1                    | 1, 1                          |
+| First live replacement  | 2585     | 1.0.1                    | 2, 2                          |
+| Second live replacement | 2585     | 1.0.1                    | 3, 3                          |
+| Subsequent cold launch  | 2607     | 1.0.3                    | 3, 3                          |
+
+The main script SHA-256 was identical across all three bundles:
+`964386f409e31e1fc946b1b175cc7e385bef6cc0b327044bb725525cb9fbe291`.
+Both pages retained their original identity values and input text through both
+live replacements. Fresh configuration reported generations 2 and 3 before the
+corresponding workers returned their matching generation markers. Electron's
+`app.getVersion()` remained 1.0.1 during live replacement: version reporting also
+needs an explicit running-versus-installed generation model in a future design.
+
+This is positive evidence for the limited bundle-replacement premise. It does
+not establish that the existing LVCE hot-reload command can apply an update, or
+that a production signed/notarized LVCE installation can safely do so. The gaps
+and acceptance gates below remain prerequisites for a feature implementation.
 
 ## Conservative eligibility for a future implementation
 
