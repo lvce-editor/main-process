@@ -13,8 +13,10 @@ import * as LifeCycle from '../LifeCycle/LifeCycle.ts'
 import * as Logger from '../Logger/Logger.ts'
 import * as Performance from '../Performance/Performance.ts'
 import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMarkerType.ts'
+import * as RestartApplication from '../RestartApplication/RestartApplication.ts'
 import * as ShowWindowWhenLoaded from '../ShowWindowWhenLoaded/ShowWindowWhenLoaded.ts'
 import * as StartupCpuProfile from '../StartupCpuProfile/StartupCpuProfile.ts'
+import * as TrackWindowRenderer from '../TrackWindowRenderer/TrackWindowRenderer.ts'
 import { VError } from '../VError/VError.ts'
 import { WindowLoadError } from '../WindowLoadError/WindowLoadError.ts'
 import * as WindowLogger from '../WindowLogger/WindowLogger.ts'
@@ -69,6 +71,10 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
     },
   })
   const windowStateTracker = promptMode || StartupCpuProfile.isEnabled() ? undefined : WindowState.trackWindowState(window)
+  const isRendererAvailable = TrackWindowRenderer.trackWindowRenderer(window.webContents, windowOptions.webPreferences?.preload)
+  window.webContents.on('preload-error', (_event, path, error) => {
+    Logger.error(`Failed to load window preload ${path}`, error)
+  })
   Performance.mark(PerformanceMarkerType.DidCreateCodeWindow)
   WindowLogger.addListener(window.id, window.webContents)
   addDevDiagnostics(window)
@@ -104,6 +110,10 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
         return
       }
       await WindowState.writeWindowState(windowStateTracker.getState())
+    },
+    {
+      isRendererAvailable,
+      onCloseCancelled: RestartApplication.cancel,
     },
   )
   window.on('close', handleWindowClose)

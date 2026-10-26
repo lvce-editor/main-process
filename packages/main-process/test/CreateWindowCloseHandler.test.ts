@@ -23,6 +23,28 @@ afterEach(() => {
   jest.useRealTimers()
 })
 
+test('closes after a known renderer startup failure without waiting for unavailable RPC', async () => {
+  const onClose = jest.fn(async () => {})
+  const handle = createWindowCloseHandler({ close, off }, rpc, onError, dispose, onClose, { isRendererAvailable: () => false })
+  handle({ preventDefault })
+  await flushClose()
+  expect(permission).not.toHaveBeenCalled()
+  expect(invoke).not.toHaveBeenCalled()
+  expect(onClose).toHaveBeenCalledTimes(1)
+  expect(dispose).toHaveBeenCalledTimes(1)
+  expect(close).toHaveBeenCalledTimes(1)
+})
+
+test('cancels a requested restart when the user declines closing unsaved editors', async () => {
+  const onCloseCancelled = jest.fn()
+  permission.mockResolvedValue(false)
+  const handle = createWindowCloseHandler({ close, off }, rpc, onError, dispose, undefined, { onCloseCancelled })
+  handle({ preventDefault })
+  await flushClose()
+  expect(onCloseCancelled).toHaveBeenCalledTimes(1)
+  expect(close).not.toHaveBeenCalled()
+})
+
 test('waits for renderer state persistence before closing the window', async () => {
   let resolveSave: () => void = () => {}
   invoke.mockReturnValue(
