@@ -8,6 +8,7 @@ beforeEach(() => {
 
 jest.unstable_mockModule('electron', () => {
   return {
+    app: {},
     BrowserWindow: {
       getFocusedWindow: jest.fn(() => ({})),
     },
