@@ -1,7 +1,9 @@
 import * as Electron from 'electron'
 import * as BrowserFullWidthGesture from '../BrowserFullWidthGesture/BrowserFullWidthGesture.ts'
 import * as GetWindowById from '../GetWindowById/GetWindowById.ts'
+import * as HasPackageChanged from '../HasPackageChanged/HasPackageChanged.ts'
 import * as Logger from '../Logger/Logger.ts'
+import * as RestartApplication from '../RestartApplication/RestartApplication.ts'
 
 const devtoolsBeforeInputListeners = new WeakMap<any, any>()
 const devtoolsOptions = {
@@ -86,6 +88,10 @@ const toggleFullScreen = (browserWindow: Electron.BrowserWindow) => {
 export const executeWindowFunction = (browserWindowId, key, modifier = 'ctrl=twice') => {
   const browserWindow = getBrowserWindow(browserWindowId)
   if (!browserWindow) {
+    return
+  }
+  if (key === 'reload' && HasPackageChanged.hasPackageChanged()) {
+    RestartApplication.restart()
     return
   }
   if (key === 'enableBrowserFullWidthGesture' || key === 'disableBrowserFullWidthGesture') {

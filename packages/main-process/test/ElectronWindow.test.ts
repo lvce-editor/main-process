@@ -1,6 +1,11 @@
 import { beforeEach, expect, jest, test } from '@jest/globals'
 
 let mockWindow: any = undefined
+const hasPackageChanged = jest.fn(() => false)
+const restart = jest.fn()
+
+jest.unstable_mockModule('../src/parts/HasPackageChanged/HasPackageChanged.ts', () => ({ hasPackageChanged }))
+jest.unstable_mockModule('../src/parts/RestartApplication/RestartApplication.ts', () => ({ restart }))
 
 jest.unstable_mockModule('electron', () => {
   return {
@@ -22,6 +27,7 @@ const ElectronWindow = await import('../src/parts/ElectronWindow/ElectronWindow.
 beforeEach(() => {
   jest.resetAllMocks()
   mockWindow = undefined
+  hasPackageChanged.mockReturnValue(false)
   // @ts-expect-error
   electron.BrowserWindow.fromId.mockImplementation((windowId: number) => {
     if (!mockWindow || mockWindow.id !== windowId) {
@@ -31,6 +37,21 @@ beforeEach(() => {
   })
   // @ts-expect-error
   electron.BrowserWindow.getFocusedWindow.mockImplementation(() => undefined)
+})
+
+test('reloads the current window when its installed build is unchanged', () => {
+  mockWindow = { id: 1, reload: jest.fn() }
+  ElectronWindow.executeWindowFunction(1, 'reload')
+  expect(mockWindow.reload).toHaveBeenCalledTimes(1)
+  expect(restart).not.toHaveBeenCalled()
+})
+
+test('restarts the application instead of reloading with removed preload and asset paths after an update', () => {
+  mockWindow = { id: 1, reload: jest.fn() }
+  hasPackageChanged.mockReturnValue(true)
+  ElectronWindow.executeWindowFunction(1, 'reload')
+  expect(mockWindow.reload).not.toHaveBeenCalled()
+  expect(restart).toHaveBeenCalledTimes(1)
 })
 
 test('executeWindowFunction - toggleDevtools - no window', () => {

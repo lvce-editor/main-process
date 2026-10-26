@@ -32,7 +32,8 @@
     "test:browser-period": "node scripts/test-browser-period.mjs",
     "test:worker-memory": "node scripts/test-worker-memory.mjs",
     "test:startup-cpu-profile": "node scripts/test-startup-cpu-profile.mjs",
-    "test:worker-cpu": "node scripts/test-worker-cpu.mjs"
+    "test:worker-cpu": "node scripts/test-worker-cpu.mjs",
+    "test:update-restart": "node scripts/test-update-restart.mjs"
   },
   "prettier": {
     "semi": false,

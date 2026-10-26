@@ -11,6 +11,11 @@ interface RendererRpc {
   invoke(method: 'Window.prepareClose' | 'Window.canClose'): Promise<unknown>
 }
 
+interface CloseOptions {
+  readonly isRendererAvailable?: () => boolean
+  readonly onCloseCancelled?: () => void
+}
+
 const closePreparationTimeout = 1000
 const closeCallbackTimeout = 1000
 const disposedRenderFrameError = 'Render frame was disposed before WebFrameMain could be accessed'
@@ -49,6 +54,7 @@ export const createWindowCloseHandler = (
   onError: (error: unknown) => void,
   dispose: () => void = (): void => {},
   onClose: () => Promise<void> = async (): Promise<void> => {},
+  { isRendererAvailable = (): boolean => true, onCloseCancelled = (): void => {} }: CloseOptions = {},
 ): ((event: CloseEvent) => void) => {
   let closePending = false
 
@@ -60,11 +66,13 @@ export const createWindowCloseHandler = (
     closePending = true
 
     void (async (): Promise<void> => {
+      const rendererAvailable = isRendererAvailable()
       // Keep user confirmation outside the bounded, best-effort state persistence.
       try {
-        const allowed = await rpc.invoke('Window.canClose')
+        const allowed = rendererAvailable ? await rpc.invoke('Window.canClose') : true
         if (allowed === false) {
           closePending = false
+          onCloseCancelled()
           return
         }
       } catch (error) {
@@ -72,12 +80,15 @@ export const createWindowCloseHandler = (
         const legacyRenderer = message === 'Command not found Window.canClose'
         if (!legacyRenderer && !isDisposedRenderFrameError(error)) {
           closePending = false
+          onCloseCancelled()
           onError(error)
           return
         }
       }
       try {
-        await prepareClose(rpc)
+        if (rendererAvailable) {
+          await prepareClose(rpc)
+        }
       } catch (error) {
         if (!isDisposedRenderFrameError(error)) {
           onError(error)
