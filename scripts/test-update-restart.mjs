@@ -2,7 +2,7 @@ import { build } from 'esbuild'
 import electron from 'electron'
 import assert from 'node:assert/strict'
 import { spawn } from 'node:child_process'
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { setTimeout } from 'node:timers/promises'
@@ -30,7 +30,20 @@ try {
       },
     ],
   })
-  for (const mode of ['restart', 'preload-failure']) {
+  // Generate different hashed lazy modules, as a new packaged build does.
+  for (const generation of ['old', 'new']) {
+    await build({
+      bundle: true,
+      splitting: true,
+      entryPoints: ['node_modules/@lvce-editor/shared-process/src/sharedProcessMain.js'],
+      external: ['electron'],
+      format: 'esm',
+      outdir: join(directory, generation),
+      platform: 'node',
+      banner: { js: `// ${generation} package generation` },
+    })
+  }
+  for (const mode of ['restart', 'updated-close', 'normal-close', 'preload-failure']) {
     const root = join(directory, mode)
     await mkdir(join(root, 'static', 'old'), { recursive: true })
     await writeFile(
@@ -49,17 +62,31 @@ try {
         headers: [{ 'Content-Type': 'text/html' }, { 'Content-Type': 'text/javascript' }],
       }),
     )
-    const env = { ...process.env, LVCE_ROOT: root }
+    await cp(join(directory, 'old'), join(root, 'shared-process'), { recursive: true })
+    await cp(join(directory, 'new'), join(root, 'new-shared-process'), { recursive: true })
+    await writeFile(join(root, 'package.json'), '{"type":"module"}')
+    const env = { ...process.env, LVCE_ROOT: root, LVCE_SHARED_PROCESS_PATH: join(root, 'shared-process', 'sharedProcessMain.js') }
     delete env.ELECTRON_RUN_AS_NODE
     for (const kind of ['CONFIG', 'DATA', 'CACHE', 'STATE']) env[`XDG_${kind}_HOME`] = join(root, kind.toLowerCase())
-    const child = spawn(electron, [outfile, '--no-sandbox', `--user-data-dir=${join(root, 'profile')}`, mode], {
-      env,
-      stdio: 'inherit',
-      detached: true,
-    })
+    let output = ''
+    const child = spawn(
+      electron,
+      [outfile, '--no-sandbox', `--user-data-dir=${join(root, 'profile')}`, '--ipc-type=electron-utility-process', mode],
+      {
+        env,
+        stdio: ['ignore', 'pipe', 'pipe'],
+        detached: true,
+      },
+    )
+    for (const stream of [child.stdout, child.stderr]) {
+      stream.on('data', (data) => {
+        output += data
+        process.stderr.write(data)
+      })
+    }
     let exit
     const exited = new Promise((resolve) =>
-      child.once('exit', (code, signal) => {
+      child.once('close', (code, signal) => {
         exit = { code, signal }
         resolve()
       }),
@@ -80,6 +107,7 @@ try {
         }),
       ])
       assert.equal(exit.code, 0)
+      assert.doesNotMatch(output, /ERR_MODULE_NOT_FOUND|Failed to load command/)
       console.log(`PASS ${mode}: ${success}`)
     } finally {
       const restartedPid = Number(await readFile(join(root, 'pid'), 'utf8').catch(() => 0))

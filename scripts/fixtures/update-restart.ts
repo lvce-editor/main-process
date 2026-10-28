@@ -1,26 +1,37 @@
 import { app, BrowserWindow, protocol } from 'electron'
 import assert from 'node:assert/strict'
 import { existsSync, writeFileSync } from 'node:fs'
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { commandMapRef } from '../../packages/main-process/src/parts/CommandMapRef/CommandMapRef.ts'
+import { handleWindowAllClosed } from '../../packages/main-process/src/parts/HandleWindowAllClosed/HandleWindowAllClosed.ts'
 import { createElectronSession } from '../../packages/main-process/src/parts/CreateElectronSession/CreateElectronSession.ts'
 import { createWindowCloseHandler } from '../../packages/main-process/src/parts/CreateWindowCloseHandler/CreateWindowCloseHandler.ts'
 import { executeWindowFunction } from '../../packages/main-process/src/parts/ElectronWindow/ElectronWindow.ts'
 import { getOrCreateConfig } from '../../packages/main-process/src/parts/GetOrCreateConfig/GetOrCreateConfig.ts'
+import * as IpcChildType from '../../packages/main-process/src/parts/IpcChildType/IpcChildType.ts'
 import * as Platform from '../../packages/main-process/src/parts/Platform/Platform.ts'
 import { enable } from '../../packages/main-process/src/parts/Protocol/Protocol.ts'
 import * as RestartApplication from '../../packages/main-process/src/parts/RestartApplication/RestartApplication.ts'
 import { root } from '../../packages/main-process/src/parts/Root/Root.ts'
+import * as SharedProcess from '../../packages/main-process/src/parts/SharedProcess/SharedProcess.ts'
 import { trackWindowRenderer } from '../../packages/main-process/src/parts/TrackWindowRenderer/TrackWindowRenderer.ts'
 
 enable(protocol)
-app.on('window-all-closed', () => setImmediate(() => app.quit()))
+app.on('window-all-closed', handleWindowAllClosed)
+commandMapRef['Exit.exit'] = () => {
+  writeFileSync(join(root, 'shared-close'), 'real shared-process close command executed')
+  setImmediate(() => app.quit())
+}
+commandMapRef['Process.writeStdout'] = (value) => process.stdout.write(value)
+commandMapRef['Process.writeStderr'] = (value) => process.stderr.write(value)
 const marker = join(root, 'restarting')
 const mode = process.argv.at(-1)
 
 const main = async (): Promise<void> => {
   await app.whenReady()
   writeFileSync(join(root, 'pid'), String(process.pid))
+  await SharedProcess.getOrCreate({ method: IpcChildType.ElectronUtilityProcess })
   const restarted = existsSync(marker)
   const commit = restarted ? 'new' : 'old'
   const config = getOrCreateConfig()
@@ -73,6 +84,14 @@ const main = async (): Promise<void> => {
     app.quit()
     return
   }
+  if (mode === 'normal-close') {
+    app.once('will-quit', () => {
+      assert.equal(existsSync(join(root, 'shared-close')), true)
+      writeFileSync(join(root, 'success'), 'normal close reached the real shared-process command')
+    })
+    window.close()
+    return
+  }
   const reloaded = new Promise<void>((resolve) => window.webContents.once('did-finish-load', resolve))
   executeWindowFunction(window.id, 'reload')
   await reloaded
@@ -87,6 +106,14 @@ const main = async (): Promise<void> => {
   const manifest = JSON.parse(await readFile(join(root, 'config.json'), 'utf8'))
   await writeFile(join(root, 'config.json'), JSON.stringify({ ...manifest, commit: 'new', files: { '/index.html': 0, '/new/app.js': 1 } }))
   await rm(join(root, 'static', 'old'), { recursive: true })
+  await rm(join(root, 'shared-process'), { recursive: true })
+  await cp(join(root, 'new-shared-process'), join(root, 'shared-process'), { recursive: true })
+
+  if (mode === 'updated-close') {
+    app.once('will-quit', () => writeFileSync(join(root, 'success'), 'updated package closed without importing obsolete shared-process modules'))
+    window.close()
+    return
+  }
 
   await window.webContents.executeJavaScript('globalThis.closeAllowed = false')
   executeWindowFunction(window.id, 'reload')
