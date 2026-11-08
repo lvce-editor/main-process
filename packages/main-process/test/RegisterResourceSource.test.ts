@@ -1,4 +1,5 @@
 import { expect, test } from '@jest/globals'
+import { join } from 'node:path'
 import * as Platform from '../src/parts/Platform/Platform.ts'
 import * as RegisterResourceSource from '../src/parts/RegisterResourceSource/RegisterResourceSource.ts'
 
@@ -6,7 +7,9 @@ test('registerResourceSource - allows the application origin to load native reso
   const calls: unknown[] = []
   const session = {
     protocol: {
-      registerSource: (...args: unknown[]) => calls.push(args),
+      registerSource: (...args: unknown[]) => {
+        calls.push(args)
+      },
     },
   } as unknown as Electron.Session
   RegisterResourceSource.registerResourceSource(session, { files: {}, headers: [] }, '/app', async () => new Response())
@@ -18,7 +21,7 @@ test('registerResourceSource - allows the application origin to load native reso
           {
             source: {
               headers: { 'Access-Control-Allow-Origin': `${Platform.scheme}://-` },
-              root: '/app/static',
+              root: join('/app', 'static'),
               type: 'directory',
             },
           },
