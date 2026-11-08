@@ -13,7 +13,15 @@ export const registerResourceSource = (
   handleRequest: (request: Request) => Promise<Response>,
 ): ((request: Request) => Promise<Response>) => {
   session.protocol.registerSource(Platform.resourceScheme, {
-    routes: [{ source: { root: join(root, 'static'), type: 'directory' } }],
+    routes: [
+      {
+        source: {
+          headers: { 'Access-Control-Allow-Origin': `${Platform.scheme}://-` },
+          root: join(root, 'static'),
+          type: 'directory',
+        },
+      },
+    ],
   })
   return async (request: Request): Promise<Response> => {
     const url = new URL(request.url)
