@@ -43,11 +43,11 @@ try {
     outputs.push(output)
     const manifest = JSON.parse(await readFile(join(output, 'manifest.json'), 'utf8'))
     assert.deepEqual(manifest.errors, mode === 'failure' ? ['diagnostic provider unavailable'] : [])
-    const trace = JSON.parse(await readFile(join(output, manifest.trace), 'utf8'))
-    const names = new Set(
-      trace.traceEvents.flatMap((event) => (event.args?.data?.cpuProfile?.nodes || []).map((node) => node.callFrame.functionName)),
-    )
-    for (const name of ['mainBusy', 'rendererBusy', 'workerBusy']) assert.ok(names.has(name), `Missing sampled function ${name}`)
+    // Electron 45 writes contentTracing output as Perfetto protobuf instead of legacy JSON.
+    const trace = await readFile(join(output, manifest.trace))
+    for (const name of ['mainBusy', 'rendererBusy', 'workerBusy']) {
+      assert.ok(trace.includes(Buffer.from(name)), `Missing sampled function ${name}`)
+    }
     assert.equal(manifest.utilities.length, 1)
     const profile = JSON.parse(await readFile(join(output, manifest.utilities[0].file), 'utf8'))
     const busyNodes = new Set(profile.nodes.filter((node) => node.callFrame.functionName === 'utilityBusy').map((node) => node.id))
