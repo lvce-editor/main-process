@@ -15,9 +15,9 @@
     "@rollup/plugin-babel": "^7.1.0",
     "@rollup/plugin-commonjs": "^29.0.3",
     "@rollup/plugin-node-resolve": "^16.0.3",
-    "@types/node": "^22.9.0",
-    "esbuild": "^0.28.1",
-    "execa": "^10.0.0",
-    "rollup": "^4.62.2"
+    "@types/node": "^22.20.5",
+    "esbuild": "^0.28.2",
+    "execa": "^10.2.1",
+    "rollup": "^4.68.8"
   }
 }
