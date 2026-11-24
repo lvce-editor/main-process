@@ -18,6 +18,7 @@ import * as ShowWindowWhenLoaded from '../ShowWindowWhenLoaded/ShowWindowWhenLoa
 import * as StartupCpuProfile from '../StartupCpuProfile/StartupCpuProfile.ts'
 import * as TrackWindowRenderer from '../TrackWindowRenderer/TrackWindowRenderer.ts'
 import { VError } from '../VError/VError.ts'
+import * as WindowAppearance from '../WindowAppearance/WindowAppearance.ts'
 import { WindowLoadError } from '../WindowLoadError/WindowLoadError.ts'
 import * as WindowLogger from '../WindowLogger/WindowLogger.ts'
 import * as GetRestoredWindowOptions from '../WindowState/GetRestoredWindowOptions.ts'
@@ -61,15 +62,19 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
   const savedWindowState = promptMode || StartupCpuProfile.isEnabled() ? undefined : await WindowState.readWindowState()
   const workArea = screen.getPrimaryDisplay().workAreaSize
   const restoredWindowOptions = GetRestoredWindowOptions.getRestoredWindowOptions(savedWindowState, workArea)
+  const { appearanceByPath, ...browserWindowOptions } = windowOptions
   Performance.mark(PerformanceMarkerType.WillCreateCodeWindow)
   const window = new BrowserWindow({
-    ...windowOptions,
+    ...browserWindowOptions,
     ...restoredWindowOptions,
     webPreferences: {
       ...windowOptions.webPreferences,
       session,
     },
   })
+  if (appearanceByPath) {
+    WindowAppearance.track(window, browserWindowOptions, appearanceByPath, url)
+  }
   const windowStateTracker = promptMode || StartupCpuProfile.isEnabled() ? undefined : WindowState.trackWindowState(window)
   const isRendererAvailable = TrackWindowRenderer.trackWindowRenderer(window.webContents, windowOptions.webPreferences?.preload)
   window.webContents.on('preload-error', (_event, path, error) => {
