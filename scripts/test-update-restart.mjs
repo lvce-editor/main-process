@@ -6,6 +6,7 @@ import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { setTimeout } from 'node:timers/promises'
+import { RendererWorker } from '../packages/main-process/src/parts/IpcId/IpcId.ts'
 
 const directory = await mkdtemp(join(tmpdir(), 'lvce-update-restart-'))
 try {
@@ -43,14 +44,18 @@ try {
       banner: { js: `// ${generation} package generation` },
     })
   }
-  for (const mode of ['restart', 'updated-close', 'normal-close', 'preload-failure']) {
+  for (const mode of ['restart', 'updated-close', 'normal-close', 'startup-close', 'preload-failure']) {
     const root = join(directory, mode)
     await mkdir(join(root, 'static', 'old'), { recursive: true })
     await writeFile(
       join(root, 'static', 'old', 'preload.cjs'),
-      `document.addEventListener('DOMContentLoaded', () => {
-      document.documentElement.dataset.preload = location.href.includes('lvce-oss:') ? require('node:path').basename(require('node:path').dirname(__filename)) : 'unexpected'
-    })`,
+      `const { ipcRenderer } = require('electron')
+      document.addEventListener('DOMContentLoaded', () => {
+        document.documentElement.dataset.preload = location.href.includes('lvce-oss:') ? require('node:path').basename(require('node:path').dirname(__filename)) : 'unexpected'
+        if (${JSON.stringify(mode)} !== 'startup-close') {
+          ipcRenderer.postMessage('port', { method: 'CreateMessagePort.createMessagePort', params: [${RendererWorker}] })
+        }
+      })`,
     )
     await writeFile(join(root, 'static', 'old', 'app.js'), "globalThis.loadedBuild = 'old'; globalThis.closeAllowed = true")
     await writeFile(join(root, 'static', 'index.html'), '<html><head><script src="/old/app.js"></script></head><body>Editor loaded</body></html>')

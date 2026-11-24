@@ -39,6 +39,7 @@ const main = async (): Promise<void> => {
   const preload = join(root, 'static', commit, 'preload.cjs')
   const window = new BrowserWindow({ show: false, webPreferences: { preload, sandbox: false, session: createElectronSession() } })
   const isRendererAvailable = trackWindowRenderer(window.webContents, preload)
+  const connected = new Promise<void>((resolve) => window.webContents.ipc.once('port', () => resolve()))
   const cancelled = Promise.withResolvers<void>()
   let rpcCalls = 0
   const closeHandler = createWindowCloseHandler(
@@ -47,6 +48,9 @@ const main = async (): Promise<void> => {
       invoke: async (method) => {
         rpcCalls++
         if (method === 'Window.canClose') {
+          if (mode === 'startup-close') {
+            return new Promise(() => {})
+          }
           return window.webContents.executeJavaScript('globalThis.closeAllowed')
         }
         await writeFile(join(root, 'saved'), 'saved before relaunch')
@@ -76,6 +80,18 @@ const main = async (): Promise<void> => {
     return
   }
   await window.loadURL(`${Platform.scheme}://-/`)
+  if (mode === 'startup-close') {
+    window.show()
+    assert.equal(window.isVisible(), true)
+    app.once('will-quit', () => {
+      assert.equal(rpcCalls, 0, 'closing before the renderer connects must not wait for close RPC')
+      writeFileSync(join(root, 'success'), 'native window closed before renderer RPC connection')
+    })
+    window.close()
+    return
+  }
+  await connected
+  assert.equal(isRendererAvailable(), true)
   assert.equal(await window.webContents.executeJavaScript('document.documentElement.dataset.preload'), commit)
   assert.equal(await window.webContents.executeJavaScript('globalThis.loadedBuild'), commit)
   if (restarted) {
@@ -86,6 +102,7 @@ const main = async (): Promise<void> => {
   }
   if (mode === 'normal-close') {
     app.once('will-quit', () => {
+      assert.equal(rpcCalls, 2, 'a connected renderer must confirm close and persist its state')
       assert.equal(existsSync(join(root, 'shared-close')), true)
       writeFileSync(join(root, 'success'), 'normal close reached the real shared-process command')
     })
@@ -93,8 +110,9 @@ const main = async (): Promise<void> => {
     return
   }
   const reloaded = new Promise<void>((resolve) => window.webContents.once('did-finish-load', resolve))
+  const reconnected = new Promise<void>((resolve) => window.webContents.ipc.once('port', () => resolve()))
   executeWindowFunction(window.id, 'reload')
-  await reloaded
+  await Promise.all([reloaded, reconnected])
   assert.equal(await window.webContents.executeJavaScript('globalThis.loadedBuild'), 'old')
 
   // Replace the build and remove its old preload exactly as package installation does.
