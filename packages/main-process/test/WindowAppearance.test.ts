@@ -9,29 +9,28 @@ const createWindow = () => ({
   webContents: new EventEmitter(),
 })
 
-const appearanceByPath = {
-  '/boards': {
+const appearanceByName = {
+  board: {
     backgroundColor: '#ffffff',
     titleBarOverlay: { color: '#00000000', symbolColor: '#202124' },
   },
 }
 
-test('tracks the main-frame path and restores the original window colors', () => {
+test('applies the selected appearance and restores the original window colors', () => {
   const window = createWindow()
   const titleBarOverlay = { color: '#123456', height: 29, symbolColor: '#abcdef' }
-  WindowAppearance.track(
-    window as unknown as BrowserWindow,
+  const browserWindow = window as unknown as BrowserWindow
+  WindowAppearance.register(
+    browserWindow,
     { backgroundColor: '#101820', titleBarOverlay, titleBarStyle: 'hidden' },
-    appearanceByPath,
-    'lvce-oss://-/',
+    appearanceByName,
   )
 
-  window.webContents.emit('did-navigate-in-page', {}, 'lvce-oss://-/boards', false)
-  expect(window.setBackgroundColor).not.toHaveBeenCalled()
-  window.webContents.emit('did-navigate-in-page', {}, 'lvce-oss://-/boards', true)
-  window.webContents.emit('did-navigate-in-page', {}, 'lvce-oss://-/boards?search=x', true)
-  window.webContents.emit('did-navigate', {}, 'lvce-oss://-/chat')
-  window.webContents.emit('did-navigate', {}, 'https://example.com/boards')
+  WindowAppearance.set(browserWindow, 'board')
+  expect(window.setBackgroundColor).toHaveBeenCalledWith('#ffffff')
+  WindowAppearance.set(browserWindow, 'board')
+  expect(window.setBackgroundColor).toHaveBeenCalledTimes(1)
+  WindowAppearance.set(browserWindow, null)
 
   expect(window.setBackgroundColor.mock.calls).toEqual([['#ffffff'], ['#101820']])
   expect(window.setTitleBarOverlay.mock.calls).toEqual(
@@ -39,15 +38,17 @@ test('tracks the main-frame path and restores the original window colors', () =>
   )
 })
 
-test('applies colors before loading an initial route without enabling native controls', () => {
+test('clears the previous appearance when a new main-frame document loads', () => {
   const window = createWindow()
-  WindowAppearance.track(
-    window as unknown as BrowserWindow,
+  const browserWindow = window as unknown as BrowserWindow
+  WindowAppearance.register(
+    browserWindow,
     { backgroundColor: '#101820', frame: false, titleBarStyle: 'hidden' },
-    appearanceByPath,
-    'lvce-oss://-/boards?search=x',
+    appearanceByName,
   )
 
-  expect(window.setBackgroundColor).toHaveBeenCalledWith('#ffffff')
+  WindowAppearance.set(browserWindow, 'board')
+  window.webContents.emit('did-navigate', {}, 'lvce-oss://-/')
+  expect(window.setBackgroundColor.mock.calls).toEqual([['#ffffff'], ['#101820']])
   expect(window.setTitleBarOverlay).not.toHaveBeenCalled()
 })

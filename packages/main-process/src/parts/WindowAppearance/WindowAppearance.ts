@@ -5,24 +5,22 @@ interface WindowAppearance {
   readonly titleBarOverlay?: TitleBarOverlayOptions
 }
 
-type AppearanceByPath = Readonly<Record<string, WindowAppearance | undefined>>
+type AppearanceByName = Readonly<Record<string, WindowAppearance>>
+const windowAppearance = new WeakMap<BrowserWindow, (name: string | null) => void>()
 
-export const track = (
+export const register = (
   window: BrowserWindow,
   options: BrowserWindowConstructorOptions,
-  appearanceByPath: AppearanceByPath,
-  initialUrl: string,
+  appearanceByName: AppearanceByName,
 ): void => {
-  const initialLocation = new URL(initialUrl)
   const defaultOverlay =
     (process.platform === 'linux' || process.platform === 'win32') && options.titleBarStyle === 'hidden' && typeof options.titleBarOverlay === 'object'
       ? options.titleBarOverlay
       : undefined
   let currentAppearance: WindowAppearance | undefined
 
-  const update = (location: URL): void => {
-    const sameApp = location.protocol === initialLocation.protocol && location.host === initialLocation.host
-    const appearance = sameApp ? appearanceByPath[location.pathname] : undefined
+  windowAppearance.set(window, (name) => {
+    const appearance = name && Object.hasOwn(appearanceByName, name) ? appearanceByName[name] : undefined
     if (appearance === currentAppearance) {
       return
     }
@@ -31,15 +29,12 @@ export const track = (
       window.setTitleBarOverlay({ ...defaultOverlay, ...appearance?.titleBarOverlay })
     }
     currentAppearance = appearance
-  }
+  })
+  window.webContents.on('did-navigate', () => {
+    set(window, null)
+  })
+}
 
-  update(initialLocation)
-  window.webContents.on('did-navigate', (_event, url) => {
-    update(new URL(url))
-  })
-  window.webContents.on('did-navigate-in-page', (_event, url, isMainFrame) => {
-    if (isMainFrame) {
-      update(new URL(url))
-    }
-  })
+export const set = (window: BrowserWindow, name: string | null): void => {
+  windowAppearance.get(window)?.(name)
 }

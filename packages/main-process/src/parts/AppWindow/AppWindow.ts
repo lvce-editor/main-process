@@ -62,7 +62,7 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
   const savedWindowState = promptMode || StartupCpuProfile.isEnabled() ? undefined : await WindowState.readWindowState()
   const workArea = screen.getPrimaryDisplay().workAreaSize
   const restoredWindowOptions = GetRestoredWindowOptions.getRestoredWindowOptions(savedWindowState, workArea)
-  const { appearanceByPath, ...browserWindowOptions } = windowOptions
+  const { appearanceByName, ...browserWindowOptions } = windowOptions
   Performance.mark(PerformanceMarkerType.WillCreateCodeWindow)
   const window = new BrowserWindow({
     ...browserWindowOptions,
@@ -72,8 +72,8 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
       session,
     },
   })
-  if (appearanceByPath) {
-    WindowAppearance.track(window, browserWindowOptions, appearanceByPath, url)
+  if (appearanceByName) {
+    WindowAppearance.register(window, browserWindowOptions, appearanceByName)
   }
   const windowStateTracker = promptMode || StartupCpuProfile.isEnabled() ? undefined : WindowState.trackWindowState(window)
   const isRendererAvailable = TrackWindowRenderer.trackWindowRenderer(window.webContents, windowOptions.webPreferences?.preload)
