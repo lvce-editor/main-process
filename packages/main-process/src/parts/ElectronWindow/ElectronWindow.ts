@@ -4,6 +4,7 @@ import * as GetWindowById from '../GetWindowById/GetWindowById.ts'
 import * as HasPackageChanged from '../HasPackageChanged/HasPackageChanged.ts'
 import * as Logger from '../Logger/Logger.ts'
 import * as RestartApplication from '../RestartApplication/RestartApplication.ts'
+import * as WindowAppearance from '../WindowAppearance/WindowAppearance.ts'
 
 const devtoolsBeforeInputListeners = new WeakMap<any, any>()
 const devtoolsOptions = {
@@ -64,6 +65,13 @@ const getBrowserWindow = (browserWindowId) => {
     return undefined
   }
   return browserWindow
+}
+
+export const setAppearance = (browserWindowId: number, appearance: string | null): void => {
+  const window = getBrowserWindow(browserWindowId)
+  if (window) {
+    WindowAppearance.set(window, appearance)
+  }
 }
 
 const toggleDevtools = (browserWindow) => {

@@ -7,4 +7,5 @@ export const Commands = {
   executeWindowFunction: ElectronWindow.executeWindowFunction,
   getFocusedWindowId: ElectronWindow.getFocusedWindowId,
   getZoom: ElectronWindow.getZoom,
+  setAppearance: ElectronWindow.setAppearance,
 }

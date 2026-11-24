@@ -162,6 +162,7 @@ export const commandMap = {
   'ElectronWindow.executeWindowFunction': ElectronWindow.executeWindowFunction,
   'ElectronWindow.getFocusedWindowId': ElectronWindow.getFocusedWindowId,
   'ElectronWindow.getZoom': ElectronWindow.getZoom,
+  'ElectronWindow.setAppearance': ElectronWindow.setAppearance,
   'ElectronWindowGpuInfo.open': ElectronWindowGpuInfo.open,
   'ElectronWindowProcessExplorer.open2': ElectronWindowProcessExplorer.open2,
   'Exit.exit': Exit.exit,
