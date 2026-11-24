@@ -4,7 +4,7 @@ import { EventEmitter } from 'node:events'
 import * as IpcId from '../src/parts/IpcId/IpcId.ts'
 import { trackWindowRenderer } from '../src/parts/TrackWindowRenderer/TrackWindowRenderer.ts'
 
-const createWebContents = (isCrashed = () => false) => Object.assign(new EventEmitter(), { ipc: new EventEmitter(), mainFrame: {}, isCrashed })
+const createWebContents = (isCrashed = () => false) => Object.assign(new EventEmitter(), { ipc: new EventEmitter(), isCrashed, mainFrame: {} })
 
 const connect = (webContents: ReturnType<typeof createWebContents>, senderFrame = webContents.mainFrame, ipcId = IpcId.RendererWorker) => {
   webContents.ipc.emit('port', { senderFrame }, { method: 'CreateMessagePort.createMessagePort', params: [ipcId] })
