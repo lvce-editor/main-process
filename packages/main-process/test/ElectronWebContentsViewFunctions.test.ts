@@ -17,21 +17,21 @@ beforeEach(() => {
   ElectronWebContentsViewState.remove(42)
 })
 
-test('hides and restores a browser page without detaching its native surface', () => {
+test('hides and restores a browser page without detaching its native surface', async () => {
   const view = { setVisible: jest.fn() }
   const contentView = { addChildView: jest.fn(), children: [view], removeChildView: jest.fn() }
   ElectronWebContentsViewState.add(42, { contentView }, view)
 
   ElectronWebContentsViewFunctions.hide(42)
-  ElectronWebContentsViewFunctions.show(42)
-  ElectronWebContentsViewFunctions.show(42)
+  await ElectronWebContentsViewFunctions.show(42)
+  await ElectronWebContentsViewFunctions.show(42)
 
   expect(view.setVisible.mock.calls).toEqual([[false], [true], [true]])
   expect(contentView.removeChildView).not.toHaveBeenCalled()
   expect(contentView.addChildView).not.toHaveBeenCalled()
 })
 
-test('attaches a detached browser page to its registered owner before showing it', () => {
+test('attaches a detached browser page to its registered owner before showing it', async () => {
   const events: string[] = []
   const view = {
     setVisible: jest.fn<(visible: boolean) => void>(() => {
@@ -46,7 +46,7 @@ test('attaches a detached browser page to its registered owner before showing it
   }
   ElectronWebContentsViewState.add(42, { contentView }, view)
 
-  ElectronWebContentsViewFunctions.show(42)
+  await ElectronWebContentsViewFunctions.show(42)
 
   expect(contentView.addChildView).toHaveBeenCalledWith(view)
   expect(view.setVisible).toHaveBeenCalledWith(true)
@@ -125,7 +125,7 @@ test('click returns false when the selector does not match', async () => {
   expect(sendInputEvent).not.toHaveBeenCalled()
 })
 
-test('setAudioMuted updates the web contents audio state', () => {
+test('setAudioMuted updates the web contents audio state', async () => {
   const setAudioMuted = jest.fn<(muted: boolean) => void>()
   const view = {
     webContents: {
@@ -133,7 +133,7 @@ test('setAudioMuted updates the web contents audio state', () => {
     },
   } as unknown as Electron.BrowserView
 
-  ElectronWebContentsViewFunctions.setAudioMuted(view, true)
+  await ElectronWebContentsViewFunctions.setAudioMuted(view, true)
 
   expect(setAudioMuted).toHaveBeenCalledWith(true)
 })

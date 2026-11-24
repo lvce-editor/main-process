@@ -7,6 +7,7 @@ let config: ParsedConfig | undefined
 type Headers = Record<string, string>
 
 export interface ParsedConfig {
+  readonly commit?: string
   readonly files: Record<string, number>
   readonly headers: readonly Headers[]
 }

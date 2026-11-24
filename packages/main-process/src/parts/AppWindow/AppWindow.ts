@@ -1,5 +1,5 @@
 import { ElectronWebContentsRpcClient } from '@lvce-editor/rpc'
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, screen } from 'electron'
 import * as AppWindowRpc from '../AppWindowRpc/AppWindowRpc.ts'
 import * as BrowserFullWidthGesture from '../BrowserFullWidthGesture/BrowserFullWidthGesture.ts'
 import * as CommandMapRef from '../CommandMapRef/CommandMapRef.ts'
@@ -13,10 +13,15 @@ import * as LifeCycle from '../LifeCycle/LifeCycle.ts'
 import * as Logger from '../Logger/Logger.ts'
 import * as Performance from '../Performance/Performance.ts'
 import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMarkerType.ts'
+import * as RestartApplication from '../RestartApplication/RestartApplication.ts'
 import * as ShowWindowWhenLoaded from '../ShowWindowWhenLoaded/ShowWindowWhenLoaded.ts'
+import * as StartupCpuProfile from '../StartupCpuProfile/StartupCpuProfile.ts'
+import * as TrackWindowRenderer from '../TrackWindowRenderer/TrackWindowRenderer.ts'
 import { VError } from '../VError/VError.ts'
 import { WindowLoadError } from '../WindowLoadError/WindowLoadError.ts'
 import * as WindowLogger from '../WindowLogger/WindowLogger.ts'
+import * as GetRestoredWindowOptions from '../WindowState/GetRestoredWindowOptions.ts'
+import * as WindowState from '../WindowState/WindowState.ts'
 // TODO impossible to test these methods
 // and ensure that there is no memory leak
 
@@ -52,20 +57,30 @@ const addDevDiagnostics = (window) => {
 // TODO avoid mixing BrowserWindow, childprocess and various lifecycle methods in one file -> separate concerns
 export const createAppWindow = async (windowOptions, parsedArgs, workingDirectory, titleBarItems, url) => {
   const session = Session.get()
+  const promptMode = IsPromptMode.isPromptMode(parsedArgs)
+  const savedWindowState = promptMode || StartupCpuProfile.isEnabled() ? undefined : await WindowState.readWindowState()
+  const workArea = screen.getPrimaryDisplay().workAreaSize
+  const restoredWindowOptions = GetRestoredWindowOptions.getRestoredWindowOptions(savedWindowState, workArea)
   Performance.mark(PerformanceMarkerType.WillCreateCodeWindow)
   const window = new BrowserWindow({
     ...windowOptions,
+    ...restoredWindowOptions,
     webPreferences: {
       ...windowOptions.webPreferences,
       session,
     },
   })
+  const windowStateTracker = promptMode || StartupCpuProfile.isEnabled() ? undefined : WindowState.trackWindowState(window)
+  const isRendererAvailable = TrackWindowRenderer.trackWindowRenderer(window.webContents, windowOptions.webPreferences?.preload)
+  window.webContents.on('preload-error', (_event, path, error) => {
+    Logger.error(`Failed to load window preload ${path}`, error)
+  })
   Performance.mark(PerformanceMarkerType.DidCreateCodeWindow)
   WindowLogger.addListener(window.id, window.webContents)
   addDevDiagnostics(window)
 
-  if (!IsPromptMode.isPromptMode(parsedArgs)) {
-    ShowWindowWhenLoaded.showWindowWhenLoaded(window)
+  if (!promptMode) {
+    ShowWindowWhenLoaded.showWindowWhenLoaded(window, savedWindowState?.maximized ? () => window.maximize() : undefined)
   }
   // TODO query applicarion menu items from shared process
   const menu = ElectronApplicationMenu.createTitleBar(titleBarItems)
@@ -88,6 +103,17 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
     () => {
       disposeBrowserGesture()
       disposeFullScreenListener()
+      windowStateTracker?.dispose()
+    },
+    async () => {
+      if (!windowStateTracker) {
+        return
+      }
+      await WindowState.writeWindowState(windowStateTracker.getState())
+    },
+    {
+      isRendererAvailable,
+      onCloseCancelled: RestartApplication.cancel,
     },
   )
   window.on('close', handleWindowClose)

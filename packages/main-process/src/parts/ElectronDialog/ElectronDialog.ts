@@ -1,4 +1,5 @@
 import * as Electron from 'electron'
+import { pathToFileURL } from 'node:url'
 import type { SaveDialogResult } from '../SaveDialogResult/SaveDialogResult.ts'
 import * as Assert from '../Assert/Assert.ts'
 import * as ElectronMessageBoxType from '../ElectronMessageBoxType/ElectronMessageBoxType.ts'
@@ -20,8 +21,7 @@ export const showOpenDialog = async (title, properties) => {
   if (result.canceled || result.filePaths.length !== 1) {
     return
   }
-  // TODO maybe return whole result (including canceled or not)
-  return result.filePaths
+  return pathToFileURL(result.filePaths[0]).href
 }
 
 export const showSaveDialog = async (title: string, properties: any[]): Promise<SaveDialogResult> => {

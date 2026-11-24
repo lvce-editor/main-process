@@ -33,11 +33,13 @@ import * as ElectronWindowProcessExplorer from '../ElectronWindowProcessExplorer
 import * as Exit from '../Exit/Exit.ts'
 import * as GetWindowId from '../GetWindowId/GetWindowId.ts'
 import * as HandleElectronMessagePort from '../HandleElectronMessagePort/HandleElectronMessagePort.ts'
+import * as HandleWorkerMemoryMessagePort from '../HandleWorkerMemoryMessagePort/HandleWorkerMemoryMessagePort.ts'
 import * as IpcParent from '../IpcParent/IpcParent.ts'
 import * as OpenExternal from '../OpenExternal/OpenExternal.ts'
 import * as Process from '../Process/Process.ts'
 import * as ProcessId from '../ProcessId/ProcessId.ts'
 import * as SecretStorage from '../SecretStorage/SecretStorage.ts'
+import * as StartupCpuProfile from '../StartupCpuProfile/StartupCpuProfile.ts'
 import * as TemporaryMessagePort from '../TemporaryMessagePort/TemporaryMessagePort.ts'
 import * as Trash from '../Trash/Trash.ts'
 import * as WebsitePasswords from '../WebsitePasswords/WebsitePasswords.ts'
@@ -180,9 +182,11 @@ export const commandMap = {
   'SecretStorage.get': SecretStorage.get,
   'SecretStorage.list': SecretStorage.list,
   'SecretStorage.store': SecretStorage.store,
+  'StartupCpuProfile.complete': StartupCpuProfile.complete,
   'TemporaryMessagePort.createPortTuple': TemporaryMessagePort.createPortTuple,
   'TemporaryMessagePort.dispose': TemporaryMessagePort.dispose,
   'TemporaryMessagePort.sendTo': TemporaryMessagePort.sendTo,
   'TemporaryMessagePort.sendTo2': TemporaryMessagePort.sendTo2,
   'Trash.trash': Trash.trash,
+  'WorkerMemory.handleMessagePort': HandleWorkerMemoryMessagePort.handleWorkerMemoryMessagePort,
 }

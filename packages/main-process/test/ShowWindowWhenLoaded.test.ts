@@ -30,3 +30,16 @@ test('closing before load removes pending startup listeners', () => {
   expect(window.listenerCount('ready-to-show')).toBe(0)
   expect(window.webContents.listenerCount('did-finish-load')).toBe(0)
 })
+
+test('runs startup restoration after showing the loaded window', () => {
+  const order: string[] = []
+  const window = createWindow()
+  window.show.mockImplementation(() => {
+    order.push('show')
+  })
+  showWindowWhenLoaded(window, () => {
+    order.push('restore')
+  })
+  window.webContents.emit('did-finish-load')
+  expect(order).toEqual(['show', 'restore'])
+})

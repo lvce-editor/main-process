@@ -1,6 +1,7 @@
 import * as Electron from 'electron'
 import unhandled from 'electron-unhandled' // TODO this might slow down initial startup
 import { spawn } from 'node:child_process'
+import * as ApplicationMemoryUsage from '../ApplicationMemoryUsage/ApplicationMemoryUsage.ts'
 import * as Cli from '../Cli/Cli.ts'
 import * as CommandLineSwitches from '../CommandLineSwitches/CommandLineSwitches.ts'
 import * as ElectronApp from '../ElectronApp/ElectronApp.ts'
@@ -21,6 +22,7 @@ import * as PerformanceMarkerType from '../PerformanceMarkerType/PerformanceMark
 import * as Process from '../Process/Process.ts'
 import * as Protocol from '../Protocol/Protocol.ts'
 import * as SingleInstanceLock from '../SingleInstanceLock/SingleInstanceLock.ts'
+import * as StartupCpuProfile from '../StartupCpuProfile/StartupCpuProfile.ts'
 import * as TimedExit from '../TimedExit/TimedExit.ts'
 
 // TODO maybe handle critical (first render) request via ipcMain
@@ -51,7 +53,14 @@ export const hydrate = async (argv: readonly string[]) => {
     await Cli.handleFastCliArgs(moduleId, parsedCliArgs)
     return
   }
-  if (!isPromptMode) {
+  try {
+    StartupCpuProfile.configure(parsedCliArgs)
+  } catch (error) {
+    console.error(String(error))
+    Electron.app.exit(1)
+    return
+  }
+  if (!isPromptMode && !StartupCpuProfile.isEnabled()) {
     const hasLock = SingleInstanceLock.requestSingleInstanceLock(argv)
     if (!hasLock) {
       Exit.exit()
@@ -62,7 +71,7 @@ export const hydrate = async (argv: readonly string[]) => {
   const hasTimedExit = TimedExit.schedule(parsedCliArgs)
 
   // TODO tree shake out the .env.DEV check: reading from env variables is expensive
-  if (process.stdout.isTTY && !parsedCliArgs.wait && !hasTimedExit && !isPromptMode && !process.env.DEV) {
+  if (process.stdout.isTTY && !parsedCliArgs.wait && !hasTimedExit && !isPromptMode && !StartupCpuProfile.isEnabled() && !process.env.DEV) {
     spawn(Process.execPath, argv.slice(1), {
       detached: true,
       stdio: 'ignore',
@@ -71,7 +80,7 @@ export const hydrate = async (argv: readonly string[]) => {
   }
 
   // command line switches
-  CommandLineSwitches.enable(parsedCliArgs)
+  CommandLineSwitches.enable(parsedCliArgs, ApplicationMemoryUsage.getSetting())
 
   // protocol
   Protocol.enable(Electron.protocol)
@@ -87,5 +96,11 @@ export const hydrate = async (argv: readonly string[]) => {
   }
   Performance.mark(PerformanceMarkerType.AppReady)
 
-  await HandleElectronReady.handleReady(parsedCliArgs, Process.cwd())
+  try {
+    await StartupCpuProfile.start()
+    await HandleElectronReady.handleReady(parsedCliArgs, Process.cwd())
+  } catch (error) {
+    if (!StartupCpuProfile.isEnabled()) throw error
+    await StartupCpuProfile.complete(String(error))
+  }
 }

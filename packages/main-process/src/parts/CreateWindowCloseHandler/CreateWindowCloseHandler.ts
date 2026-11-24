@@ -8,10 +8,16 @@ interface ClosableWindow {
 }
 
 interface RendererRpc {
-  invoke(method: 'Window.prepareClose'): Promise<unknown>
+  invoke(method: 'Window.prepareClose' | 'Window.canClose'): Promise<unknown>
+}
+
+interface CloseOptions {
+  readonly isRendererAvailable?: () => boolean
+  readonly onCloseCancelled?: () => void
 }
 
 const closePreparationTimeout = 1000
+const closeCallbackTimeout = 1000
 const disposedRenderFrameError = 'Render frame was disposed before WebFrameMain could be accessed'
 
 const isDisposedRenderFrameError = (error: unknown): boolean => {
@@ -30,11 +36,25 @@ const prepareClose = async (rpc: RendererRpc): Promise<void> => {
   }
 }
 
+const runCloseCallback = async (callback: () => Promise<void>): Promise<void> => {
+  const { promise, reject } = Promise.withResolvers<never>()
+  const timeout = setTimeout(() => {
+    reject(new Error(`Timed out saving window state after ${closeCallbackTimeout}ms`))
+  }, closeCallbackTimeout)
+  try {
+    await Promise.race([callback(), promise])
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
 export const createWindowCloseHandler = (
   window: ClosableWindow,
   rpc: RendererRpc,
   onError: (error: unknown) => void,
   dispose: () => void = (): void => {},
+  onClose: () => Promise<void> = async (): Promise<void> => {},
+  { isRendererAvailable = (): boolean => true, onCloseCancelled = (): void => {} }: CloseOptions = {},
 ): ((event: CloseEvent) => void) => {
   let closePending = false
 
@@ -46,13 +66,39 @@ export const createWindowCloseHandler = (
     closePending = true
 
     void (async (): Promise<void> => {
+      const rendererAvailable = isRendererAvailable()
+      // Keep user confirmation outside the bounded, best-effort state persistence.
       try {
-        await prepareClose(rpc)
+        const allowed = rendererAvailable ? await rpc.invoke('Window.canClose') : true
+        if (allowed === false) {
+          closePending = false
+          onCloseCancelled()
+          return
+        }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        const legacyRenderer = message === 'Command not found Window.canClose'
+        if (!legacyRenderer && !isDisposedRenderFrameError(error)) {
+          closePending = false
+          onCloseCancelled()
+          onError(error)
+          return
+        }
+      }
+      try {
+        if (rendererAvailable) {
+          await prepareClose(rpc)
+        }
       } catch (error) {
         if (!isDisposedRenderFrameError(error)) {
           onError(error)
         }
       } finally {
+        try {
+          await runCloseCallback(onClose)
+        } catch {
+          // Window state storage is best-effort; continue closing the window.
+        }
         try {
           dispose()
         } catch (error) {

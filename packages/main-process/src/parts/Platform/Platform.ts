@@ -14,6 +14,8 @@ export const applicationName = 'lvce-oss'
 
 const xdgCache = env.XDG_CACHE_HOME || (homeDirectory ? Path.join(homeDirectory, '.cache') : undefined)
 
+export const cacheDir = Path.join(xdgCache || tmpdir(), applicationName)
+
 const xdgConfig = env.XDG_CONFIG_HOME || (homeDirectory ? Path.join(homeDirectory, '.config') : undefined)
 
 export const configDir = Path.join(xdgConfig || tmpdir(), applicationName)
@@ -38,10 +40,16 @@ export const getWebPath = () => {
   return process.env.WEB_PATH || Path.join(Root.root, 'packages', 'web', 'src', 'web.ts')
 }
 
-export const electronSessionDataPath = Path.join(xdgCache || tmpdir(), applicationName, 'userdata')
+export const electronSessionDataPath = Path.join(cacheDir, 'userdata')
+
+export const windowStatePath = Path.join(cacheDir, 'window-state.json')
 
 export const getArgvConfigPath = () => {
   return Path.join(configDir, 'argv.json')
+}
+
+export const getUserSettingsPath = () => {
+  return Path.join(configDir, 'settings.json')
 }
 
 export const version = '0.0.0-dev'
@@ -49,6 +57,10 @@ export const version = '0.0.0-dev'
 export const commit = 'unknown commit'
 
 export const scheme = 'lvce-oss'
+
+export const fontScheme = `${scheme}-font`
+
+export const resourceScheme = `${scheme}-resource`
 
 export const useIpcForResponse = JSON.parse('true')
 

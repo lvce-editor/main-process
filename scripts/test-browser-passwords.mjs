@@ -15,6 +15,7 @@ try {
     format: 'esm',
     outfile,
     platform: 'node',
+    mainFields: ['module', 'main'],
   })
   const env = { ...process.env }
   delete env.ELECTRON_RUN_AS_NODE

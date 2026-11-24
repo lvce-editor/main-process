@@ -5,6 +5,7 @@ test('parseCliArgs', () => {
   expect(ParseCliArgs.parseCliArgs(['/usr/lib/lvce-oss/lvce-oss', '/test/'])).toEqual({
     _: ['/test/'],
     'built-in-self-test': false,
+    'cpu-profile': false,
     help: false,
     r: false,
     reuse: false,
@@ -50,5 +51,16 @@ test('parseCliArgs - prompt with equals', () => {
   expect(ParseCliArgs.parseCliArgs(['/usr/lib/lvce-oss/lvce-oss', '--prompt=Fix the tests'])).toMatchObject({
     _: [],
     prompt: 'Fix the tests',
+  })
+})
+
+test('cpu profiling preserves project and file arguments', () => {
+  expect(
+    ParseCliArgs.parseCliArgs(['/usr/lib/lvce-oss/lvce-oss', '--cpu-profile', '/project', '--open', 'test.js', '--cpu-profile-dir', '/profiles']),
+  ).toMatchObject({
+    _: ['/project'],
+    'cpu-profile': true,
+    'cpu-profile-dir': '/profiles',
+    open: 'test.js',
   })
 })

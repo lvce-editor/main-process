@@ -23,6 +23,7 @@ jest.unstable_mockModule('electron', () => {
   // @ts-ignore
   BrowserWindow.prototype.setAutoHideMenuBar = jest.fn()
   return {
+    app: {},
     BrowserWindow,
     Menu: class {},
     MessageChannelMain: class {},

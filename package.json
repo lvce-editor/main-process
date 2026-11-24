@@ -12,6 +12,8 @@
     "packages/*"
   ],
   "scripts": {
+    "test:resource-source": "node scripts/test-resource-source.mjs",
+    "test:font-source": "node scripts/test-font-source.mjs",
     "build": "node packages/build/src/build.js",
     "build:watch": "npm exec --workspace=packages/build -- esbuild --format=esm --bundle --external:node:buffer --external:electron --external:ws --external:node:* --watch packages/main-process/src/mainProcessMain.ts --outfile=.tmp/dist/dist/mainProcessMain.js",
     "dev:prepare": "node packages/local-dev/src/localDevMain.ts prepare",
@@ -24,9 +26,14 @@
     "test:browser-restore": "node scripts/test-browser-restore.mjs",
     "test:browser-visibility": "node scripts/test-browser-visibility.mjs",
     "type-check": "tsc -b",
+    "test:browser-freeze": "node scripts/test-browser-freeze.mjs",
     "test:browser-passwords": "node scripts/test-browser-passwords.mjs",
     "test:password-storage": "node scripts/test-password-storage.mjs",
-    "test:browser-period": "node scripts/test-browser-period.mjs"
+    "test:browser-period": "node scripts/test-browser-period.mjs",
+    "test:worker-memory": "node scripts/test-worker-memory.mjs",
+    "test:startup-cpu-profile": "node scripts/test-startup-cpu-profile.mjs",
+    "test:worker-cpu": "node scripts/test-worker-cpu.mjs",
+    "test:update-restart": "node scripts/test-update-restart.mjs"
   },
   "prettier": {
     "semi": false,
@@ -34,9 +41,10 @@
     "printWidth": 150
   },
   "devDependencies": {
-    "@lvce-editor/eslint-config": "^18.14.2",
-    "eslint": "10.11.0",
-    "prettier": "^3.9.9",
+    "@lvce-editor/eslint-config": "^18.12.0",
+    "@lvce-editor/shared-process": "0.126.11",
+    "eslint": "10.9.1",
+    "prettier": "^3.9.6",
     "typescript": "^6.0.3"
   },
   "engines": {
