@@ -22,6 +22,7 @@ import * as WindowAppearance from '../WindowAppearance/WindowAppearance.ts'
 import { WindowLoadError } from '../WindowLoadError/WindowLoadError.ts'
 import * as WindowLogger from '../WindowLogger/WindowLogger.ts'
 import * as GetRestoredWindowOptions from '../WindowState/GetRestoredWindowOptions.ts'
+import * as LimitRestoredWindowSize from '../WindowState/LimitRestoredWindowSize.ts'
 import * as WindowState from '../WindowState/WindowState.ts'
 // TODO impossible to test these methods
 // and ensure that there is no memory leak
@@ -72,6 +73,9 @@ export const createAppWindow = async (windowOptions, parsedArgs, workingDirector
       session,
     },
   })
+  if (process.platform === 'linux' && browserWindowOptions.titleBarStyle === 'hidden' && browserWindowOptions.titleBarOverlay) {
+    LimitRestoredWindowSize.limitRestoredWindowSize(window)
+  }
   if (appearanceByName) {
     WindowAppearance.register(window, browserWindowOptions, appearanceByName)
   }

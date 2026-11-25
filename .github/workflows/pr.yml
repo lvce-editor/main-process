@@ -73,7 +73,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends --yes gnome-keyring dbus-x11
           xvfb-run -a npm run test:password-storage
-      - name: Test native Wayland window startup
+      - name: Test native Wayland window startup and restore
         if: matrix.os == 'ubuntu-24.04'
         shell: bash
         run: |
@@ -82,7 +82,8 @@ jobs:
           export XDG_RUNTIME_DIR="$(mktemp -d)"
           export WAYLAND_DISPLAY=wayland-startup
           unset DISPLAY
-          weston --backend=headless-backend.so --renderer=pixman --socket="$WAYLAND_DISPLAY" --idle-time=0 > "$RUNNER_TEMP/weston-startup.log" 2>&1 &
+          printf '[shell]\npanel-position=left\n' > "$RUNNER_TEMP/weston-window.ini"
+          weston --backend=headless-backend.so --renderer=pixman --socket="$WAYLAND_DISPLAY" --idle-time=0 --width=1920 --height=1080 --config="$RUNNER_TEMP/weston-window.ini" > "$RUNNER_TEMP/weston-startup.log" 2>&1 &
           weston_pid=$!
           trap 'kill "$weston_pid" 2>/dev/null || true; wait "$weston_pid" 2>/dev/null || true; cat "$RUNNER_TEMP/weston-startup.log"; rm -rf "$XDG_RUNTIME_DIR"' EXIT
           for attempt in {1..30}; do
@@ -91,6 +92,7 @@ jobs:
           done
           test -S "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"
           node scripts/test-window-startup.mjs --ozone-platform=wayland --disable-gpu
+          node scripts/test-window-state.mjs --wayland
       - name: Test window state across Electron relaunches
         if: matrix.os == 'ubuntu-24.04'
         run: |
