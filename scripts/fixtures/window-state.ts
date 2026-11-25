@@ -1,6 +1,7 @@
 import { app, BrowserWindow, screen } from 'electron'
 import { createWindowCloseHandler } from '../../packages/main-process/src/parts/CreateWindowCloseHandler/CreateWindowCloseHandler.ts'
 import * as GetRestoredWindowOptions from '../../packages/main-process/src/parts/WindowState/GetRestoredWindowOptions.ts'
+import * as LimitRestoredWindowSize from '../../packages/main-process/src/parts/WindowState/LimitRestoredWindowSize.ts'
 import * as WindowState from '../../packages/main-process/src/parts/WindowState/WindowState.ts'
 import { showWindowWhenLoaded } from '../../packages/main-process/src/parts/ShowWindowWhenLoaded/ShowWindowWhenLoaded.ts'
 
@@ -50,7 +51,41 @@ const run = async (): Promise<void> => {
     app.quit()
     return
   }
-  if (mode === 'save-normal') {
+  if (mode === 'verify-wayland-restore') {
+    const workArea = screen.getPrimaryDisplay().workAreaSize
+    const window = new BrowserWindow({
+      ...GetRestoredWindowOptions.getRestoredWindowOptions({ ...workArea, maximized: true }, workArea),
+      frame: false,
+      show: false,
+      titleBarOverlay: { height: 29 },
+      titleBarStyle: 'hidden',
+    })
+    LimitRestoredWindowSize.limitRestoredWindowSize(window)
+    await loadAndShow(window, () => window.maximize())
+    const deadline = Date.now() + 5_000
+    while (!window.isMaximized() || window.getBounds().width >= workArea.width) {
+      if (Date.now() >= deadline) {
+        throw new Error('Expected the Wayland compositor to reserve space for its left panel')
+      }
+      await wait(20)
+    }
+    const maximizedWidth = window.getBounds().width
+    // The 'unmaximize' event precedes the compositor's resize to the restored size.
+    const resized = new Promise<void>((resolve) => window.once('resize', resolve))
+    window.unmaximize()
+    await resized
+    const restoreDeadline = Date.now() + 2_000
+    while (window.getBounds().width >= maximizedWidth) {
+      if (Date.now() >= restoreDeadline) {
+        throw new Error(`Restored width ${window.getBounds().width} exceeds available width with window decorations (${maximizedWidth})`)
+      }
+      await wait(20)
+    }
+    if (window.isMaximized()) {
+      throw new Error('Expected the window to remain restored')
+    }
+    window.close()
+  } else if (mode === 'save-normal') {
     const window = new BrowserWindow({ height: 700, show: false, width: 900 })
     const windowStateTracker = WindowState.trackWindowState(window)
     await loadAndShow(window)

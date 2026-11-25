@@ -13,8 +13,11 @@ try {
   const env = { ...process.env }
   delete env.ELECTRON_RUN_AS_NODE
   for (const kind of ['CONFIG', 'DATA', 'CACHE', 'STATE']) env[`XDG_${kind}_HOME`] = join(directory, kind.toLowerCase())
-  for (const mode of ['verify-missing', 'save-normal', 'verify-normal', 'save-maximized', 'verify-maximized']) {
-    const result = spawnSync(electron, ['--no-sandbox', `--user-data-dir=${join(directory, 'profile')}`, outfile, mode], {
+  const wayland = process.argv.includes('--wayland')
+  const modes = wayland ? ['verify-wayland-restore'] : ['verify-missing', 'save-normal', 'verify-normal', 'save-maximized', 'verify-maximized']
+  for (const mode of modes) {
+    const flags = wayland ? ['--ozone-platform=wayland', '--disable-gpu'] : []
+    const result = spawnSync(electron, ['--no-sandbox', ...flags, `--user-data-dir=${join(directory, 'profile')}`, outfile, mode], {
       env,
       stdio: 'inherit',
       timeout: 30_000,
